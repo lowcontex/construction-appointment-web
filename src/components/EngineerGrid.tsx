@@ -5,6 +5,11 @@ import { useApp } from '@/context/AppContext';
 import { formatPHP } from '@/utils/costing';
 import styles from './EngineerGrid.module.css';
 
+function initials(name: string): string {
+  const p = name.split(' ');
+  return ((p[1]?.[0] || '') + (p[2]?.[0] || '')).toUpperCase() || 'EN';
+}
+
 const specs = ['All', 'Civil', 'Structural', 'Electrical', 'Mechanical'];
 
 export default function EngineerGrid() {
@@ -34,7 +39,7 @@ export default function EngineerGrid() {
         {filtered.map(e => (
           <div key={e.id} className={styles.card}>
             <div className={styles.avatar}>
-              <span style={{ fontSize: '3.5rem' }}>{e.avatar}</span>
+              <div className={styles.avatarInitial}>{initials(e.name)}</div>
               <span className={`${styles.badge} ${e.status === 'available' ? 'badge-available' : 'badge-busy'}`}>
                 {e.status}
               </span>
@@ -42,7 +47,7 @@ export default function EngineerGrid() {
             <div className={styles.info}>
               <div className={styles.name}>{e.name}</div>
               <div className={styles.spec}>{e.spec} Engineering</div>
-              <div className={styles.exp}>🎓 {e.exp} experience</div>
+              <div className={styles.exp}>{e.exp} experience</div>
               <div className={styles.rating}>
                 ★ {e.rating} <span style={{ color: 'var(--muted)', fontSize: '12px' }}>({e.reviews} reviews)</span>
               </div>

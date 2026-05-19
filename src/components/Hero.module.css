@@ -1,4 +1,4 @@
-.hero{position:relative;background:var(--navy);overflow:hidden;padding:5rem 2rem 4rem;}
+.hero{position:relative;background:var(--navy);overflow:hidden;padding:5rem 2rem 4rem;animation:fadeUp .5s cubic-bezier(0.25,0.46,0.45,0.94) both;}
 .grid{position:absolute;inset:0;opacity:.04;background-image:linear-gradient(var(--sky) 1px,transparent 1px),linear-gradient(90deg,var(--sky) 1px,transparent 1px);background-size:40px 40px;}
 .inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center;position:relative;}
 .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}

@@ -5,7 +5,8 @@
 .tabBtn.active{background:var(--gold);color:var(--steel);}
 .content{padding:2rem;max-width:1300px;margin:0 auto;}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:2rem;}
-.astat{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:1.25rem;border-left:4px solid var(--gold);}
+.astat{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:1.25rem;position:relative;overflow:hidden;}
+.astat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);}
 .astatLabel{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;margin-bottom:6px;}
 .astatVal{font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--gold);}
 .astatSub{font-size:12px;color:var(--muted);margin-top:3px;}

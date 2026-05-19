@@ -6,6 +6,11 @@ import { SERVICES } from '@/data/services';
 import { calcCost, formatPHP } from '@/utils/costing';
 import styles from './BookingForm.module.css';
 
+function initials(name: string): string {
+  const p = name.split(' ');
+  return ((p[1]?.[0] || '') + (p[2]?.[0] || '')).toUpperCase() || 'EN';
+}
+
 export default function BookingForm() {
   const { booking, setBooking, bookings, setBookings, engineers, currentUser, showToast, showPage, setSuccessRef, openModal } = useApp();
   const [step, setStep] = useState(1);
@@ -27,18 +32,18 @@ export default function BookingForm() {
     : null;
 
   const nextStep = () => {
-    if (step === 1 && !booking.service) { showToast('Please select a service.', '⚠️'); return; }
+    if (step === 1 && !booking.service) { showToast('Please select a service.'); return; }
     if (step === 2) {
-      if (!name || !bArea || !address) { showToast('Please fill in all required fields.', '⚠️'); return; }
+      if (!name || !bArea || !address) { showToast('Please fill in all required fields.'); return; }
     }
-    if (step === 3 && !booking.engineer) { showToast('Please select an engineer.', '⚠️'); return; }
+    if (step === 3 && !booking.engineer) { showToast('Please select an engineer.'); return; }
     setStep(s => s + 1);
   };
 
   const prevStep = () => setStep(s => s - 1);
 
   const confirmBooking = () => {
-    if (!currentUser) { showToast('Please login to confirm booking', '⚠️'); openModal('login'); return; }
+    if (!currentUser) { showToast('Please login to confirm booking'); openModal('login'); return; }
     if (!selectedService || !selectedEngineer) return;
     const id = 'BK-' + String(bookings.length + 1).padStart(3, '0');
     setBookings(prev => [{
@@ -49,7 +54,7 @@ export default function BookingForm() {
     setSuccessRef('Booking Reference: ' + id);
     setBooking({ service: null, engineer: null });
     showPage('success');
-    showToast('Booking submitted successfully! 🎉', '✅');
+    showToast('Booking submitted successfully!');
   };
 
   return (
@@ -74,7 +79,7 @@ export default function BookingForm() {
       {step === 1 && (
         <div className={styles.panel}>
           <div className={styles.card}>
-            <div className={styles.cardTitle}><span>🏗️</span>Select Service</div>
+            <div className={styles.cardTitle}>Select Service</div>
             <div className={styles.picker}>
               {SERVICES.map(s => (
                 <div
@@ -82,7 +87,7 @@ export default function BookingForm() {
                   className={`${styles.pick} ${booking.service === s.id ? styles.selected : ''}`}
                   onClick={() => setBooking(prev => ({ ...prev, service: s.id }))}
                 >
-                  <div className={styles.pickIcon}>{s.icon}</div>
+                  <div className={styles.pickIcon}></div>
                   <div className={styles.pickName}>{s.name}</div>
                   <div className={styles.pickPrice}>{formatPHP(s.baseCostPerSqm.materials)}/sqm mat.</div>
                 </div>
@@ -96,7 +101,7 @@ export default function BookingForm() {
       {step === 2 && (
         <div className={styles.panel}>
           <div className={styles.card}>
-            <div className={styles.cardTitle}><span>📋</span>Project Details</div>
+            <div className={styles.cardTitle}>Project Details</div>
             <div className="form-grid">
               <div className="form-group"><label className="form-label">Full Name</label><input className="form-input" value={name} onChange={e => setName(e.target.value)} placeholder="Juan Dela Cruz" /></div>
               <div className="form-group"><label className="form-label">Phone</label><input className="form-input" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+63 9XX XXX XXXX" /></div>
@@ -138,7 +143,7 @@ export default function BookingForm() {
       {step === 3 && (
         <div className={styles.panel}>
           <div className={styles.card}>
-            <div className={styles.cardTitle}><span>👷</span>Select Engineer</div>
+            <div className={styles.cardTitle}>Select Engineer</div>
             <div className={styles.picker}>
               {engineers.map(e => (
                 <div
@@ -146,7 +151,7 @@ export default function BookingForm() {
                   className={`${styles.engPick} ${booking.engineer === e.id ? styles.selected : ''}`}
                   onClick={() => setBooking(prev => ({ ...prev, engineer: e.id }))}
                 >
-                  <div className={styles.engPickAvatar}>{e.avatar}</div>
+                  <div className={styles.engPickAvatar}>{initials(e.name)}</div>
                   <div className={styles.pickName}>{e.name}</div>
                   <div className={styles.engPickSpec}>{e.spec}</div>
                   <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>★ {e.rating} · {e.exp}</div>
@@ -168,7 +173,7 @@ export default function BookingForm() {
       {step === 4 && selectedService && selectedEngineer && (
         <div className={styles.panel}>
           <div className={styles.card}>
-            <div className={styles.cardTitle}><span>✅</span>Review Your Booking</div>
+            <div className={styles.cardTitle}>Review Your Booking</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               <div>
                 <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--sky)', fontWeight: 700, marginBottom: '.8rem' }}>Client Info</div>
@@ -179,15 +184,15 @@ export default function BookingForm() {
               </div>
               <div>
                 <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--sky)', fontWeight: 700, marginBottom: '.8rem' }}>Project Info</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Service:</span> {selectedService.icon} {selectedService.name}</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Service:</span> {selectedService.name}</div>
                 <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Area:</span> {bArea} sqm × {floors} floor(s)</div>
                 <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Grade:</span> {grade.charAt(0).toUpperCase() + grade.slice(1)}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Engineer:</span> {selectedEngineer.avatar} {selectedEngineer.name}</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Engineer:</span> {selectedEngineer.name}</div>
               </div>
             </div>
             {notes && (
               <div style={{ marginTop: '1rem', fontSize: '13px', color: 'var(--muted)', padding: '.75rem', background: 'var(--slate)', borderRadius: 'var(--r)', border: '1px solid var(--mid)' }}>
-                📝 {notes}
+                {notes}
               </div>
             )}
             {cost && (

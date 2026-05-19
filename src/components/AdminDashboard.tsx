@@ -23,14 +23,14 @@ export default function AdminDashboard() {
 
   const updateBookingStatus = (id: string, status: string) => {
     setBookings(prev => prev.map(b => b.id === id ? { ...b, status: status as any } : b));
-    showToast('Status updated: ' + status, '✅');
+    showToast('Status updated: ' + status);
   };
 
   const toggleEngStatus = (id: number) => {
     setEngineers(prev => prev.map(e =>
       e.id === id ? { ...e, status: e.status === 'available' ? 'busy' as const : 'available' as const } : e
     ));
-    showToast('Engineer status updated', '✅');
+    showToast('Engineer status updated');
   };
 
   return (
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
             <tbody>
               {engineers.map(e => (
                 <tr key={e.id}>
-                  <td>{e.avatar} {e.name}</td>
+                  <td>{e.name}</td>
                   <td style={{ color: 'var(--sky)' }}>{e.spec}</td>
                   <td>{e.exp}</td>
                   <td style={{ color: 'var(--gold)' }}>{formatPHP(e.rate)}</td>
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
             <tbody>
               {SERVICES.map((s: any) => (
                 <tr key={s.id}>
-                  <td>{s.icon} {s.name}</td>
+                  <td>{s.name}</td>
                   <td>{s.type}</td>
                   <td style={{ color: 'var(--gold)' }}>{formatPHP(s.baseCostPerSqm.materials)}</td>
                   <td style={{ color: 'var(--sky)' }}>{formatPHP(s.baseCostPerSqm.labor)}</td>

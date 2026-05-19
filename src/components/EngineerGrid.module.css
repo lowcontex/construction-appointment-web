@@ -4,6 +4,7 @@
 .card{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);overflow:hidden;transition:all var(--t);}
 .card:hover{border-color:var(--sky);transform:translateY(-3px);box-shadow:var(--shadow);}
 .avatar{height:140px;background:var(--slate);display:flex;align-items:center;justify-content:center;position:relative;}
+.avatarInitial{font-family:var(--font-head);font-size:2.8rem;font-weight:800;color:var(--gold);opacity:.7;}
 .badge{position:absolute;bottom:10px;right:10px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;}
 .info{padding:1.25rem;}
 .name{font-family:var(--font-head);font-size:1.25rem;font-weight:700;color:var(--white);letter-spacing:.03em;}

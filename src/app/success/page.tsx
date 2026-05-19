@@ -7,7 +7,11 @@ export default function SuccessPage() {
 
   return (
     <div style={{ textAlign: 'center', padding: '6rem 2rem', maxWidth: '600px', margin: '0 auto' }}>
-      <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🎉</div>
+      <div style={{
+        width: '60px', height: '60px', borderRadius: '50%', border: '3px solid var(--gold)',
+        margin: '0 auto 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontFamily: 'var(--font-head)', fontSize: '2rem', fontWeight: 800, color: 'var(--gold)',
+      }}>BK</div>
       <div style={{
         fontFamily: 'var(--font-head)', fontSize: '2.8rem', fontWeight: 800,
         color: 'var(--white)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: '.8rem',

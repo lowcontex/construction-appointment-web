@@ -11,7 +11,7 @@ export default function Hero() {
   return (
     <div className={styles.hero}>
       <div className={styles.grid}></div>
-      <div className={styles.inner}>
+      <div className={styles.inner} style={{ animation: 'fadeUp .5s cubic-bezier(0.25,0.46,0.45,0.94) both' }}>
         <div>
           <div className={styles.eyebrow}>Trusted Construction Partner</div>
           <h1 className={styles.heading}>Build Your <em className={styles.em}>Vision</em><br />With Expert Hands</h1>

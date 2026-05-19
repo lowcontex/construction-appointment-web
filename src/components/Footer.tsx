@@ -29,9 +29,9 @@ export default function Footer() {
         </div>
         <div>
           <div className={styles.heading}>Contact</div>
-          <span className={styles.link}>📞 (02) 8123-4567</span>
-          <span className={styles.link}>📧 hello@buildright.ph</span>
-          <span className={styles.link}>📍 Metro Manila, PH</span>
+          <span className={styles.link}>T: (02) 8123-4567</span>
+          <span className={styles.link}>E: hello@buildright.ph</span>
+          <span className={styles.link}>Metro Manila, PH</span>
         </div>
       </div>
       <div className={styles.bottom}>

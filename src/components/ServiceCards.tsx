@@ -17,7 +17,6 @@ export default function ServiceCards() {
         {SERVICES.map(s => (
           <div key={s.id} className={styles.card} onClick={() => showPage('booking')}>
             <div className={styles.top}>
-              <div className={styles.icon}>{s.icon}</div>
               <div className={styles.type}>{s.type}</div>
               <div className={styles.name}>{s.name}</div>
               <div className={styles.desc}>{s.desc}</div>
@@ -32,7 +31,7 @@ export default function ServiceCards() {
                   </span>
                 </div>
               ))}
-              <div className={styles.timeline}>⏱ Timeline: {s.duration}</div>
+              <div className={styles.timeline}>Timeline: {s.duration}</div>
             </div>
             <div className={styles.footer}>
               <div>

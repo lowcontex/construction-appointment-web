@@ -88,11 +88,9 @@ function RegisterForm({ role, onRoleChange }: { role: 'customer' | 'engineer'; o
         <label className="modal-label">I am registering as</label>
         <div className="role-picker">
           <div className={`role-opt ${role === 'customer' ? 'selected' : ''}`} onClick={() => onRoleChange('customer')}>
-            <div className="role-opt-icon">🏠</div>
             <div className="role-opt-name">Customer</div>
           </div>
           <div className={`role-opt ${role === 'engineer' ? 'selected' : ''}`} onClick={() => onRoleChange('engineer')}>
-            <div className="role-opt-icon">👷</div>
             <div className="role-opt-name">Engineer</div>
           </div>
         </div>

@@ -48,7 +48,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [booking, setBooking] = useState<BookingState>({ service: null, engineer: null });
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<'login' | 'register'>('login');
-  const [toast, setToast] = useState<ToastState>({ message: '', icon: '\u2713', visible: false });
+  const [toast, setToast] = useState<ToastState>({ message: '', icon: '', visible: false });
   const [successRef, setSuccessRef] = useState('');
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const router = useRouter();
@@ -76,7 +76,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const switchAuthTab = useCallback((tab: 'login' | 'register') => { setModalTab(tab); }, []);
 
-  const showToast = useCallback((msg: string, icon: string = '\u2713') => {
+  const showToast = useCallback((msg: string, icon: string = '') => {
     setToast({ message: msg, icon, visible: true });
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => {
@@ -86,24 +86,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const doLogin = useCallback((email: string, password: string) => {
     const user = users.find(u => u.email === email && u.password === password);
-    if (!user) { showToast('Invalid credentials.', '\u274C'); return; }
+    if (!user) { showToast('Invalid credentials.'); return; }
     setCurrentUser(user);
     closeModal();
-    showToast('Welcome back, ' + user.name + '! \uD83D\uDC4B', '\u2705');
+    showToast('Welcome back, ' + user.name + '!');
     if (user.role === 'admin') setTimeout(() => showPage('admin'), 500);
   }, [users, showToast, closeModal, showPage]);
 
   const logout = useCallback(() => {
     setCurrentUser(null);
     showPage('home');
-    showToast('Logged out successfully.', '\uD83D\uDC4B');
+    showToast('Logged out successfully.');
   }, [showPage, showToast]);
 
   const doRegister = useCallback((form: Record<string, string>, role: string) => {
     const { fname, lname, email, phone, password, prc, spec, exp, rate, bio } = form;
-    if (!fname || !email || !password) { showToast('Please fill in all required fields.', '\u26A0\uFE0F'); return; }
-    if (users.find(u => u.email === email)) { showToast('Email already registered.', '\u26A0\uFE0F'); return; }
-    if (password.length < 8) { showToast('Password must be at least 8 characters.', '\u26A0\uFE0F'); return; }
+    if (!fname || !email || !password) { showToast('Please fill in all required fields.'); return; }
+    if (users.find(u => u.email === email)) { showToast('Email already registered.'); return; }
+    if (password.length < 8) { showToast('Password must be at least 8 characters.'); return; }
 
     const newUser: User = {
       id: users.length + 1,
@@ -115,13 +115,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
 
     if (role === 'engineer') {
-      if (!prc) { showToast('PRC License No. is required for engineers.', '\u26A0\uFE0F'); return; }
+      if (!prc) { showToast('PRC License No. is required for engineers.'); return; }
       const specShort = spec.split(' ')[0];
       setEngineers(prev => [...prev, {
         id: prev.length + 1,
         name: 'Engr. ' + fname + ' ' + lname,
         spec: specShort,
-        avatar: '\uD83D\uDC77',
+        avatar: '',
         exp: exp + ' years',
         rate: parseInt(rate) || 2500,
         rating: 5.0,
@@ -135,7 +135,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setUsers(prev => [...prev, newUser]);
     setCurrentUser(newUser);
     closeModal();
-    showToast('Account created! Welcome, ' + fname + '! \uD83C\uDF89', '\u2705');
+    showToast('Account created! Welcome, ' + fname + '!');
   }, [users, showToast, closeModal]);
 
   return (
