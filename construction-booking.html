@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildRight — Construction Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --steel:#0f1923;
+  --navy:#14232e;
+  --slate:#1e3448;
+  --mid:#2a4a68;
+  --blue:#1a6b9e;
+  --sky:#2196c4;
+  --gold:#f59e0b;
+  --gold2:#d97706;
+  --light:#e8edf2;
+  --muted:#7a9bb5;
+  --white:#ffffff;
+  --success:#22c55e;
+  --danger:#ef4444;
+  --warn:#f59e0b;
+  --font-head:'Barlow Condensed',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  --r:8px;
+  --r-lg:14px;
+  --shadow:0 4px 24px rgba(0,0,0,0.25);
+  --shadow-lg:0 12px 48px rgba(0,0,0,0.4);
+  --t:0.2s ease;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--steel);color:var(--light);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--gold);color:var(--steel);text-align:center;font-size:12px;font-weight:600;letter-spacing:.06em;padding:7px;text-transform:uppercase;}
+
+/* HEADER */
+header{background:var(--navy);border-bottom:2px solid var(--mid);padding:0 2rem;position:sticky;top:0;z-index:300;}
+.header-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:1rem;}
+.logo{font-family:var(--font-head);font-size:1.8rem;font-weight:800;color:var(--white);letter-spacing:.02em;cursor:pointer;display:flex;align-items:center;gap:10px;}
+.logo-mark{background:var(--gold);color:var(--steel);font-size:1rem;font-weight:800;padding:4px 8px;border-radius:4px;letter-spacing:.05em;}
+.logo span{color:var(--gold);}
+.nav{display:flex;gap:1.5rem;align-items:center;}
+.nav-link{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:color var(--t);padding:4px 0;border-bottom:2px solid transparent;}
+.nav-link:hover,.nav-link.active{color:var(--white);border-bottom-color:var(--gold);}
+.header-btns{display:flex;gap:10px;align-items:center;}
+.btn{font-family:var(--font-body);font-size:13px;font-weight:600;padding:9px 20px;border-radius:var(--r);cursor:pointer;transition:all var(--t);border:2px solid transparent;letter-spacing:.04em;text-transform:uppercase;}
+.btn-gold{background:var(--gold);color:var(--steel);border-color:var(--gold);}
+.btn-gold:hover{background:var(--gold2);border-color:var(--gold2);}
+.btn-outline{background:transparent;color:var(--light);border-color:var(--mid);}
+.btn-outline:hover{border-color:var(--sky);color:var(--sky);}
+.btn-primary{background:var(--sky);color:var(--white);border-color:var(--sky);}
+.btn-primary:hover{background:var(--blue);border-color:var(--blue);}
+.btn-danger{background:var(--danger);color:white;border-color:var(--danger);}
+.btn-success{background:var(--success);color:white;border-color:var(--success);}
+.btn-sm{padding:6px 14px;font-size:11px;}
+
+/* PAGES */
+.page{display:none;animation:fadeUp .3s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* HERO */
+.hero{position:relative;background:var(--navy);overflow:hidden;padding:5rem 2rem 4rem;}
+.hero-grid{position:absolute;inset:0;opacity:.04;background-image:linear-gradient(var(--sky) 1px,transparent 1px),linear-gradient(90deg,var(--sky) 1px,transparent 1px);background-size:40px 40px;}
+.hero-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center;position:relative;}
+.hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+.hero-eyebrow::before{content:'';width:30px;height:2px;background:var(--gold);}
+.hero h1{font-family:var(--font-head);font-size:clamp(2.8rem,5vw,4.5rem);font-weight:800;line-height:1.05;letter-spacing:.01em;margin-bottom:1.2rem;color:var(--white);}
+.hero h1 em{color:var(--gold);font-style:normal;}
+.hero-sub{font-size:16px;color:var(--muted);font-weight:300;line-height:1.8;margin-bottom:2rem;max-width:520px;}
+.hero-stats{display:flex;gap:2rem;margin-bottom:2.5rem;}
+.hero-stat-val{font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--gold);}
+.hero-stat-lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-card{background:var(--slate);border:1px solid var(--mid);border-radius:var(--r-lg);padding:2rem;position:relative;overflow:hidden;}
+.hero-card::before{content:'BOOK NOW';position:absolute;top:-10px;right:-10px;font-family:var(--font-head);font-size:5rem;font-weight:800;color:var(--mid);opacity:.3;line-height:1;}
+.quick-book-title{font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:.05em;}
+.qb-field{margin-bottom:12px;}
+.qb-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px;display:block;font-weight:600;}
+.qb-select,.qb-input{width:100%;background:var(--navy);border:1.5px solid var(--mid);border-radius:var(--r);color:var(--light);font-family:var(--font-body);font-size:14px;padding:10px 13px;outline:none;transition:border-color var(--t);}
+.qb-select:focus,.qb-input:focus{border-color:var(--sky);}
+.qb-select option{background:var(--navy);}
+
+/* SECTION */
+.section{padding:5rem 2rem;max-width:1300px;margin:0 auto;}
+.section-tag{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--gold);font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:8px;}
+.section-tag::before{content:'';width:20px;height:2px;background:var(--gold);}
+.section-title{font-family:var(--font-head);font-size:2.6rem;font-weight:800;color:var(--white);line-height:1.1;letter-spacing:.02em;margin-bottom:.6rem;}
+.section-sub{font-size:15px;color:var(--muted);font-weight:300;max-width:580px;line-height:1.8;}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;margin-top:3rem;}
+.service-card{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);overflow:hidden;transition:all var(--t);cursor:pointer;position:relative;}
+.service-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--sky);}
+.service-card-top{padding:1.5rem 1.5rem 1rem;border-bottom:1px solid var(--mid);}
+.service-icon{font-size:2.4rem;margin-bottom:.8rem;}
+.service-type{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:700;margin-bottom:.3rem;}
+.service-name{font-family:var(--font-head);font-size:1.5rem;font-weight:700;color:var(--white);letter-spacing:.03em;line-height:1.2;}
+.service-desc{font-size:13px;color:var(--muted);margin-top:.5rem;line-height:1.6;}
+.service-card-body{padding:1.25rem 1.5rem;}
+.materials-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sky);font-weight:700;margin-bottom:.8rem;}
+.material-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(42,74,104,.5);}
+.material-row:last-child{border-bottom:none;}
+.material-name{color:var(--muted);}
+.material-cost{color:var(--light);font-weight:500;}
+.service-card-footer{padding:1rem 1.5rem;background:var(--slate);display:flex;align-items:center;justify-content:space-between;}
+.cost-block{}
+.cost-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.cost-range{font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--gold);}
+.cost-note{font-size:11px;color:var(--muted);}
+
+/* COST ESTIMATOR */
+.estimator-wrap{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:2.5rem;margin-top:3rem;}
+.estimator-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
+.est-col-title{font-family:var(--font-head);font-size:1.1rem;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1.2rem;padding-bottom:.7rem;border-bottom:1px solid var(--mid);}
+.est-field{margin-bottom:14px;}
+.est-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:5px;display:block;}
+.est-input,.est-select{width:100%;background:var(--slate);border:1.5px solid var(--mid);border-radius:var(--r);color:var(--light);font-family:var(--font-body);font-size:14px;padding:10px 13px;outline:none;transition:border-color var(--t);}
+.est-input:focus,.est-select:focus{border-color:var(--sky);}
+.est-select option{background:var(--navy);}
+.estimate-result{background:var(--slate);border:1px solid var(--mid);border-radius:var(--r-lg);padding:1.5rem;}
+.est-result-title{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--sky);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
+.est-line{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid rgba(42,74,104,.5);}
+.est-line:last-child{border-bottom:none;font-family:var(--font-head);font-size:1.3rem;color:var(--gold);font-weight:700;padding-top:12px;}
+.est-line-label{color:var(--muted);}
+.est-line-val{color:var(--light);font-weight:500;}
+
+/* ENGINEERS */
+.engineers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-top:3rem;}
+.eng-card{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);overflow:hidden;transition:all var(--t);}
+.eng-card:hover{border-color:var(--sky);transform:translateY(-3px);box-shadow:var(--shadow);}
+.eng-avatar{height:140px;background:var(--slate);display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;}
+.eng-badge{position:absolute;bottom:10px;right:10px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;}
+.badge-available{background:var(--success);color:white;}
+.badge-busy{background:var(--warn);color:var(--steel);}
+.eng-info{padding:1.25rem;}
+.eng-name{font-family:var(--font-head);font-size:1.25rem;font-weight:700;color:var(--white);letter-spacing:.03em;}
+.eng-spec{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin:.2rem 0;}
+.eng-exp{font-size:13px;color:var(--muted);}
+.eng-skills{display:flex;flex-wrap:wrap;gap:5px;margin-top:.7rem;}
+.eng-skill{font-size:11px;background:var(--slate);color:var(--sky);border:1px solid var(--mid);padding:3px 9px;border-radius:20px;}
+.eng-rating{display:flex;align-items:center;gap:5px;margin-top:.7rem;font-size:13px;color:var(--gold);}
+.eng-footer{padding:.9rem 1.25rem;border-top:1px solid var(--mid);display:flex;justify-content:space-between;align-items:center;}
+.eng-rate{font-family:var(--font-head);font-size:1.1rem;font-weight:700;color:var(--gold);}
+.eng-rate-lbl{font-size:11px;color:var(--muted);}
+
+/* BOOKING FORM */
+.booking-wrap{max-width:860px;margin:0 auto;padding:3rem 2rem;}
+.booking-steps{display:flex;gap:0;margin-bottom:3rem;position:relative;}
+.booking-steps::before{content:'';position:absolute;top:18px;left:0;right:0;height:2px;background:var(--mid);z-index:0;}
+.step{flex:1;text-align:center;position:relative;z-index:1;}
+.step-circle{width:36px;height:36px;border-radius:50%;background:var(--mid);color:var(--muted);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;transition:all var(--t);border:2px solid var(--mid);}
+.step.active .step-circle{background:var(--gold);color:var(--steel);border-color:var(--gold);}
+.step.done .step-circle{background:var(--success);color:white;border-color:var(--success);}
+.step-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;}
+.step.active .step-label{color:var(--gold);}
+.step.done .step-label{color:var(--success);}
+
+.booking-panel{display:none;}
+.booking-panel.active{display:block;animation:fadeUp .25s ease;}
+.booking-card{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:2rem;margin-bottom:1.5rem;}
+.booking-card-title{font-family:var(--font-head);font-size:1.3rem;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1.5rem;padding-bottom:.8rem;border-bottom:1px solid var(--mid);display:flex;align-items:center;gap:10px;}
+.booking-card-title span{font-size:1.5rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;}
+.form-input,.form-select,.form-textarea{background:var(--slate);border:1.5px solid var(--mid);border-radius:var(--r);color:var(--light);font-family:var(--font-body);font-size:14px;padding:10px 13px;outline:none;transition:border-color var(--t);width:100%;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--sky);}
+.form-textarea{resize:vertical;min-height:90px;}
+.form-select option{background:var(--navy);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted);opacity:.6;}
+
+.service-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:.5rem;}
+.service-pick{background:var(--slate);border:2px solid var(--mid);border-radius:var(--r);padding:1rem;cursor:pointer;transition:all var(--t);text-align:center;}
+.service-pick:hover{border-color:var(--sky);}
+.service-pick.selected{border-color:var(--gold);background:rgba(245,158,11,.08);}
+.service-pick-icon{font-size:1.8rem;margin-bottom:.4rem;}
+.service-pick-name{font-size:13px;font-weight:600;color:var(--light);}
+.service-pick-price{font-size:12px;color:var(--gold);margin-top:2px;}
+
+.engineer-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:.5rem;}
+.eng-pick{background:var(--slate);border:2px solid var(--mid);border-radius:var(--r);padding:1rem;cursor:pointer;transition:all var(--t);}
+.eng-pick:hover{border-color:var(--sky);}
+.eng-pick.selected{border-color:var(--gold);background:rgba(245,158,11,.08);}
+.eng-pick-avatar{font-size:1.8rem;margin-bottom:.3rem;}
+.eng-pick-name{font-size:13px;font-weight:600;color:var(--light);}
+.eng-pick-spec{font-size:11px;color:var(--sky);text-transform:uppercase;letter-spacing:.06em;}
+.eng-pick-rate{font-size:12px;color:var(--gold);margin-top:3px;}
+
+.cost-summary{background:var(--slate);border:1px solid var(--mid);border-radius:var(--r);padding:1.25rem;margin-top:1rem;}
+.cs-row{display:flex;justify-content:space-between;font-size:14px;padding:7px 0;border-bottom:1px solid rgba(42,74,104,.4);}
+.cs-row:last-child{border-bottom:none;font-family:var(--font-head);font-size:1.4rem;color:var(--gold);font-weight:700;padding-top:10px;}
+.cs-label{color:var(--muted);}
+.cs-val{color:var(--light);font-weight:500;}
+.cs-note{font-size:11px;color:var(--muted);margin-top:.5rem;font-style:italic;}
+
+.step-nav{display:flex;justify-content:space-between;margin-top:2rem;}
+
+/* AUTH MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:2.5rem;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:fadeUp .25s ease;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;}
+.modal-title{font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--white);text-transform:uppercase;letter-spacing:.05em;}
+.modal-close{background:none;border:1px solid var(--mid);border-radius:50%;width:34px;height:34px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t);font-size:18px;}
+.modal-close:hover{background:var(--slate);color:var(--white);}
+.modal-tabs{display:flex;background:var(--slate);border-radius:var(--r);padding:3px;margin-bottom:1.5rem;gap:3px;}
+.modal-tab{flex:1;text-align:center;padding:8px;border-radius:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all var(--t);color:var(--muted);}
+.modal-tab.active{background:var(--gold);color:var(--steel);}
+.modal-form{display:none;}
+.modal-form.active{display:block;}
+.modal-field{margin-bottom:14px;}
+.modal-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:5px;display:block;}
+.modal-input,.modal-select{width:100%;background:var(--slate);border:1.5px solid var(--mid);border-radius:var(--r);color:var(--light);font-family:var(--font-body);font-size:14px;padding:11px 14px;outline:none;transition:border-color var(--t);}
+.modal-input:focus,.modal-select:focus{border-color:var(--sky);}
+.modal-select option{background:var(--navy);}
+.modal-input::placeholder{color:var(--muted);opacity:.6;}
+.modal-divider{display:flex;align-items:center;gap:12px;margin:1.2rem 0;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.1em;}
+.modal-divider::before,.modal-divider::after{content:'';flex:1;height:1px;background:var(--mid);}
+.role-picker{display:flex;gap:10px;margin-bottom:14px;}
+.role-opt{flex:1;border:2px solid var(--mid);border-radius:var(--r);padding:.8rem;text-align:center;cursor:pointer;transition:all var(--t);}
+.role-opt:hover{border-color:var(--sky);}
+.role-opt.selected{border-color:var(--gold);background:rgba(245,158,11,.08);}
+.role-opt-icon{font-size:1.5rem;margin-bottom:.3rem;}
+.role-opt-name{font-size:12px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.06em;}
+.eng-extra{display:none;}
+.eng-extra.show{display:block;}
+
+/* ADMIN */
+.admin-nav{background:var(--navy);border-bottom:1px solid var(--mid);padding:0 2rem;}
+.admin-nav-inner{max-width:1300px;margin:0 auto;display:flex;gap:2px;height:50px;align-items:center;}
+.admin-tab-btn{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:8px 16px;border-radius:var(--r);cursor:pointer;transition:all var(--t);border:none;background:none;}
+.admin-tab-btn:hover{color:var(--light);background:var(--slate);}
+.admin-tab-btn.active{background:var(--gold);color:var(--steel);}
+.admin-content{padding:2rem;max-width:1300px;margin:0 auto;}
+.admin-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:2rem;}
+.astat{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:1.25rem;border-left:4px solid var(--gold);}
+.astat-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;margin-bottom:6px;}
+.astat-val{font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--gold);}
+.astat-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+.admin-panel{display:none;}
+.admin-panel.active{display:block;animation:fadeUp .2s ease;}
+.data-table{width:100%;border-collapse:collapse;background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);overflow:hidden;}
+.data-table th{background:var(--slate);padding:12px 16px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;border-bottom:1px solid var(--mid);}
+.data-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(42,74,104,.4);}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--slate);}
+.status-pill{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;}
+.s-pending{background:rgba(245,158,11,.15);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+.s-confirmed{background:rgba(33,150,196,.15);color:var(--sky);border:1px solid rgba(33,150,196,.3);}
+.s-ongoing{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3);}
+.s-completed{background:rgba(34,197,94,.15);color:var(--success);border:1px solid rgba(34,197,94,.3);}
+.s-cancelled{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.3);}
+.action-sel{background:var(--slate);border:1px solid var(--mid);border-radius:5px;color:var(--light);font-size:11px;padding:4px 8px;cursor:pointer;outline:none;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);border:1px solid var(--gold);border-radius:var(--r);padding:12px 20px;font-size:13px;font-weight:500;color:var(--gold);z-index:999;transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:320px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-icon{font-size:1.1rem;}
+
+/* FOOTER */
+footer{background:var(--navy);border-top:2px solid var(--mid);padding:3rem 2rem 1.5rem;}
+.footer-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;}
+.footer-brand{font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--white);letter-spacing:.03em;margin-bottom:.7rem;display:flex;align-items:center;gap:8px;}
+.footer-brand-mark{background:var(--gold);color:var(--steel);font-size:.85rem;font-weight:800;padding:3px 7px;border-radius:3px;}
+.footer-tagline{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;}
+.footer-heading{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--gold);font-weight:700;margin-bottom:.8rem;}
+.footer-link{font-size:13px;color:var(--muted);cursor:pointer;transition:color var(--t);display:block;margin-bottom:6px;font-weight:300;}
+.footer-link:hover{color:var(--light);}
+.footer-bottom{max-width:1300px;margin:2rem auto 0;padding-top:1.25rem;border-top:1px solid var(--mid);display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
+
+/* WHY US */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:3rem;}
+.why-card{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:1.75rem;transition:border-color var(--t);}
+.why-card:hover{border-color:var(--sky);}
+.why-icon{font-size:2rem;margin-bottom:.8rem;}
+.why-title{font-family:var(--font-head);font-size:1.15rem;font-weight:700;color:var(--white);letter-spacing:.04em;margin-bottom:.4rem;}
+.why-desc{font-size:13px;color:var(--muted);line-height:1.7;font-weight:300;}
+
+/* USER INFO BAR */
+.user-bar{background:var(--slate);border-bottom:1px solid var(--mid);padding:6px 2rem;font-size:12px;color:var(--muted);}
+.user-bar-inner{max-width:1300px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+.user-bar span{color:var(--sky);}
+
+@media(max-width:1000px){.hero-inner{grid-template-columns:1fr;}.hero-card{display:none;}}
+@media(max-width:800px){.admin-stats{grid-template-columns:1fr 1fr;}.form-grid{grid-template-columns:1fr;}.footer-inner{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.nav{display:none;}.header-btns .btn-outline{display:none;}.admin-stats{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">🏗️ BuildRight Construction — Licensed & Insured · Serving Metro Manila & Nearby Provinces</div>
+
+<div id="userBar" style="display:none;">
+  <div class="user-bar">
+    <div class="user-bar-inner">
+      <span>Welcome back, <span id="userBarName"></span> (<span id="userBarRole"></span>)</span>
+      <button class="btn btn-outline btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="logo" onclick="showPage('home')">
+      <div class="logo-mark">BR</div>
+      Build<span>Right</span>
+    </div>
+    <nav class="nav">
+      <span class="nav-link active" onclick="showPage('home',this)">Home</span>
+      <span class="nav-link" onclick="showPage('services',this)">Services & Costs</span>
+      <span class="nav-link" onclick="showPage('engineers',this)">Engineers</span>
+      <span class="nav-link" onclick="showPage('booking',this)">Book Now</span>
+    </nav>
+    <div class="header-btns" id="headerBtns">
+      <button class="btn btn-outline" onclick="openModal('login')">Login</button>
+      <button class="btn btn-gold" onclick="openModal('register')">Register</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════ HOME ══════════ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-eyebrow">Trusted Construction Partner</div>
+        <h1>Build Your <em>Vision</em><br>With Expert Hands</h1>
+        <p class="hero-sub">From house construction to commercial renovation — transparent pricing, licensed engineers, and quality materials. Know your cost before you commit.</p>
+        <div class="hero-stats">
+          <div><div class="hero-stat-val">250+</div><div class="hero-stat-lbl">Projects Done</div></div>
+          <div><div class="hero-stat-val">40+</div><div class="hero-stat-lbl">Engineers</div></div>
+          <div><div class="hero-stat-val">98%</div><div class="hero-stat-lbl">Satisfaction</div></div>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-gold" onclick="showPage('booking')">Book a Project</button>
+          <button class="btn btn-outline" onclick="showPage('services')">View Costs & Materials</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="quick-book-title">Quick Estimate</div>
+        <div class="qb-field"><label class="qb-label">Service Type</label><select class="qb-select" id="qbService" onchange="updateQuickEst()"><option value="">— Select Service —</option></select></div>
+        <div class="qb-field"><label class="qb-label">Floor Area (sqm)</label><input class="qb-input" type="number" id="qbArea" placeholder="e.g. 80" oninput="updateQuickEst()"></div>
+        <div id="qbResult" style="margin-top:1rem;"></div>
+        <button class="btn btn-gold" style="width:100%;margin-top:1rem;" onclick="showPage('booking')">Proceed to Full Booking →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-tag">Why Choose Us</div>
+    <div class="section-title">Built on Trust & Transparency</div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon">📋</div><div class="why-title">Full Cost Breakdown</div><div class="why-desc">See exactly what materials and labor cost before signing anything. No hidden fees, ever.</div></div>
+      <div class="why-card"><div class="why-icon">👷</div><div class="why-title">Licensed Engineers</div><div class="why-desc">All engineers are PRC-licensed and background-checked. You pick who handles your project.</div></div>
+      <div class="why-card"><div class="why-icon">🏗️</div><div class="why-title">Quality Materials</div><div class="why-desc">We source only from accredited suppliers. Premium and standard options available.</div></div>
+      <div class="why-card"><div class="why-icon">📅</div><div class="why-title">Online Booking</div><div class="why-desc">Book anytime, track your project status, and communicate with your engineer — all online.</div></div>
+      <div class="why-card"><div class="why-icon">🔒</div><div class="why-title">Insured Projects</div><div class="why-desc">Every project is covered by contractor's liability insurance. Your investment is protected.</div></div>
+      <div class="why-card"><div class="why-icon">⭐</div><div class="why-title">Guaranteed Work</div><div class="why-desc">Workmanship warranty on all completed projects. We stand behind every nail we drive.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SERVICES ══════════ -->
+<div id="page-services" class="page">
+  <div class="section">
+    <div class="section-tag">Services & Pricing</div>
+    <div class="section-title">Transparent Costs, No Surprises</div>
+    <p class="section-sub">Every service includes a detailed materials list and labor estimate. Actual cost depends on floor area and specifications.</p>
+    <div class="services-grid" id="servicesGrid"></div>
+
+    <div style="margin-top:4rem;">
+      <div class="section-tag">Cost Estimator</div>
+      <div class="section-title">Calculate Your Budget</div>
+      <p class="section-sub">Enter your project details to get an instant cost estimate breakdown.</p>
+      <div class="estimator-wrap">
+        <div class="estimator-grid">
+          <div>
+            <div class="est-col-title">Project Details</div>
+            <div class="est-field"><label class="est-label">Service Type</label><select class="est-select" id="estService" onchange="calcEstimate()"><option value="">— Select —</option></select></div>
+            <div class="est-field"><label class="est-label">Floor Area (sqm)</label><input class="est-input" type="number" id="estArea" placeholder="e.g. 100" oninput="calcEstimate()"></div>
+            <div class="est-field"><label class="est-label">Material Grade</label>
+              <select class="est-select" id="estGrade" onchange="calcEstimate()">
+                <option value="standard">Standard</option>
+                <option value="premium">Premium (+30%)</option>
+                <option value="economy">Economy (-20%)</option>
+              </select>
+            </div>
+            <div class="est-field"><label class="est-label">Project Duration</label>
+              <select class="est-select" id="estDuration" onchange="calcEstimate()">
+                <option value="normal">Normal Timeline</option>
+                <option value="rush">Rush (+20% labor)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="est-col-title">Cost Breakdown</div>
+            <div id="estimateResult"><div style="color:var(--muted);font-size:14px;padding:1rem 0;">Select a service and enter floor area to see cost estimate.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ENGINEERS ══════════ -->
+<div id="page-engineers" class="page">
+  <div class="section">
+    <div class="section-tag">Our Team</div>
+    <div class="section-title">Meet Our Licensed Engineers</div>
+    <p class="section-sub">All engineers are PRC-licensed, experienced, and vetted by our team. Pick the right expert for your project.</p>
+    <div style="display:flex;gap:10px;margin-top:1.5rem;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" onclick="filterEngineers('all',this)" style="border-color:var(--gold);color:var(--gold)">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterEngineers('Civil',this)">Civil</button>
+      <button class="btn btn-outline btn-sm" onclick="filterEngineers('Structural',this)">Structural</button>
+      <button class="btn btn-outline btn-sm" onclick="filterEngineers('Electrical',this)">Electrical</button>
+      <button class="btn btn-outline btn-sm" onclick="filterEngineers('Mechanical',this)">Mechanical</button>
+    </div>
+    <div class="engineers-grid" id="engineersGrid"></div>
+  </div>
+</div>
+
+<!-- ══════════ BOOKING ══════════ -->
+<div id="page-booking" class="page">
+  <div class="booking-wrap">
+    <div style="font-family:var(--font-head);font-size:2.2rem;font-weight:800;color:var(--white);letter-spacing:.04em;margin-bottom:.4rem;text-transform:uppercase;">Book a Project</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:2.5rem;">Fill in your project details and get a full cost estimate before confirming.</p>
+
+    <div class="booking-steps">
+      <div class="step active" id="bstep1"><div class="step-circle">1</div><div class="step-label">Service</div></div>
+      <div class="step" id="bstep2"><div class="step-circle">2</div><div class="step-label">Details</div></div>
+      <div class="step" id="bstep3"><div class="step-circle">3</div><div class="step-label">Engineer</div></div>
+      <div class="step" id="bstep4"><div class="step-circle">4</div><div class="step-label">Confirm</div></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="booking-panel active" id="bpanel1">
+      <div class="booking-card">
+        <div class="booking-card-title"><span>🏗️</span>Select Service</div>
+        <div class="service-picker" id="servicePicker"></div>
+      </div>
+      <div class="step-nav"><div></div><button class="btn btn-gold" onclick="nextStep(1)">Next: Project Details →</button></div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="booking-panel" id="bpanel2">
+      <div class="booking-card">
+        <div class="booking-card-title"><span>📋</span>Project Details</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="b-name" placeholder="Juan Dela Cruz"></div>
+          <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="b-phone" placeholder="+63 9XX XXX XXXX"></div>
+          <div class="form-group form-full"><label class="form-label">Project Address</label><input class="form-input" id="b-address" placeholder="Complete address / lot, barangay, city"></div>
+          <div class="form-group"><label class="form-label">Floor Area (sqm)</label><input class="form-input" type="number" id="b-area" placeholder="e.g. 80" oninput="updateBookingCost()"></div>
+          <div class="form-group"><label class="form-label">No. of Floors</label><select class="form-select" id="b-floors" onchange="updateBookingCost()"><option value="1">1 Floor</option><option value="2">2 Floors</option><option value="3">3 Floors</option></select></div>
+          <div class="form-group"><label class="form-label">Material Grade</label>
+            <select class="form-select" id="b-grade" onchange="updateBookingCost()">
+              <option value="standard">Standard</option>
+              <option value="premium">Premium (+30%)</option>
+              <option value="economy">Economy (-20%)</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Preferred Start Date</label><input class="form-input" type="date" id="b-date"></div>
+          <div class="form-group"><label class="form-label">Timeline</label>
+            <select class="form-select" id="b-timeline" onchange="updateBookingCost()">
+              <option value="normal">Normal</option>
+              <option value="rush">Rush (+20% labor)</option>
+            </select>
+          </div>
+          <div class="form-group form-full"><label class="form-label">Additional Notes</label><textarea class="form-textarea" id="b-notes" placeholder="Any special requirements, existing structures, etc."></textarea></div>
+        </div>
+        <div id="bookingCostPreview"></div>
+      </div>
+      <div class="step-nav">
+        <button class="btn btn-outline" onclick="prevStep(2)">← Back</button>
+        <button class="btn btn-gold" onclick="nextStep(2)">Next: Choose Engineer →</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="booking-panel" id="bpanel3">
+      <div class="booking-card">
+        <div class="booking-card-title"><span>👷</span>Select Engineer</div>
+        <div class="engineer-picker" id="engineerPicker"></div>
+      </div>
+      <div class="step-nav">
+        <button class="btn btn-outline" onclick="prevStep(3)">← Back</button>
+        <button class="btn btn-gold" onclick="nextStep(3)">Review & Confirm →</button>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="booking-panel" id="bpanel4">
+      <div class="booking-card">
+        <div class="booking-card-title"><span>✅</span>Review Your Booking</div>
+        <div id="bookingSummary"></div>
+      </div>
+      <div class="step-nav">
+        <button class="btn btn-outline" onclick="prevStep(4)">← Back</button>
+        <button class="btn btn-gold" onclick="confirmBooking()">Confirm & Submit Booking ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ADMIN ══════════ -->
+<div id="page-admin" class="page">
+  <div class="admin-nav">
+    <div class="admin-nav-inner">
+      <button class="admin-tab-btn active" onclick="switchAdmin('bookings',this)">Bookings</button>
+      <button class="admin-tab-btn" onclick="switchAdmin('engineers',this)">Engineers</button>
+      <button class="admin-tab-btn" onclick="switchAdmin('services',this)">Services</button>
+      <button class="admin-tab-btn" onclick="switchAdmin('users',this)">Users</button>
+    </div>
+  </div>
+  <div class="admin-content">
+    <div class="admin-stats" id="adminStats"></div>
+    <div id="admin-bookings" class="admin-panel active"></div>
+    <div id="admin-engineers" class="admin-panel"></div>
+    <div id="admin-services" class="admin-panel"></div>
+    <div id="admin-users" class="admin-panel"></div>
+  </div>
+</div>
+
+<!-- ══════════ SUCCESS ══════════ -->
+<div id="page-success" class="page">
+  <div style="text-align:center;padding:6rem 2rem;max-width:600px;margin:0 auto;">
+    <div style="font-size:4rem;margin-bottom:1.5rem;">🎉</div>
+    <div style="font-family:var(--font-head);font-size:2.8rem;font-weight:800;color:var(--white);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem;">Booking Submitted!</div>
+    <p style="color:var(--muted);font-size:15px;line-height:1.8;margin-bottom:.7rem;">Your project booking has been received. Our team will review and confirm within 24 hours.</p>
+    <div id="successRef" style="font-family:var(--font-head);font-size:1.5rem;color:var(--gold);margin:1.5rem 0;"></div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:2rem;">Track your booking status in the Admin Dashboard.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="showPage('home')">Back to Home</button>
+      <button class="btn btn-outline" onclick="showPage('admin')">View Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Welcome</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" id="tabLogin" onclick="switchAuthTab('login')">Login</div>
+      <div class="modal-tab" id="tabRegister" onclick="switchAuthTab('register')">Register</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="modal-form active" id="formLogin">
+      <div class="modal-field"><label class="modal-label">Email</label><input class="modal-input" id="li-email" type="email" placeholder="your@email.com"></div>
+      <div class="modal-field"><label class="modal-label">Password</label><input class="modal-input" id="li-pass" type="password" placeholder="••••••••"></div>
+      <button class="btn btn-gold" style="width:100%;margin-top:.5rem;padding:13px;" onclick="doLogin()">Login to BuildRight</button>
+      <div style="text-align:center;margin-top:1rem;font-size:12px;color:var(--muted);">
+        Demo: <span style="color:var(--sky)">admin@buildright.com</span> / <span style="color:var(--sky)">admin123</span>
+        &nbsp;|&nbsp; <span style="color:var(--sky)">eng@buildright.com</span> / <span style="color:var(--sky)">eng123</span>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="modal-form" id="formRegister">
+      <div class="modal-field">
+        <label class="modal-label">I am registering as</label>
+        <div class="role-picker">
+          <div class="role-opt selected" id="roleCustomer" onclick="selectRole('customer')"><div class="role-opt-icon">🏠</div><div class="role-opt-name">Customer</div></div>
+          <div class="role-opt" id="roleEngineer" onclick="selectRole('engineer')"><div class="role-opt-icon">👷</div><div class="role-opt-name">Engineer</div></div>
+        </div>
+      </div>
+      <div class="form-grid" style="gap:12px;">
+        <div class="modal-field"><label class="modal-label">First Name</label><input class="modal-input" id="reg-fname" placeholder="Juan"></div>
+        <div class="modal-field"><label class="modal-label">Last Name</label><input class="modal-input" id="reg-lname" placeholder="Dela Cruz"></div>
+      </div>
+      <div class="modal-field"><label class="modal-label">Email</label><input class="modal-input" id="reg-email" type="email" placeholder="your@email.com"></div>
+      <div class="modal-field"><label class="modal-label">Phone</label><input class="modal-input" id="reg-phone" placeholder="+63 9XX XXX XXXX"></div>
+      <div class="modal-field"><label class="modal-label">Password</label><input class="modal-input" id="reg-pass" type="password" placeholder="Min. 8 characters"></div>
+
+      <!-- Engineer-only fields -->
+      <div class="eng-extra" id="engExtra">
+        <div class="modal-divider">Engineer Information</div>
+        <div class="modal-field"><label class="modal-label">PRC License No.</label><input class="modal-input" id="reg-prc" placeholder="e.g. 0012345"></div>
+        <div class="modal-field"><label class="modal-label">Specialization</label>
+          <select class="modal-select" id="reg-spec">
+            <option>Civil Engineering</option>
+            <option>Structural Engineering</option>
+            <option>Electrical Engineering</option>
+            <option>Mechanical Engineering</option>
+            <option>Geodetic Engineering</option>
+          </select>
+        </div>
+        <div class="modal-field"><label class="modal-label">Years of Experience</label><input class="modal-input" id="reg-exp" type="number" placeholder="e.g. 5"></div>
+        <div class="modal-field"><label class="modal-label">Daily Rate (₱)</label><input class="modal-input" id="reg-rate" type="number" placeholder="e.g. 2500"></div>
+        <div class="modal-field"><label class="modal-label">Notable Projects / Bio</label><textarea class="modal-input" id="reg-bio" placeholder="Brief experience summary..." style="min-height:70px;resize:vertical;"></textarea></div>
+      </div>
+
+      <button class="btn btn-gold" style="width:100%;margin-top:1rem;padding:13px;" onclick="doRegister()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="toast-icon" id="toastIcon">✓</span><span id="toastMsg"></span></div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand"><div class="footer-brand-mark">BR</div>BuildRight</div>
+      <div class="footer-tagline">Licensed construction services with full material transparency. Build smarter, build right.</div>
+    </div>
+    <div>
+      <div class="footer-heading">Services</div>
+      <span class="footer-link" onclick="showPage('services')">House Construction</span>
+      <span class="footer-link" onclick="showPage('services')">Renovation</span>
+      <span class="footer-link" onclick="showPage('services')">Commercial Build</span>
+      <span class="footer-link" onclick="showPage('services')">Electrical Works</span>
+    </div>
+    <div>
+      <div class="footer-heading">Company</div>
+      <span class="footer-link">About Us</span>
+      <span class="footer-link" onclick="showPage('engineers')">Our Engineers</span>
+      <span class="footer-link">Projects</span>
+      <span class="footer-link">Careers</span>
+    </div>
+    <div>
+      <div class="footer-heading">Contact</div>
+      <span class="footer-link">📞 (02) 8123-4567</span>
+      <span class="footer-link">📧 hello@buildright.ph</span>
+      <span class="footer-link">📍 Metro Manila, PH</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 BuildRight Construction. All rights reserved.</span>
+    <span>PRC Accredited · PCAB Licensed</span>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const SERVICES = [
+  {
+    id:'house',name:'House Construction',icon:'🏠',type:'Residential',
+    desc:'Full turnkey house construction from foundation to roofing.',
+    baseCostPerSqm:{materials:18000,labor:8000},
+    materials:[
+      {name:'Cement (40kg bags)',unit:'bags',perSqm:0.8,unitCost:290},
+      {name:'Deformed Bars (12mm)',unit:'pcs',perSqm:1.2,unitCost:380},
+      {name:'Hollow Blocks (4")',unit:'pcs',perSqm:18,unitCost:18},
+      {name:'Roofing (G.I. Sheets)',unit:'sheets',perSqm:0.5,unitCost:850},
+      {name:'Sand & Gravel',unit:'cu.m',perSqm:0.15,unitCost:1200},
+      {name:'Lumber (2x3)',unit:'pcs',perSqm:0.8,unitCost:280},
+      {name:'Electrical Materials',unit:'lot',perSqm:0,unitCost:0,fixed:85000},
+      {name:'Plumbing Materials',unit:'lot',perSqm:0,unitCost:0,fixed:65000},
+    ],
+    duration:'4–8 months',minSqm:40,
+  },
+  {
+    id:'renovation',name:'Renovation',icon:'🔨',type:'Remodeling',
+    desc:'Interior & exterior renovation, room additions, and upgrades.',
+    baseCostPerSqm:{materials:8500,labor:4500},
+    materials:[
+      {name:'Tiles (60x60cm)',unit:'pcs',perSqm:3,unitCost:180},
+      {name:'Cement',unit:'bags',perSqm:0.4,unitCost:290},
+      {name:'Paint (4L)',unit:'cans',perSqm:0.1,unitCost:650},
+      {name:'Plywood (1/2")',unit:'sheets',perSqm:0.3,unitCost:750},
+      {name:'Waterproofing',unit:'liters',perSqm:0.5,unitCost:420},
+      {name:'Door & Windows',unit:'lot',perSqm:0,unitCost:0,fixed:45000},
+    ],
+    duration:'2–6 weeks',minSqm:10,
+  },
+  {
+    id:'commercial',name:'Commercial Build',icon:'🏢',type:'Commercial',
+    desc:'Office buildings, warehouses, retail spaces, and commercial structures.',
+    baseCostPerSqm:{materials:22000,labor:11000},
+    materials:[
+      {name:'Steel Beams (W6x9)',unit:'pcs',perSqm:0.4,unitCost:4500},
+      {name:'Concrete Mix',unit:'cu.m',perSqm:0.3,unitCost:5500},
+      {name:'Curtain Wall Glass',unit:'sqm',perSqm:0.2,unitCost:3800},
+      {name:'Fire Suppression',unit:'lot',perSqm:0,unitCost:0,fixed:180000},
+      {name:'HVAC System',unit:'lot',perSqm:0,unitCost:0,fixed:350000},
+      {name:'Electrical (3-phase)',unit:'lot',perSqm:0,unitCost:0,fixed:220000},
+    ],
+    duration:'6–18 months',minSqm:80,
+  },
+  {
+    id:'electrical',name:'Electrical Works',icon:'⚡',type:'Specialty',
+    desc:'Complete electrical installation, rewiring, and panel upgrades.',
+    baseCostPerSqm:{materials:1800,labor:1200},
+    materials:[
+      {name:'Wire (THHN 3.5mm²)',unit:'meters',perSqm:3,unitCost:45},
+      {name:'Circuit Breakers',unit:'pcs',perSqm:0.1,unitCost:850},
+      {name:'Junction Boxes',unit:'pcs',perSqm:0.3,unitCost:120},
+      {name:'Conduit (EMT)',unit:'pcs',perSqm:0.5,unitCost:180},
+      {name:'Outlets & Switches',unit:'sets',perSqm:0.2,unitCost:220},
+      {name:'Panel Board',unit:'unit',perSqm:0,unitCost:0,fixed:18000},
+    ],
+    duration:'1–3 weeks',minSqm:20,
+  },
+  {
+    id:'plumbing',name:'Plumbing Works',icon:'🔧',type:'Specialty',
+    desc:'Water supply, drainage, and sanitary system installation.',
+    baseCostPerSqm:{materials:1500,labor:900},
+    materials:[
+      {name:'PVC Pipe (3/4")',unit:'meters',perSqm:2,unitCost:85},
+      {name:'PVC Fittings',unit:'lot',perSqm:0,unitCost:0,fixed:12000},
+      {name:'Faucets & Fixtures',unit:'sets',perSqm:0.1,unitCost:1800},
+      {name:'Water Tank (1000L)',unit:'unit',perSqm:0,unitCost:0,fixed:8500},
+      {name:'Septic Tank',unit:'lot',perSqm:0,unitCost:0,fixed:35000},
+    ],
+    duration:'1–2 weeks',minSqm:15,
+  },
+  {
+    id:'roofing',name:'Roofing Works',icon:'🏗️',type:'Specialty',
+    desc:'Roof installation, repair, waterproofing, and gutter works.',
+    baseCostPerSqm:{materials:2800,labor:1400},
+    materials:[
+      {name:'G.I. Roofing Sheets',unit:'sheets',perSqm:0.6,unitCost:850},
+      {name:'Roof Purlins (2x3)',unit:'pcs',perSqm:0.8,unitCost:280},
+      {name:'Ridge Roll',unit:'meters',perSqm:0.05,unitCost:420},
+      {name:'Roofing Screws',unit:'box',perSqm:0.1,unitCost:380},
+      {name:'Waterproofing Paint',unit:'liters',perSqm:0.3,unitCost:520},
+    ],
+    duration:'1–3 weeks',minSqm:20,
+  },
+];
+
+let ENGINEERS = [
+  {id:1,name:'Engr. Marco Santos',spec:'Civil',avatar:'👨‍💼',exp:'12 years',rate:3500,rating:4.9,reviews:87,status:'available',skills:['Foundation','Structural','Supervision'],bio:'Specializes in residential and light commercial structures.'},
+  {id:2,name:'Engr. Ana Reyes',spec:'Structural',avatar:'👩‍💼',exp:'9 years',rate:4000,rating:4.8,reviews:64,status:'available',skills:['Steel Design','Seismic','High-rise'],bio:'Expert in earthquake-resistant structural design.'},
+  {id:3,name:'Engr. Ben Cruz',spec:'Electrical',avatar:'👨‍🔧',exp:'8 years',rate:2800,rating:4.7,reviews:112,status:'busy',skills:['Wiring','Solar','Panel Design'],bio:'Licensed electrical engineer with solar experience.'},
+  {id:4,name:'Engr. Liza Tan',spec:'Civil',avatar:'👩‍🔧',exp:'15 years',rate:4500,rating:5.0,reviews:143,status:'available',skills:['Project Mgmt','QC','Estimation'],bio:'Senior engineer with 150+ completed projects.'},
+  {id:5,name:'Engr. Rico Bautista',spec:'Mechanical',avatar:'👨‍💻',exp:'6 years',rate:3200,rating:4.6,reviews:38,status:'available',skills:['HVAC','Plumbing','Fire Safety'],bio:'Specializes in mechanical systems for buildings.'},
+  {id:6,name:'Engr. Grace Dela Cruz',spec:'Civil',avatar:'👩‍💻',exp:'10 years',rate:3800,rating:4.8,reviews:76,status:'busy',skills:['Roads','Drainage','Land Dev'],bio:'Infrastructure and subdivision development specialist.'},
+];
+
+let USERS = [
+  {id:1,name:'Admin User',email:'admin@buildright.com',password:'admin123',role:'admin',phone:''},
+  {id:2,name:'Marco Santos',email:'eng@buildright.com',password:'eng123',role:'engineer',phone:''},
+];
+
+let BOOKINGS = [
+  {id:'BK-001',client:'Jose Rizal',service:'House Construction',engineer:'Engr. Marco Santos',area:80,total:2236000,status:'Confirmed',date:'2025-05-10'},
+  {id:'BK-002',client:'Maria Clara',service:'Renovation',engineer:'Engr. Ana Reyes',area:45,total:621000,status:'Ongoing',date:'2025-05-12'},
+  {id:'BK-003',client:'Andres Bonifacio',service:'Electrical Works',engineer:'Engr. Ben Cruz',area:60,total:186000,status:'Completed',date:'2025-04-28'},
+];
+
+let currentUser = null;
+let selectedRole = 'customer';
+let booking = {service:null,engineer:null};
+let currentBookingStep = 1;
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function showPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  if(navEl) navEl.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='services') renderServices();
+  if(id==='engineers') renderEngineers('all');
+  if(id==='booking') renderBooking();
+  if(id==='admin') { renderAdmin(); }
+}
+
+// ═══════════════════════════════════════════
+// HOME QUICK ESTIMATE
+// ═══════════════════════════════════════════
+function populateServiceDropdowns() {
+  ['qbService','estService'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    SERVICES.forEach(s=>{
+      const o = document.createElement('option');
+      o.value=s.id; o.textContent=s.name;
+      el.appendChild(o);
+    });
+  });
+}
+
+function updateQuickEst() {
+  const sid = document.getElementById('qbService').value;
+  const area = parseFloat(document.getElementById('qbArea').value)||0;
+  const el = document.getElementById('qbResult');
+  if(!sid||!area){el.innerHTML='';return;}
+  const svc = SERVICES.find(s=>s.id===sid);
+  const mat = svc.baseCostPerSqm.materials*area;
+  const labor = svc.baseCostPerSqm.labor*area;
+  const total = mat+labor;
+  el.innerHTML=`<div style="background:var(--slate);border:1px solid var(--mid);border-radius:var(--r);padding:1rem;">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sky);margin-bottom:.6rem;font-weight:700;">Estimated Cost</div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--muted);">
+      <span>Materials</span><span style="color:var(--light);">₱${mat.toLocaleString()}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--muted);">
+      <span>Labor</span><span style="color:var(--light);">₱${labor.toLocaleString()}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:15px;padding:8px 0 4px;font-family:var(--font-head);font-weight:700;border-top:1px solid var(--mid);margin-top:6px;">
+      <span style="color:var(--muted);">Total</span><span style="color:var(--gold);">₱${total.toLocaleString()}</span>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+// SERVICES PAGE
+// ═══════════════════════════════════════════
+function renderServices() {
+  const grid = document.getElementById('servicesGrid');
+  grid.innerHTML = SERVICES.map(s=>{
+    const matRows = s.materials.slice(0,5).map(m=>{
+      const cost = m.fixed ? `₱${m.fixed.toLocaleString()} (fixed)` : `₱${m.unitCost.toLocaleString()}/${m.unit}`;
+      return `<div class="material-row"><span class="material-name">${m.name}</span><span class="material-cost">${cost}</span></div>`;
+    }).join('');
+    const minTotal = s.baseCostPerSqm.materials * s.minSqm + s.baseCostPerSqm.labor * s.minSqm;
+    return `<div class="service-card" onclick="showPage('booking')">
+      <div class="service-card-top">
+        <div class="service-icon">${s.icon}</div>
+        <div class="service-type">${s.type}</div>
+        <div class="service-name">${s.name}</div>
+        <div class="service-desc">${s.desc}</div>
+      </div>
+      <div class="service-card-body">
+        <div class="materials-title">Key Materials</div>
+        ${matRows}
+        <div style="margin-top:.8rem;font-size:12px;color:var(--muted);">⏱ Timeline: ${s.duration}</div>
+      </div>
+      <div class="service-card-footer">
+        <div class="cost-block">
+          <div class="cost-label">Materials / sqm</div>
+          <div class="cost-range">₱${s.baseCostPerSqm.materials.toLocaleString()}</div>
+          <div class="cost-note">+ ₱${s.baseCostPerSqm.labor.toLocaleString()}/sqm labor</div>
+        </div>
+        <button class="btn btn-gold btn-sm">Book Now</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function calcEstimate() {
+  const sid = document.getElementById('estService').value;
+  const area = parseFloat(document.getElementById('estArea').value)||0;
+  const grade = document.getElementById('estGrade').value;
+  const duration = document.getElementById('estDuration').value;
+  const el = document.getElementById('estimateResult');
+  if(!sid||!area){el.innerHTML='<div style="color:var(--muted);font-size:14px;padding:1rem 0;">Enter service and area to calculate.</div>';return;}
+  const svc = SERVICES.find(s=>s.id===sid);
+  let gm = grade==='premium'?1.3:grade==='economy'?.8:1;
+  let lm = duration==='rush'?1.2:1;
+  const mat = svc.baseCostPerSqm.materials*area*gm;
+  const labor = svc.baseCostPerSqm.labor*area*lm;
+  const fixed = svc.materials.filter(m=>m.fixed).reduce((s,m)=>s+(m.fixed*gm),0);
+  const total = mat+labor+fixed;
+  el.innerHTML=`<div class="estimate-result">
+    <div class="est-result-title">Cost Breakdown</div>
+    <div class="est-line"><span class="est-line-label">Materials (${area} sqm)</span><span class="est-line-val">₱${mat.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    <div class="est-line"><span class="est-line-label">Labor</span><span class="est-line-val">₱${labor.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    ${fixed>0?`<div class="est-line"><span class="est-line-label">Fixed Installations</span><span class="est-line-val">₱${fixed.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>`:''}
+    <div class="est-line"><span class="est-line-label">VAT (12%)</span><span class="est-line-val">₱${((mat+labor+fixed)*.12).toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    <div class="est-line"><span>Total Estimate</span><span>₱${(total*1.12).toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+// ENGINEERS PAGE
+// ═══════════════════════════════════════════
+function renderEngineers(filter) {
+  const list = filter==='all' ? ENGINEERS : ENGINEERS.filter(e=>e.spec===filter);
+  document.getElementById('engineersGrid').innerHTML = list.map(e=>`
+    <div class="eng-card">
+      <div class="eng-avatar">${e.avatar}<span class="eng-badge ${e.status==='available'?'badge-available':'badge-busy'}">${e.status}</span></div>
+      <div class="eng-info">
+        <div class="eng-name">${e.name}</div>
+        <div class="eng-spec">${e.spec} Engineering</div>
+        <div class="eng-exp">🎓 ${e.exp} experience</div>
+        <div class="eng-rating">★ ${e.rating} <span style="color:var(--muted);font-size:12px">(${e.reviews} reviews)</span></div>
+        <div class="eng-skills">${e.skills.map(sk=>`<span class="eng-skill">${sk}</span>`).join('')}</div>
+      </div>
+      <div class="eng-footer">
+        <div><div class="eng-rate">₱${e.rate.toLocaleString()}</div><div class="eng-rate-lbl">per day</div></div>
+        <button class="btn btn-gold btn-sm" onclick="showPage('booking')">Hire</button>
+      </div>
+    </div>`).join('');
+}
+
+function filterEngineers(filter, btn) {
+  document.querySelectorAll('.btn-sm').forEach(b=>b.style.borderColor='');
+  btn.style.borderColor='var(--gold)';
+  renderEngineers(filter);
+}
+
+// ═══════════════════════════════════════════
+// BOOKING
+// ═══════════════════════════════════════════
+function renderBooking() {
+  currentBookingStep = 1;
+  updateStepUI();
+  // Service picker
+  document.getElementById('servicePicker').innerHTML = SERVICES.map(s=>`
+    <div class="service-pick ${booking.service===s.id?'selected':''}" onclick="selectService('${s.id}',this)">
+      <div class="service-pick-icon">${s.icon}</div>
+      <div class="service-pick-name">${s.name}</div>
+      <div class="service-pick-price">₱${s.baseCostPerSqm.materials.toLocaleString()}/sqm mat.</div>
+    </div>`).join('');
+  // Engineer picker
+  document.getElementById('engineerPicker').innerHTML = ENGINEERS.map(e=>`
+    <div class="eng-pick ${booking.engineer===e.id?'selected':''}" onclick="selectEngineer(${e.id},this)">
+      <div class="eng-pick-avatar">${e.avatar}</div>
+      <div class="eng-pick-name">${e.name}</div>
+      <div class="eng-pick-spec">${e.spec}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;">★ ${e.rating} · ${e.exp}</div>
+      <div class="eng-pick-rate">₱${e.rate.toLocaleString()}/day</div>
+      <div style="font-size:10px;margin-top:4px;"><span class="${e.status==='available'?'badge-available':'badge-busy'}" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;">${e.status}</span></div>
+    </div>`).join('');
+}
+
+function selectService(id, el) {
+  booking.service = id;
+  document.querySelectorAll('.service-pick').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectEngineer(id, el) {
+  booking.engineer = id;
+  document.querySelectorAll('.eng-pick').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function updateBookingCost() {
+  const sid = booking.service;
+  const area = parseFloat(document.getElementById('b-area').value)||0;
+  const grade = document.getElementById('b-grade').value;
+  const timeline = document.getElementById('b-timeline').value;
+  const floors = parseInt(document.getElementById('b-floors').value)||1;
+  const el = document.getElementById('bookingCostPreview');
+  if(!sid||!area){el.innerHTML='';return;}
+  const svc = SERVICES.find(s=>s.id===sid);
+  const gm = grade==='premium'?1.3:grade==='economy'?.8:1;
+  const lm = timeline==='rush'?1.2:1;
+  const totalArea = area * floors;
+  const mat = svc.baseCostPerSqm.materials * totalArea * gm;
+  const labor = svc.baseCostPerSqm.labor * totalArea * lm;
+  const fixed = svc.materials.filter(m=>m.fixed).reduce((s,m)=>s+(m.fixed*gm),0);
+  const subtotal = mat+labor+fixed;
+  const vat = subtotal*.12;
+  const total = subtotal+vat;
+  booking.costBreakdown={mat,labor,fixed,vat,total,totalArea};
+  el.innerHTML=`<div class="cost-summary">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sky);font-weight:700;margin-bottom:.7rem;">Estimated Project Cost</div>
+    <div class="cs-row"><span class="cs-label">Materials (${totalArea} sqm)</span><span class="cs-val">₱${mat.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    <div class="cs-row"><span class="cs-label">Labor</span><span class="cs-val">₱${labor.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    ${fixed>0?`<div class="cs-row"><span class="cs-label">Fixed Installations</span><span class="cs-val">₱${fixed.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>`:''}
+    <div class="cs-row"><span class="cs-label">VAT (12%)</span><span class="cs-val">₱${vat.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    <div class="cs-row"><span>Total Estimate</span><span>₱${total.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+    <div class="cs-note">* Final cost subject to site inspection. This is a planning estimate only.</div>
+  </div>`;
+}
+
+function nextStep(step) {
+  if(step===1) {
+    if(!booking.service){showToast('Please select a service.','⚠️');return;}
+  }
+  if(step===2) {
+    const name = document.getElementById('b-name').value.trim();
+    const area = document.getElementById('b-area').value;
+    const address = document.getElementById('b-address').value.trim();
+    if(!name||!area||!address){showToast('Please fill in all required fields.','⚠️');return;}
+    updateBookingCost();
+  }
+  if(step===3) {
+    if(!booking.engineer){showToast('Please select an engineer.','⚠️');return;}
+    buildReviewSummary();
+  }
+  currentBookingStep = step+1;
+  updateStepUI();
+}
+
+function prevStep(step) {
+  currentBookingStep = step-1;
+  updateStepUI();
+}
+
+function updateStepUI() {
+  for(let i=1;i<=4;i++){
+    document.getElementById('bpanel'+i).classList.toggle('active',i===currentBookingStep);
+    const s = document.getElementById('bstep'+i);
+    s.classList.remove('active','done');
+    if(i===currentBookingStep) s.classList.add('active');
+    if(i<currentBookingStep) s.classList.add('done');
+  }
+}
+
+function buildReviewSummary() {
+  const svc = SERVICES.find(s=>s.id===booking.service);
+  const eng = ENGINEERS.find(e=>e.id===booking.engineer);
+  const name = document.getElementById('b-name').value;
+  const phone = document.getElementById('b-phone').value;
+  const address = document.getElementById('b-address').value;
+  const area = document.getElementById('b-area').value;
+  const floors = document.getElementById('b-floors').value;
+  const grade = document.getElementById('b-grade').value;
+  const date = document.getElementById('b-date').value;
+  const notes = document.getElementById('b-notes').value;
+  const cb = booking.costBreakdown || {};
+
+  document.getElementById('bookingSummary').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sky);font-weight:700;margin-bottom:.8rem;">Client Info</div>
+        <div style="font-size:14px;margin-bottom:5px;"><span style="color:var(--muted);">Name:</span> ${name}</div>
+        <div style="font-size:14px;margin-bottom:5px;"><span style="color:var(--muted);">Phone:</span> ${phone||'—'}</div>
+        <div style="font-size:14px;margin-bottom:5px;"><span style="color:var(--muted);">Address:</span> ${address}</div>
+        <div style="font-size:14px;margin-bottom:5px;"><span style="color:var(--muted);">Start Date:</span> ${date||'TBD'}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sky);font-weight:700;margin-bottom:.8rem;">Project Info</div>
+        <div style="font-size:14px;margin-bottom:5px;"><span style="color:var(--muted);">Service:</span> ${svc.icon} ${svc.name}</div>
+        <div style="font-size:14px;margin-bottom:5px;"><span style="color:var(--muted);">Area:</span> ${area} sqm × ${floors} floor(s)</div>
+        <div style="font-size:14px;margin-bottom:5px;"><span style="color:var(--muted);">Grade:</span> ${grade.charAt(0).toUpperCase()+grade.slice(1)}</div>
+        <div style="font-size:14px;margin-bottom:5px;"><span style="color:var(--muted);">Engineer:</span> ${eng.avatar} ${eng.name}</div>
+      </div>
+    </div>
+    ${notes?`<div style="margin-top:1rem;font-size:13px;color:var(--muted);padding:.75rem;background:var(--slate);border-radius:var(--r);border:1px solid var(--mid);">📝 ${notes}</div>`:''}
+    <div class="cost-summary" style="margin-top:1.5rem;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:700;margin-bottom:.7rem;">Final Cost Summary</div>
+      <div class="cs-row"><span class="cs-label">Materials</span><span class="cs-val">₱${(cb.mat||0).toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+      <div class="cs-row"><span class="cs-label">Labor</span><span class="cs-val">₱${(cb.labor||0).toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+      ${cb.fixed>0?`<div class="cs-row"><span class="cs-label">Fixed Installations</span><span class="cs-val">₱${cb.fixed.toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>`:''}
+      <div class="cs-row"><span class="cs-label">VAT (12%)</span><span class="cs-val">₱${(cb.vat||0).toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+      <div class="cs-row"><span style="color:var(--gold)">TOTAL ESTIMATE</span><span style="color:var(--gold);font-family:var(--font-head);font-size:1.4rem;">₱${(cb.total||0).toLocaleString(undefined,{maximumFractionDigits:0})}</span></div>
+      <div class="cs-note">* Estimate includes materials, labor, and VAT. Subject to final site assessment.</div>
+    </div>`;
+}
+
+function confirmBooking() {
+  if(!currentUser){showToast('Please login to confirm booking','⚠️'); openModal('login'); return;}
+  const svc = SERVICES.find(s=>s.id===booking.service);
+  const eng = ENGINEERS.find(e=>e.id===booking.engineer);
+  const name = document.getElementById('b-name').value||currentUser.name;
+  const cb = booking.costBreakdown||{};
+  const id = 'BK-'+String(BOOKINGS.length+1).padStart(3,'0');
+  BOOKINGS.unshift({
+    id, client:name, service:svc.name, engineer:eng.name,
+    area:document.getElementById('b-area').value,
+    total:Math.round(cb.total||0),
+    status:'Pending',
+    date:new Date().toISOString().slice(0,10)
+  });
+  document.getElementById('successRef').textContent = 'Booking Reference: '+id;
+  booking={service:null,engineer:null};
+  showPage('success');
+  showToast('Booking submitted successfully! 🎉','✅');
+}
+
+// ═══════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════
+function renderAdmin() {
+  const totalRev = BOOKINGS.filter(b=>b.status==='Completed').reduce((s,b)=>s+b.total,0);
+  document.getElementById('adminStats').innerHTML=`
+    <div class="astat"><div class="astat-label">Total Bookings</div><div class="astat-val">${BOOKINGS.length}</div><div class="astat-sub">all time</div></div>
+    <div class="astat"><div class="astat-label">Engineers</div><div class="astat-val">${ENGINEERS.length}</div><div class="astat-sub">${ENGINEERS.filter(e=>e.status==='available').length} available</div></div>
+    <div class="astat"><div class="astat-label">Revenue</div><div class="astat-val">₱${(totalRev/1000000).toFixed(1)}M</div><div class="astat-sub">completed projects</div></div>
+    <div class="astat"><div class="astat-label">Users</div><div class="astat-val">${USERS.length}</div><div class="astat-sub">registered</div></div>`;
+  renderAdminBookings();
+  renderAdminEngineers();
+  renderAdminServices();
+  renderAdminUsers();
+}
+
+function renderAdminBookings() {
+  document.getElementById('admin-bookings').innerHTML=`
+    <table class="data-table">
+      <thead><tr><th>Booking ID</th><th>Client</th><th>Service</th><th>Engineer</th><th>Area (sqm)</th><th>Total</th><th>Date</th><th>Status</th><th>Update</th></tr></thead>
+      <tbody>${BOOKINGS.map(b=>`
+        <tr>
+          <td style="font-weight:700;color:var(--sky)">${b.id}</td>
+          <td>${b.client}</td>
+          <td>${b.service}</td>
+          <td>${b.engineer}</td>
+          <td>${b.area}</td>
+          <td style="color:var(--gold);font-weight:600">₱${b.total.toLocaleString()}</td>
+          <td style="color:var(--muted)">${b.date}</td>
+          <td><span class="status-pill s-${b.status.toLowerCase()}">${b.status}</span></td>
+          <td><select class="action-sel" onchange="updateBookingStatus('${b.id}',this.value)">
+            ${['Pending','Confirmed','Ongoing','Completed','Cancelled'].map(s=>`<option ${s===b.status?'selected':''}>${s}</option>`).join('')}
+          </select></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function updateBookingStatus(id, val) {
+  const b = BOOKINGS.find(x=>x.id===id);
+  if(b){b.status=val;renderAdmin();showToast('Status updated: '+val,'✅');}
+}
+
+function renderAdminEngineers() {
+  document.getElementById('admin-engineers').innerHTML=`
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Specialization</th><th>Experience</th><th>Daily Rate</th><th>Rating</th><th>Status</th><th>Toggle</th></tr></thead>
+      <tbody>${ENGINEERS.map(e=>`
+        <tr>
+          <td>${e.avatar} ${e.name}</td>
+          <td style="color:var(--sky)">${e.spec}</td>
+          <td>${e.exp}</td>
+          <td style="color:var(--gold)">₱${e.rate.toLocaleString()}</td>
+          <td>★ ${e.rating}</td>
+          <td><span class="status-pill ${e.status==='available'?'s-completed':'s-ongoing'}">${e.status}</span></td>
+          <td><button class="btn btn-outline btn-sm" onclick="toggleEngStatus(${e.id})">${e.status==='available'?'Set Busy':'Set Available'}</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function toggleEngStatus(id) {
+  const e = ENGINEERS.find(x=>x.id===id);
+  if(e){e.status=e.status==='available'?'busy':'available';renderAdmin();showToast(e.name+' status updated','✅');}
+}
+
+function renderAdminServices() {
+  document.getElementById('admin-services').innerHTML=`
+    <table class="data-table">
+      <thead><tr><th>Service</th><th>Type</th><th>Mat. Cost/sqm</th><th>Labor/sqm</th><th>Duration</th><th>Min Area</th></tr></thead>
+      <tbody>${SERVICES.map(s=>`
+        <tr>
+          <td>${s.icon} ${s.name}</td>
+          <td>${s.type}</td>
+          <td style="color:var(--gold)">₱${s.baseCostPerSqm.materials.toLocaleString()}</td>
+          <td style="color:var(--sky)">₱${s.baseCostPerSqm.labor.toLocaleString()}</td>
+          <td>${s.duration}</td>
+          <td>${s.minSqm} sqm</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function renderAdminUsers() {
+  document.getElementById('admin-users').innerHTML=`
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Phone</th></tr></thead>
+      <tbody>${USERS.map(u=>`
+        <tr>
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td><span class="status-pill ${u.role==='admin'?'s-confirmed':u.role==='engineer'?'s-ongoing':'s-completed'}">${u.role}</span></td>
+          <td style="color:var(--muted)">${u.phone||'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function switchAdmin(panel, btn) {
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('admin-'+panel).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════
+function openModal(tab) {
+  document.getElementById('authModal').classList.add('open');
+  switchAuthTab(tab);
+}
+function closeModal() { document.getElementById('authModal').classList.remove('open'); }
+document.getElementById('authModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
+
+function switchAuthTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
+  document.getElementById('formLogin').classList.toggle('active',tab==='login');
+  document.getElementById('formRegister').classList.toggle('active',tab==='register');
+}
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('roleCustomer').classList.toggle('selected',role==='customer');
+  document.getElementById('roleEngineer').classList.toggle('selected',role==='engineer');
+  document.getElementById('engExtra').classList.toggle('show',role==='engineer');
+}
+
+function doLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass = document.getElementById('li-pass').value;
+  const user = USERS.find(u=>u.email===email&&u.password===pass);
+  if(!user){showToast('Invalid credentials.','❌');return;}
+  currentUser = user;
+  closeModal();
+  updateAuthUI();
+  showToast('Welcome back, '+user.name+'! 👋','✅');
+  if(user.role==='admin') setTimeout(()=>showPage('admin'),500);
+}
+
+function doRegister() {
+  const fname = document.getElementById('reg-fname').value.trim();
+  const lname = document.getElementById('reg-lname').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  if(!fname||!email||!pass){showToast('Please fill in all required fields.','⚠️');return;}
+  if(USERS.find(u=>u.email===email)){showToast('Email already registered.','⚠️');return;}
+  if(pass.length<8){showToast('Password must be at least 8 characters.','⚠️');return;}
+
+  const newUser = {
+    id:USERS.length+1, name:fname+' '+lname,
+    email, password:pass, phone, role:selectedRole
+  };
+
+  if(selectedRole==='engineer') {
+    const prc = document.getElementById('reg-prc').value.trim();
+    const spec = document.getElementById('reg-spec').value;
+    const exp = document.getElementById('reg-exp').value;
+    const rate = document.getElementById('reg-rate').value;
+    const bio = document.getElementById('reg-bio').value;
+    if(!prc){showToast('PRC License No. is required for engineers.','⚠️');return;}
+    ENGINEERS.push({
+      id:ENGINEERS.length+1,
+      name:'Engr. '+fname+' '+lname,
+      spec: spec.split(' ')[0],
+      avatar:'👷',
+      exp: exp+' years',
+      rate: parseInt(rate)||2500,
+      rating: 5.0, reviews:0,
+      status:'available',
+      skills:[spec.split(' ')[0]],
+      bio: bio||'Newly registered engineer.',
+    });
+  }
+
+  USERS.push(newUser);
+  currentUser = newUser;
+  closeModal();
+  updateAuthUI();
+  showToast('Account created! Welcome, '+fname+'! 🎉','✅');
+}
+
+function logout() {
+  currentUser = null;
+  updateAuthUI();
+  showPage('home');
+  showToast('Logged out successfully.','👋');
+}
+
+function updateAuthUI() {
+  const loggedIn = !!currentUser;
+  document.getElementById('userBar').style.display = loggedIn?'block':'none';
+  document.getElementById('userBarName').textContent = currentUser?.name||'';
+  document.getElementById('userBarRole').textContent = currentUser?.role||'';
+  document.getElementById('headerBtns').innerHTML = loggedIn
+    ? `<button class="btn btn-outline btn-sm" onclick="showPage('admin')">Dashboard</button><button class="btn btn-gold" onclick="logout()">Logout</button>`
+    : `<button class="btn btn-outline" onclick="openModal('login')">Login</button><button class="btn btn-gold" onclick="openModal('register')">Register</button>`;
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function showToast(msg, icon='✓') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = icon;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+populateServiceDropdowns();
+renderServices();
+renderEngineers('all');
+</script>
+</body>
+</html>
