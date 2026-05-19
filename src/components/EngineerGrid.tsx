@@ -1,0 +1,65 @@
+'use client';
+
+import { useState } from 'react';
+import { useApp } from '@/context/AppContext';
+import { formatPHP } from '@/utils/costing';
+import styles from './EngineerGrid.module.css';
+
+const specs = ['All', 'Civil', 'Structural', 'Electrical', 'Mechanical'];
+
+export default function EngineerGrid() {
+  const { engineers, showPage } = useApp();
+  const [filter, setFilter] = useState('All');
+
+  const filtered = filter === 'All' ? engineers : engineers.filter(e => e.spec === filter);
+
+  return (
+    <div className="section">
+      <div className="section-tag">Our Team</div>
+      <div className="section-title">Meet Our Licensed Engineers</div>
+      <p className="section-sub">All engineers are PRC-licensed, experienced, and vetted by our team. Pick the right expert for your project.</p>
+      <div className={styles.filters}>
+        {specs.map(s => (
+          <button
+            key={s}
+            className={`btn btn-outline btn-sm ${filter === s ? styles.activeFilter : ''}`}
+            style={filter === s ? { borderColor: 'var(--gold)', color: 'var(--gold)' } : undefined}
+            onClick={() => setFilter(s)}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+      <div className={styles.grid}>
+        {filtered.map(e => (
+          <div key={e.id} className={styles.card}>
+            <div className={styles.avatar}>
+              <span style={{ fontSize: '3.5rem' }}>{e.avatar}</span>
+              <span className={`${styles.badge} ${e.status === 'available' ? 'badge-available' : 'badge-busy'}`}>
+                {e.status}
+              </span>
+            </div>
+            <div className={styles.info}>
+              <div className={styles.name}>{e.name}</div>
+              <div className={styles.spec}>{e.spec} Engineering</div>
+              <div className={styles.exp}>🎓 {e.exp} experience</div>
+              <div className={styles.rating}>
+                ★ {e.rating} <span style={{ color: 'var(--muted)', fontSize: '12px' }}>({e.reviews} reviews)</span>
+              </div>
+              <div className={styles.skills}>
+                {e.skills.map(sk => <span key={sk} className={styles.skill}>{sk}</span>)}
+              </div>
+            </div>
+            <div className={styles.footer}>
+              <div>
+                <div className={styles.rate}>{formatPHP(e.rate)}</div>
+                <div className={styles.rateLbl}>per day</div>
+              </div>
+              <button className="btn btn-gold btn-sm" onClick={() => showPage('booking')}>Hire</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

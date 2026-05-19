@@ -1,0 +1,43 @@
+'use client';
+
+import { useApp } from '@/context/AppContext';
+import styles from './Footer.module.css';
+
+export default function Footer() {
+  const { showPage } = useApp();
+
+  return (
+    <footer className={styles.footer}>
+      <div className={styles.inner}>
+        <div>
+          <div className={styles.brand}><div className={styles.mark}>BR</div>BuildRight</div>
+          <div className={styles.tagline}>Licensed construction services with full material transparency. Build smarter, build right.</div>
+        </div>
+        <div>
+          <div className={styles.heading}>Services</div>
+          <span className={styles.link} onClick={() => showPage('services')}>House Construction</span>
+          <span className={styles.link} onClick={() => showPage('services')}>Renovation</span>
+          <span className={styles.link} onClick={() => showPage('services')}>Commercial Build</span>
+          <span className={styles.link} onClick={() => showPage('services')}>Electrical Works</span>
+        </div>
+        <div>
+          <div className={styles.heading}>Company</div>
+          <span className={styles.link}>About Us</span>
+          <span className={styles.link} onClick={() => showPage('engineers')}>Our Engineers</span>
+          <span className={styles.link}>Projects</span>
+          <span className={styles.link}>Careers</span>
+        </div>
+        <div>
+          <div className={styles.heading}>Contact</div>
+          <span className={styles.link}>📞 (02) 8123-4567</span>
+          <span className={styles.link}>📧 hello@buildright.ph</span>
+          <span className={styles.link}>📍 Metro Manila, PH</span>
+        </div>
+      </div>
+      <div className={styles.bottom}>
+        <span>© 2025 BuildRight Construction. All rights reserved.</span>
+        <span>PRC Accredited · PCAB Licensed</span>
+      </div>
+    </footer>
+  );
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import type { User, Engineer, Booking, BookingState, PageId } from '@/types';
 import { initialEngineers, initialUsers, initialBookings } from '@/data/engineers';
 
@@ -14,7 +15,6 @@ interface AppContextType {
   currentPage: PageId;
   showPage: (id: PageId) => void;
   currentUser: User | null;
-  setCurrentUser: (user: User | null) => void;
   engineers: Engineer[];
   setEngineers: React.Dispatch<React.SetStateAction<Engineer[]>>;
   users: User[];
@@ -28,6 +28,9 @@ interface AppContextType {
   openModal: (tab: 'login' | 'register') => void;
   closeModal: () => void;
   switchAuthTab: (tab: 'login' | 'register') => void;
+  doLogin: (email: string, password: string) => void;
+  doRegister: (form: Record<string, string>, role: string) => void;
+  logout: () => void;
   toast: ToastState;
   showToast: (msg: string, icon?: string) => void;
   successRef: string;
@@ -48,11 +51,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<ToastState>({ message: '', icon: '\u2713', visible: false });
   const [successRef, setSuccessRef] = useState('');
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const router = useRouter();
 
   const showPage = useCallback((id: PageId) => {
     setCurrentPage(id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+    const paths: Record<PageId, string> = {
+      home: '/',
+      services: '/services',
+      engineers: '/engineers',
+      booking: '/booking',
+      admin: '/admin',
+      success: '/success',
+    };
+    router.push(paths[id]);
+  }, [router]);
 
   const openModal = useCallback((tab: 'login' | 'register') => {
     setModalOpen(true);
@@ -71,12 +84,66 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }, 3000);
   }, []);
 
+  const doLogin = useCallback((email: string, password: string) => {
+    const user = users.find(u => u.email === email && u.password === password);
+    if (!user) { showToast('Invalid credentials.', '\u274C'); return; }
+    setCurrentUser(user);
+    closeModal();
+    showToast('Welcome back, ' + user.name + '! \uD83D\uDC4B', '\u2705');
+    if (user.role === 'admin') setTimeout(() => showPage('admin'), 500);
+  }, [users, showToast, closeModal, showPage]);
+
+  const logout = useCallback(() => {
+    setCurrentUser(null);
+    showPage('home');
+    showToast('Logged out successfully.', '\uD83D\uDC4B');
+  }, [showPage, showToast]);
+
+  const doRegister = useCallback((form: Record<string, string>, role: string) => {
+    const { fname, lname, email, phone, password, prc, spec, exp, rate, bio } = form;
+    if (!fname || !email || !password) { showToast('Please fill in all required fields.', '\u26A0\uFE0F'); return; }
+    if (users.find(u => u.email === email)) { showToast('Email already registered.', '\u26A0\uFE0F'); return; }
+    if (password.length < 8) { showToast('Password must be at least 8 characters.', '\u26A0\uFE0F'); return; }
+
+    const newUser: User = {
+      id: users.length + 1,
+      name: fname + ' ' + lname,
+      email,
+      password,
+      phone,
+      role: role as User['role'],
+    };
+
+    if (role === 'engineer') {
+      if (!prc) { showToast('PRC License No. is required for engineers.', '\u26A0\uFE0F'); return; }
+      const specShort = spec.split(' ')[0];
+      setEngineers(prev => [...prev, {
+        id: prev.length + 1,
+        name: 'Engr. ' + fname + ' ' + lname,
+        spec: specShort,
+        avatar: '\uD83D\uDC77',
+        exp: exp + ' years',
+        rate: parseInt(rate) || 2500,
+        rating: 5.0,
+        reviews: 0,
+        status: 'available' as const,
+        skills: [specShort],
+        bio: bio || 'Newly registered engineer.',
+      }]);
+    }
+
+    setUsers(prev => [...prev, newUser]);
+    setCurrentUser(newUser);
+    closeModal();
+    showToast('Account created! Welcome, ' + fname + '! \uD83C\uDF89', '\u2705');
+  }, [users, showToast, closeModal]);
+
   return (
     <AppContext.Provider value={{
-      currentPage, showPage, currentUser, setCurrentUser,
+      currentPage, showPage, currentUser,
       engineers, setEngineers, users, setUsers, bookings, setBookings,
       booking, setBooking, modalOpen, modalTab, openModal, closeModal,
-      switchAuthTab, toast, showToast, successRef, setSuccessRef,
+      switchAuthTab, doLogin, doRegister, logout, toast, showToast, successRef, setSuccessRef,
     }}>
       {children}
     </AppContext.Provider>
