@@ -1,0 +1,7 @@
+.reveal{opacity:0;transform:translate3d(0,18px,0);transition:opacity .55s cubic-bezier(0.25,0.46,0.45,0.94),transform .55s cubic-bezier(0.25,0.46,0.45,0.94);transition-delay:var(--reveal-delay,0ms);will-change:opacity,transform;}
+.card{transform:translate3d(0,18px,0) scale(.985);}
+.visible{opacity:1;transform:translate3d(0,0,0) scale(1);}
+
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none;will-change:auto;}
+}

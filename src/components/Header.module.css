@@ -8,8 +8,27 @@
 .navLink{font-size:13px;font-weight:500;color:var(--text-secondary);letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:color var(--t);padding:4px 0;border-bottom:2px solid transparent;text-decoration:none;}
 .navLink:hover,.active{color:var(--brand);border-bottom-color:var(--brand);}
 .headerBtns{display:flex;gap:10px;align-items:center;}
+.hamburger{display:none;width:40px;height:40px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px;transition:all var(--t);}
+.hamburger:hover{border-color:var(--brand);background:var(--bg-alt);}
+.hamburger span{display:block;width:20px;height:2px;background:var(--brand);border-radius:2px;}
+.drawer{display:none;border-top:1px solid var(--border);background:var(--bg-card);box-shadow:var(--shadow);}
+.drawerOpen{display:none;}
+.drawerInner{max-width:1300px;margin:0 auto;padding:1rem 2rem 1.25rem;display:flex;flex-direction:column;gap:4px;}
+.drawerLink{font-size:13px;font-weight:700;color:var(--text-secondary);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:11px 0;border-bottom:1px solid var(--border);}
+.drawerLink:hover{color:var(--brand);}
+.drawerActions{display:flex;gap:10px;flex-wrap:wrap;padding-top:12px;}
+
+@media(max-width:900px){
+  .nav{display:none;}
+  .headerBtns{display:none;}
+  .hamburger{display:flex;}
+  .drawerOpen{display:block;}
+}
 
 @media(max-width:600px){
-  .nav{display:none;}
-  .headerBtns .btn-outline{display:none;}
+  .header{padding:0 1rem;}
+  .inner{height:62px;}
+  .logo{font-size:1.25rem;gap:8px;}
+  .logoMark img{height:34px;}
+  .drawerInner{padding:1rem;}
 }

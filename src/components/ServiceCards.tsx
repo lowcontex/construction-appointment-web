@@ -3,19 +3,20 @@
 import { SERVICES } from '@/data/services';
 import { formatPHP } from '@/utils/costing';
 import { useApp } from '@/context/AppContext';
+import Reveal from './Reveal';
 import styles from './ServiceCards.module.css';
 
 export default function ServiceCards() {
   const { showPage } = useApp();
 
   return (
-    <div className="section">
+    <Reveal className="section">
       <div className="section-tag">Services & Pricing</div>
       <div className="section-title">Transparent Costs, No Surprises</div>
       <p className="section-sub">Every service includes a detailed materials list and labor estimate. Actual cost depends on floor area and specifications.</p>
       <div className={styles.grid}>
-        {SERVICES.map(s => (
-          <div key={s.id} className={styles.card} onClick={() => showPage('booking')}>
+        {SERVICES.map((s, i) => (
+          <Reveal key={s.id} className={styles.card} variant="card" delay={i * 70} onClick={() => showPage('booking')}>
             <div className={styles.top}>
               <div className={styles.type}>{s.type}</div>
               <div className={styles.name}>{s.name}</div>
@@ -41,9 +42,9 @@ export default function ServiceCards() {
               </div>
               <button className="btn btn-gold btn-sm">Book Now</button>
             </div>
-          </div>
+          </Reveal>
         ))}
       </div>
-    </div>
+    </Reveal>
   );
 }

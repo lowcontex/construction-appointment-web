@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { SERVICES } from '@/data/services';
 import { calcCost, formatPHP } from '@/utils/costing';
+import Reveal from './Reveal';
 import styles from './CostEstimator.module.css';
 
 export default function CostEstimator() {
@@ -15,11 +16,11 @@ export default function CostEstimator() {
   const cost = service && area && Number(area) > 0 ? calcCost(service, Number(area), 1, grade, duration) : null;
 
   return (
-    <div className="section" style={{ marginTop: '-2rem' }}>
+    <Reveal className="section" style={{ marginTop: '-2rem' }}>
       <div className="section-tag">Cost Estimator</div>
       <div className="section-title">Calculate Your Budget</div>
       <p className="section-sub">Enter your project details to get an instant cost estimate breakdown.</p>
-      <div className={styles.wrap}>
+      <Reveal className={styles.wrap} variant="card" delay={90}>
         <div className={styles.grid}>
           <div>
             <div className={styles.colTitle}>Project Details</div>
@@ -79,13 +80,13 @@ export default function CostEstimator() {
                 </div>
               </div>
             ) : (
-              <div style={{ color: 'var(--muted)', fontSize: '14px', padding: '1rem 0' }}>
+              <div style={{ color: 'var(--text-muted)', fontSize: '14px', padding: '1rem 0' }}>
                 Select a service and enter floor area to see cost estimate.
               </div>
             )}
           </div>
         </div>
-      </div>
-    </div>
+      </Reveal>
+    </Reveal>
   );
 }

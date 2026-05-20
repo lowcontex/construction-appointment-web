@@ -38,14 +38,14 @@ function QuickEstimateCard() {
   const [area, setArea] = useState('');
 
   const service = SERVICES.find(s => s.id === selectedService);
+  const areaValue = Math.max(0, Number(area) || 0);
 
-  const mat = service && area ? service.baseCostPerSqm.materials * Number(area) : 0;
-  const labor = service && area ? service.baseCostPerSqm.labor * Number(area) : 0;
+  const mat = service && areaValue > 0 ? service.baseCostPerSqm.materials * areaValue : 0;
+  const labor = service && areaValue > 0 ? service.baseCostPerSqm.labor * areaValue : 0;
   const total = mat + labor;
 
   return (
     <div className={styles.card}>
-      <div className={styles.cardBefore}>BOOK NOW</div>
       <div className={styles.cardTitle}>Quick Estimate</div>
       <div className={styles.field}>
         <label className={styles.label}>Service Type</label>
@@ -58,9 +58,9 @@ function QuickEstimateCard() {
       </div>
       <div className={styles.field}>
         <label className={styles.label}>Floor Area (sqm)</label>
-        <input className={styles.input} type="number" placeholder="e.g. 80" value={area} onChange={e => setArea(e.target.value)} />
+        <input className={styles.input} type="number" min="1" placeholder="e.g. 80" value={area} onChange={e => setArea(e.target.value)} />
       </div>
-      {selectedService && area && Number(area) > 0 && (
+      {selectedService && areaValue > 0 && (
         <div className={styles.result}>
           <div className={styles.resultTitle}>Estimated Cost</div>
           <div className={styles.resultRow}><span>Materials</span><span>₱{mat.toLocaleString()}</span></div>
