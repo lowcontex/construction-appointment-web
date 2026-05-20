@@ -1,0 +1,27 @@
+.shell{max-width:1300px;margin:0 auto;padding:4rem 2rem;}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:1.5rem;margin-bottom:1.5rem;}
+.kicker{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;color:var(--brand);font-weight:800;margin-bottom:.55rem;}
+.title{font-family:var(--font-head);font-size:var(--text-2xl);line-height:1.1;font-weight:800;color:var(--text);letter-spacing:0;margin-bottom:.55rem;}
+.subtitle{font-size:var(--text-base);color:var(--text-secondary);max-width:620px;line-height:1.7;}
+.summaryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:1.5rem;}
+.metric{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:1.15rem;box-shadow:var(--shadow-sm);transition:transform var(--transition-base),box-shadow var(--transition-base),border-color var(--transition-base);}
+.metric:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--color-border-strong);}
+.metricLabel{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:800;margin-bottom:6px;}
+.metricValue{font-family:var(--font-head);font-size:var(--text-xl);font-weight:800;color:var(--brand);line-height:1.1;}
+.metricSub{font-size:var(--text-xs);color:var(--text-muted);margin-top:5px;}
+.tableWrap{width:100%;overflow-x:auto;border-radius:var(--radius-lg);}
+.tableWrap table{min-width:760px;}
+.keyCell{font-weight:800;color:var(--brand);}
+.moneyCell{font-weight:800;color:var(--brand);}
+.mutedCell{color:var(--text-muted);}
+.emptyCell{color:var(--text-muted);text-align:center;padding:2rem 1rem;}
+.guard{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;}
+.guardCard{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:2rem;max-width:430px;width:100%;text-align:center;box-shadow:var(--shadow-sm);}
+.guardTitle{font-family:var(--font-head);font-size:var(--text-xl);font-weight:800;color:var(--text);margin-bottom:.7rem;}
+.guardText{font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:1.4rem;line-height:1.6;}
+
+@media(max-width:800px){
+  .shell{padding:3rem 1rem;}
+  .hero{align-items:flex-start;flex-direction:column;}
+  .summaryGrid{grid-template-columns:1fr;}
+}

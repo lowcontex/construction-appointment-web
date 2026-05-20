@@ -1,0 +1,29 @@
+
+> construction-booking-web@1.0.0 dev
+> next dev
+
+   ▲ Next.js 15.5.18
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.50.16:3000
+
+ ✓ Starting...
+ ✓ Ready in 2.6s
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 6.4s (674 modules)
+ GET /admin 200 in 7196ms
+ ○ Compiling /engineers ...
+ ✓ Compiled /engineers in 870ms (645 modules)
+ GET /engineers 200 in 1369ms
+ ✓ Compiled / in 444ms (671 modules)
+ GET / 200 in 552ms
+ GET / 200 in 220ms
+ GET /admin 200 in 81ms
+ GET /admin 200 in 229ms
+ GET /admin 200 in 172ms
+ GET /admin 200 in 108ms
+ GET / 200 in 28ms
+ GET /admin 200 in 101ms
+ ○ Compiling /booking ...
+ ✓ Compiled /booking in 920ms (673 modules)
+ GET /booking 200 in 1115ms
+ GET / 200 in 37ms

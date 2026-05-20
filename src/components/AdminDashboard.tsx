@@ -3,10 +3,25 @@
 import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { SERVICES } from '@/data/services';
+import type { Booking } from '@/types';
 import { formatPHP } from '@/utils/costing';
 import styles from './AdminDashboard.module.css';
 
-type AdminTab = 'bookings' | 'engineers' | 'services' | 'users';
+const ADMIN_TABS = ['bookings', 'engineers', 'services', 'users'] as const;
+const ENGINEER_FILTERS = ['all', 'available', 'busy'] as const;
+const BOOKING_STATUSES: Booking['status'][] = ['Pending', 'Confirmed', 'Ongoing', 'Completed', 'Cancelled'];
+const BOOKING_STATUS_SET = new Set<string>(BOOKING_STATUSES);
+
+type AdminTab = typeof ADMIN_TABS[number];
+type EngineerFilter = typeof ENGINEER_FILTERS[number];
+
+function isBookingStatus(value: string): value is Booking['status'] {
+  return BOOKING_STATUS_SET.has(value);
+}
+
+function formatLabel(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
 
 export default function AdminDashboard() {
   const { bookings, setBookings, engineers, setEngineers, users, setUsers, showToast, currentUser, openModal, showPage } = useApp();
@@ -15,7 +30,7 @@ export default function AdminDashboard() {
     fname: '', lname: '', email: '', phone: '', password: '',
     spec: 'Civil', exp: '', rate: '', skills: '', bio: '',
   });
-  const [engFilter, setEngFilter] = useState<'all' | 'available' | 'busy'>('all');
+  const [engFilter, setEngFilter] = useState<EngineerFilter>('all');
 
   if (!currentUser) {
     return (
@@ -46,13 +61,17 @@ export default function AdminDashboard() {
   const stats = [
     { label: 'Total Bookings', val: String(bookings.length), sub: 'all time' },
     { label: 'Engineers', val: String(engineers.length), sub: `${engineers.filter(e => e.status === 'available').length} available` },
-    { label: 'Revenue', val: `₱${(totalRev / 1000000).toFixed(1)}M`, sub: 'completed projects' },
+    { label: 'Revenue', val: `\u20b1${(totalRev / 1000000).toFixed(1)}M`, sub: 'completed projects' },
     { label: 'Users', val: String(users.length), sub: 'registered' },
   ];
 
-  const updateBookingStatus = (id: string, status: string) => {
-    setBookings(prev => prev.map(b => b.id === id ? { ...b, status: status as any } : b));
-    showToast('Status updated: ' + status);
+  const updateBookingStatus = (id: string, statusValue: string) => {
+    if (!isBookingStatus(statusValue)) {
+      showToast('Could not update status. Please choose a valid status.');
+      return;
+    }
+    setBookings(prev => prev.map(b => b.id === id ? { ...b, status: statusValue } : b));
+    showToast('Status updated: ' + statusValue);
   };
 
   const toggleEngStatus = (id: number) => {
@@ -125,9 +144,9 @@ export default function AdminDashboard() {
     <div>
       <div className={styles.nav}>
         <div className={styles.navInner}>
-          {(['bookings', 'engineers', 'services', 'users'] as AdminTab[]).map(t => (
+          {ADMIN_TABS.map(t => (
             <button key={t} className={`${styles.tabBtn} ${tab === t ? styles.active : ''}`} onClick={() => setTab(t)}>
-              {t.charAt(0).toUpperCase() + t.slice(1)}
+              {formatLabel(t)}
             </button>
           ))}
         </div>
@@ -144,30 +163,32 @@ export default function AdminDashboard() {
         </div>
 
         {tab === 'bookings' && (
-          <table className="data-table">
-            <thead><tr><th>Booking ID</th><th>Client</th><th>Service</th><th>Engineer</th><th>Area (sqm)</th><th>Total</th><th>Date</th><th>Status</th><th>Update</th></tr></thead>
-            <tbody>
-              {bookings.map(b => (
-                <tr key={b.id}>
-                  <td style={{ fontWeight: 700, color: 'var(--sky)' }}>{b.id}</td>
-                  <td>{b.client}</td>
-                  <td>{b.service}</td>
-                  <td>{b.engineer}</td>
-                  <td>{b.area}</td>
-                  <td style={{ color: 'var(--gold)', fontWeight: 600 }}>{formatPHP(b.total)}</td>
-                  <td style={{ color: 'var(--muted)' }}>{b.date}</td>
-                  <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
-                  <td>
-                    <select className={styles.actionSel} value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value)}>
-                      {['Pending', 'Confirmed', 'Ongoing', 'Completed', 'Cancelled'].map(s => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className={`${styles.tableWrap} ${styles.wideTable}`}>
+            <table className="data-table">
+              <thead><tr><th>Booking ID</th><th>Client</th><th>Service</th><th>Engineer</th><th>Area (sqm)</th><th>Total</th><th>Date</th><th>Status</th><th>Update</th></tr></thead>
+              <tbody>
+                {bookings.map(b => (
+                  <tr key={b.id}>
+                    <td className={styles.keyCell}>{b.id}</td>
+                    <td>{b.client}</td>
+                    <td>{b.service}</td>
+                    <td>{b.engineer}</td>
+                    <td>{b.area}</td>
+                    <td className={styles.moneyCell}>{formatPHP(b.total)}</td>
+                    <td className={styles.mutedCell}>{b.date}</td>
+                    <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
+                    <td>
+                      <select className={styles.actionSel} value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value)}>
+                        {BOOKING_STATUSES.map(s => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
         {tab === 'engineers' && (
@@ -199,68 +220,80 @@ export default function AdminDashboard() {
               <div className={styles.engTableHeader}>
                 <div className={styles.engTitle}>Engineers</div>
                 <div className={styles.engFilters}>
-                  {(['all', 'available', 'busy'] as const).map(s => (
+                  {ENGINEER_FILTERS.map(s => (
                     <button key={s} className={`btn btn-outline btn-sm ${engFilter === s ? styles.engActive : ''}`} onClick={() => setEngFilter(s)}>
-                      {s}
+                      {formatLabel(s)}
                     </button>
                   ))}
                 </div>
               </div>
-              <table className="data-table">
-                <thead><tr><th>Name</th><th>Specialization</th><th>Experience</th><th>Daily Rate</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
-                <tbody>
-                  {visibleEngineers.map(e => (
-                    <tr key={e.id}>
-                      <td>{e.name}</td>
-                      <td style={{ color: 'var(--sky)' }}>{e.spec}</td>
-                      <td>{e.exp}</td>
-                      <td style={{ color: 'var(--gold)' }}>{formatPHP(e.rate)}</td>
-                      <td>★ {e.rating}</td>
-                      <td><span className={`status-pill ${e.status === 'available' ? 's-completed' : 's-ongoing'}`}>{e.status}</span></td>
-                      <td style={{ display: 'flex', gap: '8px' }}>
-                        <button className="btn btn-outline btn-sm" onClick={() => toggleEngStatus(e.id)}>{e.status === 'available' ? 'Set Busy' : 'Set Available'}</button>
-                        <button className="btn btn-danger btn-sm" onClick={() => removeEngineer(e.id, e.accountEmail)}>Remove</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className={`${styles.tableWrap} ${styles.wideTable}`}>
+                <table className="data-table">
+                  <thead><tr><th>Name</th><th>Specialization</th><th>Experience</th><th>Daily Rate</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    {visibleEngineers.length === 0 ? (
+                      <tr><td className={styles.emptyCell} colSpan={7}>No engineers match this filter.</td></tr>
+                    ) : (
+                      visibleEngineers.map(e => (
+                        <tr key={e.id}>
+                          <td className={styles.keyCell}>{e.name}</td>
+                          <td className={styles.brandCell}>{e.spec}</td>
+                          <td>{e.exp}</td>
+                          <td className={styles.moneyCell}>{formatPHP(e.rate)}</td>
+                          <td className={styles.ratingCell}>{e.rating} / 5</td>
+                          <td><span className={`status-pill ${e.status === 'available' ? 's-completed' : 's-busy'}`}>{formatLabel(e.status)}</span></td>
+                          <td>
+                            <div className={styles.actionGroup}>
+                              <button className={`btn btn-outline btn-sm ${styles.statusAction}`} onClick={() => toggleEngStatus(e.id)}>{e.status === 'available' ? 'Mark Busy' : 'Mark Available'}</button>
+                              <button className={`btn btn-danger btn-sm ${styles.removeAction}`} onClick={() => removeEngineer(e.id, e.accountEmail)}>Remove</button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
 
         {tab === 'services' && (
-          <table className="data-table">
-            <thead><tr><th>Service</th><th>Type</th><th>Mat. Cost/sqm</th><th>Labor/sqm</th><th>Duration</th><th>Min Area</th></tr></thead>
-            <tbody>
-              {SERVICES.map((s: any) => (
-                <tr key={s.id}>
-                  <td>{s.name}</td>
-                  <td>{s.type}</td>
-                  <td style={{ color: 'var(--gold)' }}>{formatPHP(s.baseCostPerSqm.materials)}</td>
-                  <td style={{ color: 'var(--sky)' }}>{formatPHP(s.baseCostPerSqm.labor)}</td>
-                  <td>{s.duration}</td>
-                  <td>{s.minSqm} sqm</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className={styles.tableWrap}>
+            <table className="data-table">
+              <thead><tr><th>Service</th><th>Type</th><th>Mat. Cost/sqm</th><th>Labor/sqm</th><th>Duration</th><th>Min Area</th></tr></thead>
+              <tbody>
+                {SERVICES.map(s => (
+                  <tr key={s.id}>
+                    <td className={styles.keyCell}>{s.name}</td>
+                    <td>{s.type}</td>
+                    <td className={styles.moneyCell}>{formatPHP(s.baseCostPerSqm.materials)}</td>
+                    <td className={styles.brandCell}>{formatPHP(s.baseCostPerSqm.labor)}</td>
+                    <td>{s.duration}</td>
+                    <td>{s.minSqm} sqm</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
         {tab === 'users' && (
-          <table className="data-table">
-            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Phone</th></tr></thead>
-            <tbody>
-              {users.map(u => (
-                <tr key={u.id}>
-                  <td>{u.name}</td>
-                  <td>{u.email}</td>
-                  <td><span className={`status-pill ${u.role === 'admin' ? 's-confirmed' : u.role === 'engineer' ? 's-ongoing' : 's-completed'}`}>{u.role}</span></td>
-                  <td style={{ color: 'var(--text-muted)' }}>{u.phone || '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className={styles.tableWrap}>
+            <table className="data-table">
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Phone</th></tr></thead>
+              <tbody>
+                {users.map(u => (
+                  <tr key={u.id}>
+                    <td className={styles.keyCell}>{u.name}</td>
+                    <td>{u.email}</td>
+                    <td><span className={`status-pill ${u.role === 'admin' ? 's-confirmed' : u.role === 'engineer' ? 's-ongoing' : 's-completed'}`}>{formatLabel(u.role)}</span></td>
+                    <td className={styles.mutedCell}>{u.phone || 'Not provided'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

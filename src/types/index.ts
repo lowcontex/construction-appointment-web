@@ -54,6 +54,7 @@ export interface Booking {
   total: number;
   status: 'Pending' | 'Confirmed' | 'Ongoing' | 'Completed' | 'Cancelled';
   date: string;
+  customerEmail?: string;
 }
 
 export interface CostBreakdown {
@@ -71,4 +72,4 @@ export interface BookingState {
   costBreakdown?: CostBreakdown;
 }
 
-export type PageId = 'home' | 'services' | 'engineers' | 'booking' | 'admin' | 'success';
+export type PageId = 'home' | 'services' | 'engineers' | 'booking' | 'admin' | 'success' | 'engineer' | 'my-bookings';

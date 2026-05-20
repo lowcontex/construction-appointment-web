@@ -39,8 +39,10 @@ export default function Header() {
             <>
               {currentUser.role === 'admin' ? (
                 <button className="btn btn-outline btn-sm" onClick={() => showPage('admin')}>Admin</button>
+              ) : currentUser.role === 'engineer' ? (
+                <button className="btn btn-outline btn-sm" onClick={() => showPage('engineer')}>Engineer</button>
               ) : (
-                <button className="btn btn-outline btn-sm" onClick={() => showPage('booking')}>My Booking</button>
+                <button className="btn btn-outline btn-sm" onClick={() => showPage('my-bookings')}>My Bookings</button>
               )}
               <button className="btn btn-gold" onClick={logout}>Logout</button>
             </>

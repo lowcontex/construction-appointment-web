@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { User, Engineer, Booking, BookingState, PageId } from '@/types';
 import { initialEngineers, initialUsers, initialBookings } from '@/data/engineers';
@@ -31,6 +31,8 @@ interface AppContextType {
   doLogin: (email: string, password: string) => void;
   doRegister: (form: Record<string, string>) => void;
   logout: () => void;
+  pendingAction: string | null;
+  setPendingAction: (action: string | null) => void;
   toast: ToastState;
   showToast: (msg: string, icon?: string) => void;
   successRef: string;
@@ -39,6 +41,8 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
+const STORAGE_KEY = 'construction-app-state-v1';
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -46,6 +50,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [booking, setBooking] = useState<BookingState>({ service: null, engineer: null });
+  const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<'login' | 'register'>('login');
   const [toast, setToast] = useState<ToastState>({ message: '', icon: '', visible: false });
@@ -55,13 +60,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const showPage = useCallback((id: PageId) => {
     setCurrentPage(id);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     const paths: Record<PageId, string> = {
       home: '/',
       services: '/services',
       engineers: '/engineers',
       booking: '/booking',
       admin: '/admin',
+      engineer: '/engineer',
+      'my-bookings': '/my-bookings',
       success: '/success',
     };
     router.push(paths[id]);
@@ -84,17 +93,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }, 3000);
   }, []);
 
+  const handlePostAuth = useCallback((user: User) => {
+    if (pendingAction === 'confirm-booking') {
+      showPage('booking');
+      return;
+    }
+    if (user.role === 'admin') { showPage('admin'); return; }
+    if (user.role === 'engineer') { showPage('engineer'); return; }
+    showPage('my-bookings');
+  }, [pendingAction, showPage]);
+
   const doLogin = useCallback((email: string, password: string) => {
     const user = users.find(u => u.email === email && u.password === password);
     if (!user) { showToast('Invalid credentials.'); return; }
     setCurrentUser(user);
     closeModal();
     showToast('Welcome back, ' + user.name + '!');
-    if (user.role === 'admin') setTimeout(() => showPage('admin'), 500);
-  }, [users, showToast, closeModal, showPage]);
+    setTimeout(() => handlePostAuth(user), 400);
+  }, [users, showToast, closeModal, handlePostAuth]);
 
   const logout = useCallback(() => {
     setCurrentUser(null);
+    setPendingAction(null);
     showPage('home');
     showToast('Logged out successfully.');
   }, [showPage, showToast]);
@@ -118,14 +138,45 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(newUser);
     closeModal();
     showToast('Account created! Welcome, ' + fname + '!');
-  }, [users, showToast, closeModal]);
+    setTimeout(() => handlePostAuth(newUser), 400);
+  }, [users, showToast, closeModal, handlePostAuth]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed?.currentUser) setCurrentUser(parsed.currentUser);
+      if (parsed?.booking) setBooking(parsed.booking);
+      if (parsed?.bookings) setBookings(parsed.bookings);
+      if (parsed?.users) setUsers(parsed.users);
+      if (parsed?.engineers) setEngineers(parsed.engineers);
+      if (parsed?.pendingAction) setPendingAction(parsed.pendingAction);
+    } catch (error) {
+      console.error('Failed to restore app state from localStorage.', { error });
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    const data = {
+      currentUser,
+      booking,
+      bookings,
+      users,
+      engineers,
+      pendingAction,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }, [currentUser, booking, bookings, users, engineers, pendingAction]);
 
   return (
     <AppContext.Provider value={{
       currentPage, showPage, currentUser,
       engineers, setEngineers, users, setUsers, bookings, setBookings,
       booking, setBooking, modalOpen, modalTab, openModal, closeModal,
-      switchAuthTab, doLogin, doRegister, logout, toast, showToast, successRef, setSuccessRef,
+      switchAuthTab, doLogin, doRegister, logout, pendingAction, setPendingAction,
+      toast, showToast, successRef, setSuccessRef,
     }}>
       {children}
     </AppContext.Provider>
