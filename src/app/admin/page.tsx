@@ -1,5 +1,10 @@
 import AdminDashboard from '@/components/AdminDashboard';
+import Reveal from '@/components/Reveal';
 
 export default function AdminPage() {
-  return <AdminDashboard />;
+  return (
+    <Reveal>
+      <AdminDashboard />
+    </Reveal>
+  );
 }

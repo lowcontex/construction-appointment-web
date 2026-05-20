@@ -1,12 +1,13 @@
 'use client';
 
 import { useApp } from '@/context/AppContext';
+import Reveal from '@/components/Reveal';
 
 export default function SuccessPage() {
   const { successRef, showPage } = useApp();
 
   return (
-    <div style={{ textAlign: 'center', padding: '6rem 2rem', maxWidth: '600px', margin: '0 auto' }}>
+    <Reveal style={{ textAlign: 'center', padding: '6rem 2rem', maxWidth: '600px', margin: '0 auto' }}>
       <div style={{
         width: '60px', height: '60px', borderRadius: '50%', border: '3px solid var(--brand)',
         margin: '0 auto 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -34,6 +35,6 @@ export default function SuccessPage() {
         <button className="btn btn-gold" onClick={() => showPage('home')}>Back to Home</button>
         <button className="btn btn-outline" onClick={() => showPage('booking')}>Book Another Project</button>
       </div>
-    </div>
+    </Reveal>
   );
 }

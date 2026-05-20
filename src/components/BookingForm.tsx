@@ -6,9 +6,26 @@ import { SERVICES } from '@/data/services';
 import { calcCost, formatPHP } from '@/utils/costing';
 import styles from './BookingForm.module.css';
 
+const MIN_AREA = 1;
+const MAX_AREA = 10000;
+const DRAFT_KEY = 'booking-draft-v1';
+
 function initials(name: string): string {
   const p = name.split(' ');
   return ((p[1]?.[0] || '') + (p[2]?.[0] || '')).toUpperCase() || 'EN';
+}
+
+function cleanText(value: string, maxLength = 180) {
+  return value.trim().replace(/\s+/g, ' ').slice(0, maxLength);
+}
+
+function nextBookingId(bookings: { id: string }[]) {
+  const highest = bookings.reduce((max, booking) => {
+    const numeric = Number(booking.id.replace(/^BK-/, ''));
+    return Number.isFinite(numeric) ? Math.max(max, numeric) : max;
+  }, 0);
+
+  return 'BK-' + String(highest + 1).padStart(3, '0');
 }
 
 export default function BookingForm() {
@@ -24,9 +41,10 @@ export default function BookingForm() {
   const [date, setDate] = useState('');
   const [timeline, setTimeline] = useState<'normal' | 'rush'>('normal');
   const [notes, setNotes] = useState('');
+  const today = new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
-    const stored = localStorage.getItem('booking-draft-v1');
+    const stored = localStorage.getItem(DRAFT_KEY);
     if (!stored) return;
     try {
       const draft = JSON.parse(stored);
@@ -41,13 +59,19 @@ export default function BookingForm() {
       if (draft.timeline) setTimeline(draft.timeline);
       if (draft.notes) setNotes(draft.notes);
     } catch {
-      localStorage.removeItem('booking-draft-v1');
+      localStorage.removeItem(DRAFT_KEY);
     }
   }, []);
 
   useEffect(() => {
+    if (!currentUser || name) return;
+    setName(currentUser.name);
+    if (!phone && currentUser.phone) setPhone(currentUser.phone);
+  }, [currentUser, name, phone]);
+
+  useEffect(() => {
     const draft = { step, name, phone, address, bArea, floors, grade, date, timeline, notes };
-    localStorage.setItem('booking-draft-v1', JSON.stringify(draft));
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
   }, [step, name, phone, address, bArea, floors, grade, date, timeline, notes]);
 
   useEffect(() => {
@@ -65,9 +89,13 @@ export default function BookingForm() {
   const nextStep = () => {
     if (step === 1 && !booking.service) { showToast('Please select a service.'); return; }
     if (step === 2) {
-      if (!name || !bArea || !address) { showToast('Please fill in all required fields.'); return; }
+      const area = Number(bArea);
+      if (!cleanText(name) || !cleanText(bArea) || !cleanText(address)) { showToast('Please fill in all required fields.'); return; }
+      if (!Number.isFinite(area) || area < MIN_AREA || area > MAX_AREA) { showToast(`Area must be between ${MIN_AREA} and ${MAX_AREA} sqm.`); return; }
+      if (date && date < today) { showToast('Start date cannot be in the past.'); return; }
     }
     if (step === 3 && !booking.engineer) { showToast('Please select an engineer.'); return; }
+    if (step === 3 && selectedEngineer?.status !== 'available') { showToast('Please choose an available engineer.'); return; }
     setStep(s => s + 1);
   };
 
@@ -82,15 +110,19 @@ export default function BookingForm() {
     }
     if (currentUser.role !== 'customer') { showToast('Only customers can submit bookings.'); return; }
     if (!selectedService || !selectedEngineer) return;
-    const id = 'BK-' + String(bookings.length + 1).padStart(3, '0');
+    if (selectedEngineer.status !== 'available') { showToast('Please choose an available engineer.'); return; }
+    const area = Number(bArea);
+    if (!Number.isFinite(area) || area < MIN_AREA || area > MAX_AREA || !cost) { showToast('Please review the project area and estimate.'); return; }
+    if (date && date < today) { showToast('Start date cannot be in the past.'); return; }
+    const id = nextBookingId(bookings);
     setBookings(prev => [{
-      id, client: name || currentUser.name, service: selectedService.name,
-      engineer: selectedEngineer.name, area: Number(bArea), total: Math.round(cost?.total || 0),
-      status: 'Pending', date: new Date().toISOString().slice(0, 10), customerEmail: currentUser.email,
+      id, client: cleanText(name) || currentUser.name, service: selectedService.name,
+      engineer: selectedEngineer.name, area, total: Math.round(cost.total),
+      status: 'Pending', date: date || today, customerEmail: currentUser.email,
     }, ...prev]);
     setSuccessRef('Booking Reference: ' + id);
     setBooking({ service: null, engineer: null });
-    localStorage.removeItem('booking-draft-v1');
+    localStorage.removeItem(DRAFT_KEY);
     showPage('success');
     showToast('Booking submitted successfully!');
   };
@@ -144,14 +176,14 @@ export default function BookingForm() {
               <div className="form-group"><label className="form-label">Full Name</label><input className="form-input" value={name} onChange={e => setName(e.target.value)} placeholder="Juan Dela Cruz" /></div>
               <div className="form-group"><label className="form-label">Phone</label><input className="form-input" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+63 9XX XXX XXXX" /></div>
               <div className="form-group form-full"><label className="form-label">Project Address</label><input className="form-input" value={address} onChange={e => setAddress(e.target.value)} placeholder="Complete address" /></div>
-              <div className="form-group"><label className="form-label">Floor Area (sqm)</label><input className="form-input" type="number" min="1" value={bArea} onChange={e => setBArea(e.target.value)} placeholder="e.g. 80" /></div>
+              <div className="form-group"><label className="form-label">Floor Area (sqm)</label><input className="form-input" type="number" min={MIN_AREA} max={MAX_AREA} value={bArea} onChange={e => setBArea(e.target.value)} placeholder="e.g. 80" /></div>
               <div className="form-group"><label className="form-label">No. of Floors</label><select className="form-select" value={floors} onChange={e => setFloors(e.target.value)}><option value="1">1 Floor</option><option value="2">2 Floors</option><option value="3">3 Floors</option></select></div>
               <div className="form-group"><label className="form-label">Material Grade</label>
                 <select className="form-select" value={grade} onChange={e => setGrade(e.target.value as typeof grade)}>
                   <option value="standard">Standard</option><option value="premium">Premium (+30%)</option><option value="economy">Economy (-20%)</option>
                 </select>
               </div>
-              <div className="form-group"><label className="form-label">Preferred Start Date</label><input className="form-input" type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
+              <div className="form-group"><label className="form-label">Preferred Start Date</label><input className="form-input" type="date" min={today} value={date} onChange={e => setDate(e.target.value)} /></div>
               <div className="form-group"><label className="form-label">Timeline</label>
                 <select className="form-select" value={timeline} onChange={e => setTimeline(e.target.value as typeof timeline)}>
                   <option value="normal">Normal</option><option value="rush">Rush (+20% labor)</option>

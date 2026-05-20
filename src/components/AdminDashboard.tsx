@@ -23,6 +23,14 @@ function formatLabel(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
+function cleanText(value: string, maxLength = 120) {
+  return value.trim().replace(/\s+/g, ' ').slice(0, maxLength);
+}
+
+function normalizeEmail(value: string) {
+  return value.trim().toLowerCase();
+}
+
 export default function AdminDashboard() {
   const { bookings, setBookings, engineers, setEngineers, users, setUsers, showToast, currentUser, openModal, showPage } = useApp();
   const [tab, setTab] = useState<AdminTab>('bookings');
@@ -88,23 +96,45 @@ export default function AdminDashboard() {
   const addEngineer = (e: React.FormEvent) => {
     e.preventDefault();
     const { fname, lname, email, phone, password, spec, exp, rate, skills, bio } = engForm;
-    if (!fname || !lname || !email || !password) {
+    const safeFirstName = cleanText(fname, 40);
+    const safeLastName = cleanText(lname, 40);
+    const safeEmail = normalizeEmail(email);
+    const safePhone = cleanText(phone, 30);
+    const parsedRate = Number(rate);
+    const parsedExp = Number(exp);
+    if (!safeFirstName || !safeLastName || !safeEmail || !password) {
       showToast('Please fill in required engineer fields.');
       return;
     }
-    if (users.find(u => u.email === email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) {
+      showToast('Please enter a valid engineer email.');
+      return;
+    }
+    if (password.length < 8) {
+      showToast('Engineer password must be at least 8 characters.');
+      return;
+    }
+    if (users.find(u => normalizeEmail(u.email) === safeEmail)) {
       showToast('Email already exists.');
+      return;
+    }
+    if (rate && (!Number.isFinite(parsedRate) || parsedRate < 1000 || parsedRate > 50000)) {
+      showToast('Daily rate must be between ₱1,000 and ₱50,000.');
+      return;
+    }
+    if (exp && (!Number.isFinite(parsedExp) || parsedExp < 0 || parsedExp > 60)) {
+      showToast('Experience must be between 0 and 60 years.');
       return;
     }
 
     const newUserId = users.length + 1;
-    const engineerName = `Engr. ${fname} ${lname}`;
+    const engineerName = `Engr. ${safeFirstName} ${safeLastName}`;
     const newUser = {
       id: newUserId,
-      name: `${fname} ${lname}`,
-      email,
+      name: `${safeFirstName} ${safeLastName}`,
+      email: safeEmail,
       password,
-      phone,
+      phone: safePhone,
       role: 'engineer' as const,
     };
     const skillList = skills.split(',').map(s => s.trim()).filter(Boolean);
@@ -113,14 +143,14 @@ export default function AdminDashboard() {
       name: engineerName,
       spec,
       avatar: '',
-      exp: exp ? `${exp} years` : '5 years',
-      rate: parseInt(rate) || 2500,
+      exp: Number.isFinite(parsedExp) && exp ? `${parsedExp} years` : '5 years',
+      rate: Number.isFinite(parsedRate) && rate ? Math.round(parsedRate) : 2500,
       rating: 5.0,
       reviews: 0,
       status: 'available' as const,
-      skills: skillList.length ? skillList : [spec],
-      bio: bio || 'Admin-added engineer profile.',
-      userEmail: email,
+      skills: skillList.length ? skillList.map(skill => cleanText(skill, 32)) : [spec],
+      bio: cleanText(bio, 240) || 'Admin-added engineer profile.',
+      userEmail: safeEmail,
     }]);
     setUsers(prev => [...prev, newUser]);
     setEngForm({ fname: '', lname: '', email: '', phone: '', password: '', spec: 'Civil', exp: '', rate: '', skills: '', bio: '' });

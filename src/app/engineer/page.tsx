@@ -2,6 +2,7 @@
 
 import { useApp } from '@/context/AppContext';
 import styles from '@/components/DashboardPage.module.css';
+import Reveal from '@/components/Reveal';
 
 export default function EngineerDashboardPage() {
   const { currentUser, bookings, showPage } = useApp();
@@ -37,33 +38,33 @@ export default function EngineerDashboardPage() {
 
   return (
     <div className={styles.shell}>
-      <div className={styles.hero}>
+      <Reveal className={styles.hero}>
         <div>
           <div className={styles.kicker}>Engineer Dashboard</div>
           <h1 className={styles.title}>Assigned Bookings</h1>
           <p className={styles.subtitle}>View project requests assigned to you and track their current status.</p>
         </div>
-      </div>
+      </Reveal>
 
       <div className={styles.summaryGrid}>
-        <div className={styles.metric}>
+        <Reveal className={styles.metric} variant="card" delay={80}>
           <div className={styles.metricLabel}>Assigned</div>
           <div className={styles.metricValue}>{assigned.length}</div>
           <div className={styles.metricSub}>total projects</div>
-        </div>
-        <div className={styles.metric}>
+        </Reveal>
+        <Reveal className={styles.metric} variant="card" delay={150}>
           <div className={styles.metricLabel}>Active</div>
           <div className={styles.metricValue}>{active}</div>
           <div className={styles.metricSub}>confirmed or ongoing</div>
-        </div>
-        <div className={styles.metric}>
+        </Reveal>
+        <Reveal className={styles.metric} variant="card" delay={220}>
           <div className={styles.metricLabel}>Completed</div>
           <div className={styles.metricValue}>{completed}</div>
           <div className={styles.metricSub}>closed projects</div>
-        </div>
+        </Reveal>
       </div>
 
-      <div className={styles.tableWrap}>
+      <Reveal className={styles.tableWrap} variant="card" delay={140}>
         <table className="data-table">
           <thead>
             <tr>
@@ -94,7 +95,7 @@ export default function EngineerDashboardPage() {
             )}
           </tbody>
         </table>
-      </div>
+      </Reveal>
     </div>
   );
 }

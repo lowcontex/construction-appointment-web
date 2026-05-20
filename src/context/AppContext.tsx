@@ -42,6 +42,41 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 const STORAGE_KEY = 'construction-app-state-v1';
+const USER_ROLES = new Set<User['role']>(['admin', 'engineer', 'customer']);
+
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase();
+}
+
+function cleanText(value: string, maxLength = 120) {
+  return value.trim().replace(/\s+/g, ' ').slice(0, maxLength);
+}
+
+function isUser(value: unknown): value is User {
+  if (!value || typeof value !== 'object') return false;
+  const user = value as Partial<User>;
+  return (
+    typeof user.id === 'number' &&
+    typeof user.name === 'string' &&
+    typeof user.email === 'string' &&
+    typeof user.password === 'string' &&
+    typeof user.phone === 'string' &&
+    typeof user.role === 'string' &&
+    USER_ROLES.has(user.role as User['role'])
+  );
+}
+
+function isBookingState(value: unknown): value is BookingState {
+  if (!value || typeof value !== 'object') return false;
+  const draft = value as Partial<BookingState>;
+  const serviceOk = draft.service === null || typeof draft.service === 'string';
+  const engineerOk = draft.engineer === null || typeof draft.engineer === 'number';
+  return serviceOk && engineerOk;
+}
+
+function sanitizeUsers(value: unknown) {
+  return Array.isArray(value) ? value.filter(isUser) : null;
+}
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
@@ -104,7 +139,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [pendingAction, showPage]);
 
   const doLogin = useCallback((email: string, password: string) => {
-    const user = users.find(u => u.email === email && u.password === password);
+    const safeEmail = normalizeEmail(email);
+    const user = users.find(u => normalizeEmail(u.email) === safeEmail && u.password === password);
     if (!user) { showToast('Invalid credentials.'); return; }
     setCurrentUser(user);
     closeModal();
@@ -121,23 +157,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const doRegister = useCallback((form: Record<string, string>) => {
     const { fname, lname, email, phone, password } = form;
-    if (!fname || !email || !password) { showToast('Please fill in all required fields.'); return; }
-    if (users.find(u => u.email === email)) { showToast('Email already registered.'); return; }
+    const safeFirstName = cleanText(fname, 40);
+    const safeLastName = cleanText(lname, 40);
+    const safeEmail = normalizeEmail(email);
+    const safePhone = cleanText(phone, 30);
+    if (!safeFirstName || !safeEmail || !password) { showToast('Please fill in all required fields.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) { showToast('Please enter a valid email address.'); return; }
+    if (users.find(u => normalizeEmail(u.email) === safeEmail)) { showToast('Email already registered.'); return; }
     if (password.length < 8) { showToast('Password must be at least 8 characters.'); return; }
 
     const newUser: User = {
       id: users.length + 1,
-      name: fname + ' ' + lname,
-      email,
+      name: cleanText(`${safeFirstName} ${safeLastName}`),
+      email: safeEmail,
       password,
-      phone,
+      phone: safePhone,
       role: 'customer',
     };
 
     setUsers(prev => [...prev, newUser]);
     setCurrentUser(newUser);
     closeModal();
-    showToast('Account created! Welcome, ' + fname + '!');
+    showToast('Account created! Welcome, ' + safeFirstName + '!');
     setTimeout(() => handlePostAuth(newUser), 400);
   }, [users, showToast, closeModal, handlePostAuth]);
 
@@ -146,10 +187,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!stored) return;
     try {
       const parsed = JSON.parse(stored);
-      if (parsed?.currentUser) setCurrentUser(parsed.currentUser);
-      if (parsed?.booking) setBooking(parsed.booking);
-      if (parsed?.bookings) setBookings(parsed.bookings);
-      if (parsed?.users) setUsers(parsed.users);
+      if (isUser(parsed?.currentUser)) setCurrentUser(parsed.currentUser);
+      if (isBookingState(parsed?.booking)) setBooking(parsed.booking);
+      if (Array.isArray(parsed?.bookings)) setBookings(parsed.bookings);
+      const safeUsers = sanitizeUsers(parsed?.users);
+      if (safeUsers) setUsers(safeUsers);
       if (parsed?.engineers) setEngineers(parsed.engineers);
       if (parsed?.pendingAction) setPendingAction(parsed.pendingAction);
     } catch (error) {

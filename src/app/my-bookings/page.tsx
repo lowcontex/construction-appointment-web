@@ -3,6 +3,7 @@
 import { useApp } from '@/context/AppContext';
 import styles from '@/components/DashboardPage.module.css';
 import { formatPHP } from '@/utils/costing';
+import Reveal from '@/components/Reveal';
 
 export default function MyBookingsPage() {
   const { currentUser, bookings, showPage } = useApp();
@@ -38,33 +39,33 @@ export default function MyBookingsPage() {
 
   return (
     <div className={styles.shell}>
-      <div className={styles.hero}>
+      <Reveal className={styles.hero}>
         <div>
           <div className={styles.kicker}>Customer Dashboard</div>
           <h1 className={styles.title}>My Bookings</h1>
           <p className={styles.subtitle}>Track your project requests, assigned engineers, dates, and booking status.</p>
         </div>
-      </div>
+      </Reveal>
 
       <div className={styles.summaryGrid}>
-        <div className={styles.metric}>
+        <Reveal className={styles.metric} variant="card" delay={80}>
           <div className={styles.metricLabel}>Bookings</div>
           <div className={styles.metricValue}>{mine.length}</div>
           <div className={styles.metricSub}>total requests</div>
-        </div>
-        <div className={styles.metric}>
+        </Reveal>
+        <Reveal className={styles.metric} variant="card" delay={150}>
           <div className={styles.metricLabel}>Active</div>
           <div className={styles.metricValue}>{active}</div>
           <div className={styles.metricSub}>pending or in progress</div>
-        </div>
-        <div className={styles.metric}>
+        </Reveal>
+        <Reveal className={styles.metric} variant="card" delay={220}>
           <div className={styles.metricLabel}>Estimated Value</div>
           <div className={styles.metricValue}>{formatPHP(totalValue)}</div>
           <div className={styles.metricSub}>{completed} completed</div>
-        </div>
+        </Reveal>
       </div>
 
-      <div className={styles.tableWrap}>
+      <Reveal className={styles.tableWrap} variant="card" delay={140}>
         <table className="data-table">
           <thead>
             <tr>
@@ -97,7 +98,7 @@ export default function MyBookingsPage() {
             )}
           </tbody>
         </table>
-      </div>
+      </Reveal>
     </div>
   );
 }

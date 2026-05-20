@@ -1,5 +1,10 @@
 import EngineerGrid from '@/components/EngineerGrid';
+import Reveal from '@/components/Reveal';
 
 export default function EngineersPage() {
-  return <EngineerGrid />;
+  return (
+    <Reveal>
+      <EngineerGrid />
+    </Reveal>
+  );
 }
