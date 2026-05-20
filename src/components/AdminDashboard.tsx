@@ -256,7 +256,7 @@ export default function AdminDashboard() {
                   <td>{u.name}</td>
                   <td>{u.email}</td>
                   <td><span className={`status-pill ${u.role === 'admin' ? 's-confirmed' : u.role === 'engineer' ? 's-ongoing' : 's-completed'}`}>{u.role}</span></td>
-                  <td style={{ color: 'var(--muted)' }}>{u.phone || '—'}</td>
+                  <td style={{ color: 'var(--text-muted)' }}>{u.phone || '—'}</td>
                 </tr>
               ))}
             </tbody>

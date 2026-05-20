@@ -56,10 +56,10 @@ function LoginForm() {
         <label className="modal-label">Password</label>
         <input className="modal-input" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
       </div>
-      <button className="btn btn-gold" style={{ width: '100%', marginTop: '.5rem', padding: '13px' }}>Login to BuildRight</button>
-      <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '12px', color: 'var(--muted)' }}>
-        Demo: <span style={{ color: 'var(--sky)' }}>admin@buildright.com</span> / <span style={{ color: 'var(--sky)' }}>admin123</span>
-        &nbsp;|&nbsp; <span style={{ color: 'var(--sky)' }}>eng@buildright.com</span> / <span style={{ color: 'var(--sky)' }}>eng123</span>
+      <button className="btn btn-gold" style={{ width: '100%', marginTop: '.5rem', padding: '13px' }}>Login to Agudo Construction</button>
+      <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '12px', color: 'var(--text-muted)' }}>
+        Demo: <span style={{ color: 'var(--brand-vivid)' }}>admin@agudo.com</span> / <span style={{ color: 'var(--brand-vivid)' }}>admin123</span>
+        &nbsp;|&nbsp; <span style={{ color: 'var(--brand-vivid)' }}>eng@agudo.com</span> / <span style={{ color: 'var(--brand-vivid)' }}>eng123</span>
       </div>
     </form>
   );

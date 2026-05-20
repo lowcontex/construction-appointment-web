@@ -61,7 +61,7 @@ export default function BookingForm() {
   return (
     <div className={styles.wrap}>
       <div className={styles.title}>Book a Project</div>
-      <p style={{ color: 'var(--muted)', fontSize: '14px', marginBottom: '2.5rem' }}>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '2.5rem' }}>
         Fill in your project details and get a full cost estimate before confirming.
       </p>
 
@@ -124,7 +124,7 @@ export default function BookingForm() {
             </div>
             {cost && (
               <div className="cost-summary">
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--sky)', fontWeight: 700, marginBottom: '.7rem' }}>Estimated Project Cost</div>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--brand-vivid)', fontWeight: 700, marginBottom: '.7rem' }}>Estimated Project Cost</div>
                 <div className="cs-row"><span className="cs-label">Materials ({cost.totalArea} sqm)</span><span className="cs-val">{formatPHP(cost.mat)}</span></div>
                 <div className="cs-row"><span className="cs-label">Labor</span><span className="cs-val">{formatPHP(cost.labor)}</span></div>
                 {cost.fixed > 0 && <div className="cs-row"><span className="cs-label">Fixed Installations</span><span className="cs-val">{formatPHP(cost.fixed)}</span></div>}
@@ -155,7 +155,7 @@ export default function BookingForm() {
                   <div className={styles.engPickAvatar}>{initials(e.name)}</div>
                   <div className={styles.pickName}>{e.name}</div>
                   <div className={styles.engPickSpec}>{e.spec}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>★ {e.rating} · {e.exp}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>★ {e.rating} · {e.exp}</div>
                   <div className={styles.pickPrice}>{formatPHP(e.rate)}/day</div>
                   <div style={{ fontSize: '10px', marginTop: '4px' }}>
                     <span className={e.status === 'available' ? 'badge-available' : 'badge-busy'} style={{ fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '10px' }}>{e.status}</span>
@@ -177,33 +177,33 @@ export default function BookingForm() {
             <div className={styles.cardTitle}>Review Your Booking</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               <div>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--sky)', fontWeight: 700, marginBottom: '.8rem' }}>Client Info</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Name:</span> {name}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Phone:</span> {phone || '—'}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Address:</span> {address}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Start Date:</span> {date || 'TBD'}</div>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--brand-vivid)', fontWeight: 700, marginBottom: '.8rem' }}>Client Info</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Name:</span> {name}</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Phone:</span> {phone || '—'}</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Address:</span> {address}</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Start Date:</span> {date || 'TBD'}</div>
               </div>
               <div>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--sky)', fontWeight: 700, marginBottom: '.8rem' }}>Project Info</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Service:</span> {selectedService.name}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Area:</span> {bArea} sqm × {floors} floor(s)</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Grade:</span> {grade.charAt(0).toUpperCase() + grade.slice(1)}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Engineer:</span> {selectedEngineer.name}</div>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--brand-vivid)', fontWeight: 700, marginBottom: '.8rem' }}>Project Info</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Service:</span> {selectedService.name}</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Area:</span> {bArea} sqm × {floors} floor(s)</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Grade:</span> {grade.charAt(0).toUpperCase() + grade.slice(1)}</div>
+                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Engineer:</span> {selectedEngineer.name}</div>
               </div>
             </div>
             {notes && (
-              <div style={{ marginTop: '1rem', fontSize: '13px', color: 'var(--muted)', padding: '.75rem', background: 'var(--slate)', borderRadius: 'var(--r)', border: '1px solid var(--mid)' }}>
+              <div style={{ marginTop: '1rem', fontSize: '13px', color: 'var(--text-muted)', padding: '.75rem', background: 'var(--bg-alt)', borderRadius: 'var(--r)', border: '1px solid var(--border)' }}>
                 {notes}
               </div>
             )}
             {cost && (
               <div className="cost-summary" style={{ marginTop: '1.5rem' }}>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--gold)', fontWeight: 700, marginBottom: '.7rem' }}>Final Cost Summary</div>
+                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--brand)', fontWeight: 700, marginBottom: '.7rem' }}>Final Cost Summary</div>
                 <div className="cs-row"><span className="cs-label">Materials</span><span className="cs-val">{formatPHP(cost.mat)}</span></div>
                 <div className="cs-row"><span className="cs-label">Labor</span><span className="cs-val">{formatPHP(cost.labor)}</span></div>
                 {cost.fixed > 0 && <div className="cs-row"><span className="cs-label">Fixed Installations</span><span className="cs-val">{formatPHP(cost.fixed)}</span></div>}
                 <div className="cs-row"><span className="cs-label">VAT (12%)</span><span className="cs-val">{formatPHP(cost.vat)}</span></div>
-                <div className="cs-row"><span style={{ color: 'var(--gold)' }}>TOTAL ESTIMATE</span><span style={{ color: 'var(--gold)', fontFamily: 'var(--font-head)', fontSize: '1.4rem' }}>{formatPHP(cost.total)}</span></div>
+                <div className="cs-row"><span style={{ color: 'var(--brand)' }}>TOTAL ESTIMATE</span><span style={{ color: 'var(--brand)', fontFamily: 'var(--font-head)', fontSize: '1.4rem' }}>{formatPHP(cost.total)}</span></div>
                 <div className="cs-note">* Estimate includes materials, labor, and VAT. Subject to final site assessment.</div>
               </div>
             )}
