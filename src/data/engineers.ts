@@ -40,8 +40,8 @@ export const initialEngineers: Engineer[] = [
 ];
 
 export const initialUsers: User[] = [
-  { id: 1, name: 'Admin User', email: 'admin@buildright.com', password: 'admin123', role: 'admin', phone: '' },
-  { id: 2, name: 'Marco Santos', email: 'eng@buildright.com', password: 'eng123', role: 'engineer', phone: '' },
+  { id: 1, name: 'Admin User', email: 'admin@agudo.com', password: 'admin123', role: 'admin', phone: '' },
+  { id: 2, name: 'Marco Santos', email: 'eng@agudo.com', password: 'eng123', role: 'engineer', phone: '' },
 ];
 
 export const initialBookings: Booking[] = [

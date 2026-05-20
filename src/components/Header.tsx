@@ -20,8 +20,8 @@ export default function Header() {
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link href="/" className={styles.logo}>
-          <div className={styles.logoMark}>BR</div>
-          Build<span className={styles.gold}>Right</span>
+          <div className={styles.logoMark}><img src="/img/agudo-logo.svg" alt="Agudo Construction" /></div>
+          Agudo<span className={styles.gold}>Construction</span>
         </Link>
         <nav className={styles.nav}>
           {navItems.map(item => (

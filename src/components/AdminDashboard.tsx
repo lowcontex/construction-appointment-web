@@ -61,13 +61,13 @@ export default function AdminDashboard() {
             <tbody>
               {bookings.map(b => (
                 <tr key={b.id}>
-                  <td style={{ fontWeight: 700, color: 'var(--sky)' }}>{b.id}</td>
+                  <td style={{ fontWeight: 700, color: 'var(--brand-vivid)' }}>{b.id}</td>
                   <td>{b.client}</td>
                   <td>{b.service}</td>
                   <td>{b.engineer}</td>
                   <td>{b.area}</td>
-                  <td style={{ color: 'var(--gold)', fontWeight: 600 }}>{formatPHP(b.total)}</td>
-                  <td style={{ color: 'var(--muted)' }}>{b.date}</td>
+                  <td style={{ color: 'var(--brand)', fontWeight: 600 }}>{formatPHP(b.total)}</td>
+                  <td style={{ color: 'var(--text-muted)' }}>{b.date}</td>
                   <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
                   <td>
                     <select className={styles.actionSel} value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value)}>
@@ -89,9 +89,9 @@ export default function AdminDashboard() {
               {engineers.map(e => (
                 <tr key={e.id}>
                   <td>{e.name}</td>
-                  <td style={{ color: 'var(--sky)' }}>{e.spec}</td>
+                  <td style={{ color: 'var(--brand-vivid)' }}>{e.spec}</td>
                   <td>{e.exp}</td>
-                  <td style={{ color: 'var(--gold)' }}>{formatPHP(e.rate)}</td>
+                  <td style={{ color: 'var(--brand)' }}>{formatPHP(e.rate)}</td>
                   <td>★ {e.rating}</td>
                   <td><span className={`status-pill ${e.status === 'available' ? 's-completed' : 's-ongoing'}`}>{e.status}</span></td>
                   <td><button className="btn btn-outline btn-sm" onClick={() => toggleEngStatus(e.id)}>{e.status === 'available' ? 'Set Busy' : 'Set Available'}</button></td>
@@ -109,8 +109,8 @@ export default function AdminDashboard() {
                 <tr key={s.id}>
                   <td>{s.name}</td>
                   <td>{s.type}</td>
-                  <td style={{ color: 'var(--gold)' }}>{formatPHP(s.baseCostPerSqm.materials)}</td>
-                  <td style={{ color: 'var(--sky)' }}>{formatPHP(s.baseCostPerSqm.labor)}</td>
+                  <td style={{ color: 'var(--brand)' }}>{formatPHP(s.baseCostPerSqm.materials)}</td>
+                  <td style={{ color: 'var(--brand-vivid)' }}>{formatPHP(s.baseCostPerSqm.labor)}</td>
                   <td>{s.duration}</td>
                   <td>{s.minSqm} sqm</td>
                 </tr>
@@ -128,7 +128,7 @@ export default function AdminDashboard() {
                   <td>{u.name}</td>
                   <td>{u.email}</td>
                   <td><span className={`status-pill ${u.role === 'admin' ? 's-confirmed' : u.role === 'engineer' ? 's-ongoing' : 's-completed'}`}>{u.role}</span></td>
-                  <td style={{ color: 'var(--muted)' }}>{u.phone || '—'}</td>
+                  <td style={{ color: 'var(--text-muted)' }}>{u.phone || '—'}</td>
                 </tr>
               ))}
             </tbody>

@@ -10,8 +10,11 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div>
-          <div className={styles.brand}><div className={styles.mark}>BR</div>BuildRight</div>
-          <div className={styles.tagline}>Licensed construction services with full material transparency. Build smarter, build right.</div>
+          <div className={styles.brand}>
+            <div className={styles.mark}><img src="/img/agudo-logo.svg" alt="Agudo Construction" /></div>
+            Agudo Construction
+          </div>
+          <div className={styles.tagline}>&quot;Together, We Build Stronger&quot; — Licensed construction services with full material transparency.</div>
         </div>
         <div>
           <div className={styles.heading}>Services</div>
@@ -30,12 +33,12 @@ export default function Footer() {
         <div>
           <div className={styles.heading}>Contact</div>
           <span className={styles.link}>T: (02) 8123-4567</span>
-          <span className={styles.link}>E: hello@buildright.ph</span>
+          <span className={styles.link}>E: hello@agudoconstruction.ph</span>
           <span className={styles.link}>Metro Manila, PH</span>
         </div>
       </div>
       <div className={styles.bottom}>
-        <span>© 2025 BuildRight Construction. All rights reserved.</span>
+        <span>© 2025 Agudo Construction. All rights reserved.</span>
         <span>PRC Accredited · PCAB Licensed</span>
       </div>
     </footer>
