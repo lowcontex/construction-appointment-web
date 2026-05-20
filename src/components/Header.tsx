@@ -19,9 +19,19 @@ export default function Header() {
   ];
 
   const closeMenu = () => setMenuOpen(false);
-  const accountLabel = currentUser?.role === 'admin' ? 'Admin' : 'My Booking';
+  const accountLabel = currentUser?.role === 'admin'
+    ? 'Admin'
+    : currentUser?.role === 'engineer'
+      ? 'Engineer'
+      : 'My Bookings';
   const showAccountPage = () => {
-    showPage(currentUser?.role === 'admin' ? 'admin' : 'booking');
+    if (currentUser?.role === 'admin') {
+      showPage('admin');
+    } else if (currentUser?.role === 'engineer') {
+      showPage('engineer');
+    } else {
+      showPage('my-bookings');
+    }
     closeMenu();
   };
   const handleLogout = () => {
@@ -51,12 +61,8 @@ export default function Header() {
         <div className={styles.headerBtns}>
           {currentUser ? (
             <>
-              {currentUser.role === 'admin' ? (
-                <button className="btn btn-outline btn-sm" onClick={() => showPage('admin')}>Admin</button>
-              ) : (
-                <button className="btn btn-outline btn-sm" onClick={() => showPage('booking')}>My Booking</button>
-              )}
-              <button className="btn btn-gold" onClick={logout}>Logout</button>
+              <button className="btn btn-outline btn-sm" onClick={showAccountPage}>{accountLabel}</button>
+              <button className="btn btn-gold" onClick={handleLogout}>Logout</button>
             </>
           ) : (
             <>

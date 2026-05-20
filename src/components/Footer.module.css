@@ -2,7 +2,7 @@
 .inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;}
 .brand{font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:white;letter-spacing:-.01em;margin-bottom:.7rem;display:flex;align-items:center;gap:8px;}
 .mark{display:flex;align-items:center;justify-content:center;background:white;border-radius:var(--r);padding:4px;border:1px solid rgba(255,255,255,.18);}
-.mark img{height:32px;width:auto;display:block;}
+.mark img{height:32px;width:32px;object-fit:contain;display:block;}
 .tagline{font-size:13px;color:rgba(255,255,255,.6);font-weight:300;line-height:1.7;overflow-wrap:break-word;}
 .heading{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.4);font-weight:700;margin-bottom:.8rem;}
 .link{font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;transition:color var(--t);display:block;margin-bottom:6px;font-weight:300;}

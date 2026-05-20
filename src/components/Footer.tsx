@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useApp } from '@/context/AppContext';
 import Reveal from './Reveal';
 import styles from './Footer.module.css';
@@ -12,10 +13,12 @@ export default function Footer() {
       <div className={styles.inner}>
         <Reveal delay={0}>
           <div className={styles.brand}>
-            <div className={styles.mark}><img src="/img/agudo-logo.svg" alt="Agudo Construction" /></div>
+            <div className={styles.mark}>
+              <Image src="/img/agudo-logo.svg" alt="Agudo Construction" width={32} height={32} />
+            </div>
             Agudo Construction
           </div>
-          <div className={styles.tagline}>&quot;Together, We Build Stronger&quot; — Licensed construction services with full material transparency.</div>
+          <div className={styles.tagline}>&quot;Together, We Build Stronger.&quot; Licensed construction services with full material transparency.</div>
         </Reveal>
         <Reveal delay={70}>
           <div className={styles.heading}>Services</div>
@@ -39,8 +42,8 @@ export default function Footer() {
         </Reveal>
       </div>
       <div className={styles.bottom}>
-        <span>© 2025 Agudo Construction. All rights reserved.</span>
-        <span>PRC Accredited · PCAB Licensed</span>
+        <span>Copyright 2025 Agudo Construction. All rights reserved.</span>
+        <span>PRC Accredited | PCAB Licensed</span>
       </div>
     </footer>
   );

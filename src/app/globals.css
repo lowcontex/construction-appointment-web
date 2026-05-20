@@ -95,7 +95,7 @@
   --t: var(--transition-base);
 }
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:var(--text-base);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;}
 ::selection{background:var(--brand);color:white;}
 
 button,a,[role="button"]{

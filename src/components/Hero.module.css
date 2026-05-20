@@ -1,6 +1,6 @@
-.hero{position:relative;background:linear-gradient(135deg, #f0f4fa 0%, #e8edf5 50%, #f4f6f9 100%);overflow:hidden;padding:5rem 2rem 4rem;animation:fadeUp .5s cubic-bezier(0.25,0.46,0.45,0.94) both;}
+.hero{position:relative;background:linear-gradient(135deg, #f0f4fa 0%, #e8edf5 50%, #f4f6f9 100%);overflow:hidden;padding:5rem 2rem 4rem;}
 .grid{position:absolute;inset:0;opacity:.03;background-image:linear-gradient(var(--brand) 1px,transparent 1px),linear-gradient(90deg,var(--brand) 1px,transparent 1px);background-size:40px 40px;}
-.inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center;position:relative;}
+.inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center;position:relative;animation:heroIntro var(--transition-slow) cubic-bezier(0.25,0.46,0.45,0.94) both;}
 .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brand);font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
 .eyebrow::before{content:'';width:30px;height:2px;background:var(--brand);}
 .heading{font-family:var(--font-head);font-size:clamp(2.8rem,5vw,4.5rem);font-weight:800;line-height:1.05;letter-spacing:-.01em;margin-bottom:1.2rem;color:var(--text);}
@@ -27,6 +27,14 @@
 .resultTotal{display:flex;justify-content:space-between;font-size:15px;padding:8px 0 4px;font-family:var(--font-head);font-weight:700;border-top:1px solid var(--border);margin-top:6px;}
 .resultTotal span:first-child{color:var(--text-muted);}
 .resultTotal span:last-child{color:var(--brand);}
+.fullButton{width:100%;margin-top:1rem;}
+
+@keyframes heroIntro{
+  from{opacity:0;transform:translate3d(0,12px,0);}
+  to{opacity:1;transform:none;}
+}
+
+@media(prefers-reduced-motion:reduce){.inner{animation:none;}}
 
 @media(max-width:1000px){.inner{grid-template-columns:1fr;gap:2.5rem;}.card{display:none;}}
 @media(max-width:600px){.hero{padding:3.5rem 1rem 3rem;}.stats{gap:1.25rem;flex-wrap:wrap;}.actions{flex-direction:column;align-items:stretch;}.actions :global(.btn){width:100%;}.heading{font-size:clamp(2.35rem,12vw,3.2rem);}.sub{font-size:15px;line-height:1.7;}}
