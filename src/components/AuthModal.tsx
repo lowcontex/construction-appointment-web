@@ -100,7 +100,7 @@ function RegisterForm() {
       <div className="modal-field"><label className="modal-label">Password</label><input className="modal-input" type="password" placeholder="Min. 8 characters" value={form.password} onChange={handleChange('password')} /></div>
 
       <div className="modal-field" style={{ marginTop: '1rem' }}>
-        <div style={{ fontSize: '12px', color: 'var(--muted)', lineHeight: '1.6' }}>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
           Engineer accounts are created by admins only. If you are an engineer, please contact support to be added.
         </div>
       </div>

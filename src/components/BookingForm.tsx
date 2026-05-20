@@ -61,7 +61,7 @@ export default function BookingForm() {
   return (
     <div className={styles.wrap}>
       <div className={styles.title}>Book a Project</div>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '2.5rem' }}>
+      <p className={styles.subtitle}>
         Fill in your project details and get a full cost estimate before confirming.
       </p>
 
@@ -107,7 +107,7 @@ export default function BookingForm() {
               <div className="form-group"><label className="form-label">Full Name</label><input className="form-input" value={name} onChange={e => setName(e.target.value)} placeholder="Juan Dela Cruz" /></div>
               <div className="form-group"><label className="form-label">Phone</label><input className="form-input" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+63 9XX XXX XXXX" /></div>
               <div className="form-group form-full"><label className="form-label">Project Address</label><input className="form-input" value={address} onChange={e => setAddress(e.target.value)} placeholder="Complete address" /></div>
-              <div className="form-group"><label className="form-label">Floor Area (sqm)</label><input className="form-input" type="number" value={bArea} onChange={e => setBArea(e.target.value)} placeholder="e.g. 80" /></div>
+              <div className="form-group"><label className="form-label">Floor Area (sqm)</label><input className="form-input" type="number" min="1" value={bArea} onChange={e => setBArea(e.target.value)} placeholder="e.g. 80" /></div>
               <div className="form-group"><label className="form-label">No. of Floors</label><select className="form-select" value={floors} onChange={e => setFloors(e.target.value)}><option value="1">1 Floor</option><option value="2">2 Floors</option><option value="3">3 Floors</option></select></div>
               <div className="form-group"><label className="form-label">Material Grade</label>
                 <select className="form-select" value={grade} onChange={e => setGrade(e.target.value as typeof grade)}>
@@ -175,7 +175,7 @@ export default function BookingForm() {
         <div className={styles.panel}>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Review Your Booking</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className={styles.reviewGrid}>
               <div>
                 <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--brand-vivid)', fontWeight: 700, marginBottom: '.8rem' }}>Client Info</div>
                 <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--text-muted)' }}>Name:</span> {name}</div>

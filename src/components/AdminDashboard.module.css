@@ -11,31 +11,42 @@
 .astatVal{font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--brand);}
 .astatSub{font-size:12px;color:var(--text-muted);margin-top:3px;}
 .actionSel{background:var(--bg-alt);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:11px;padding:4px 8px;cursor:pointer;outline:none;}
+.tableWrap{width:100%;overflow-x:auto;border-radius:var(--r-lg);box-shadow:var(--shadow);}
+.tableWrap table{min-width:760px;box-shadow:none;}
 
 .engWrap{display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start;}
-.engForm{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:1.25rem;box-shadow:var(--shadow);}
-.engHeader{font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:var(--white);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1rem;}
+.engForm{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;box-shadow:var(--shadow);}
+.engHeader{font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1rem;}
 .engGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .engField{display:flex;flex-direction:column;gap:6px;}
-.engField label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;}
-.engField input,.engField select,.engField textarea{background:var(--slate);border:1.5px solid var(--mid);border-radius:var(--r);color:var(--light);font-family:var(--font-body);font-size:13px;padding:8px 10px;outline:none;transition:border-color var(--t);}
-.engField input:focus,.engField select:focus,.engField textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,148,10,0.1);}
+.engField label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);font-weight:700;}
+.engField input,.engField select,.engField textarea{background:var(--bg-alt);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font-body);font-size:13px;padding:8px 10px;outline:none;transition:border-color var(--t);}
+.engField input:focus,.engField select:focus,.engField textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(21,101,192,0.1);}
 .engField textarea{min-height:72px;resize:vertical;}
 .full{grid-column:1/-1;}
 .engActions{display:flex;justify-content:flex-end;margin-top:12px;}
 .engTableWrap{display:flex;flex-direction:column;gap:12px;}
 .engTableHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.engTitle{font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--white);text-transform:uppercase;letter-spacing:.05em;}
+.engTitle{font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.05em;}
 .engFilters{display:flex;gap:8px;}
-.engActive{border-color:var(--gold);color:var(--gold);}
+.engActive{border-color:var(--brand);color:var(--brand);}
 
 .guard{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;}
-.guardCard{background:var(--navy);border:1px solid var(--mid);border-radius:var(--r-lg);padding:2rem;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow);}
-.guardTitle{font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--white);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.7rem;}
-.guardText{font-size:14px;color:var(--muted);margin-bottom:1.4rem;line-height:1.6;}
+.guardCard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow);}
+.guardTitle{font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.7rem;}
+.guardText{font-size:14px;color:var(--text-secondary);margin-bottom:1.4rem;line-height:1.6;}
 
 @media(max-width:900px){
   .stats{grid-template-columns:1fr 1fr;}
   .engWrap{grid-template-columns:1fr;}
   .engGrid{grid-template-columns:1fr;}
+}
+
+@media(max-width:600px){
+  .nav{padding:0 1rem;overflow-x:auto;}
+  .navInner{min-width:max-content;}
+  .content{padding:1.5rem 1rem;}
+  .stats{grid-template-columns:1fr;}
+  .engTableHeader{align-items:flex-start;flex-direction:column;}
+  .engFilters{flex-wrap:wrap;}
 }

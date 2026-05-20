@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { SERVICES } from '@/data/services';
 import { formatPHP } from '@/utils/costing';
+import type { Booking } from '@/types';
 import styles from './AdminDashboard.module.css';
 
 type AdminTab = 'bookings' | 'engineers' | 'services' | 'users';
@@ -50,8 +51,8 @@ export default function AdminDashboard() {
     { label: 'Users', val: String(users.length), sub: 'registered' },
   ];
 
-  const updateBookingStatus = (id: string, status: string) => {
-    setBookings(prev => prev.map(b => b.id === id ? { ...b, status: status as any } : b));
+  const updateBookingStatus = (id: string, status: Booking['status']) => {
+    setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
     showToast('Status updated: ' + status);
   };
 
@@ -144,22 +145,23 @@ export default function AdminDashboard() {
         </div>
 
         {tab === 'bookings' && (
+          <div className={styles.tableWrap}>
           <table className="data-table">
             <thead><tr><th>Booking ID</th><th>Client</th><th>Service</th><th>Engineer</th><th>Area (sqm)</th><th>Total</th><th>Date</th><th>Status</th><th>Update</th></tr></thead>
             <tbody>
               {bookings.map(b => (
                 <tr key={b.id}>
-                  <td style={{ fontWeight: 700, color: 'var(--sky)' }}>{b.id}</td>
+                  <td style={{ fontWeight: 700, color: 'var(--brand-vivid)' }}>{b.id}</td>
                   <td>{b.client}</td>
                   <td>{b.service}</td>
                   <td>{b.engineer}</td>
                   <td>{b.area}</td>
-                  <td style={{ color: 'var(--gold)', fontWeight: 600 }}>{formatPHP(b.total)}</td>
-                  <td style={{ color: 'var(--muted)' }}>{b.date}</td>
+                  <td style={{ color: 'var(--brand)', fontWeight: 600 }}>{formatPHP(b.total)}</td>
+                  <td style={{ color: 'var(--text-muted)' }}>{b.date}</td>
                   <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
                   <td>
-                    <select className={styles.actionSel} value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value)}>
-                      {['Pending', 'Confirmed', 'Ongoing', 'Completed', 'Cancelled'].map(s => (
+                    <select className={styles.actionSel} value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value as Booking['status'])}>
+                      {(['Pending', 'Confirmed', 'Ongoing', 'Completed', 'Cancelled'] as Booking['status'][]).map(s => (
                         <option key={s} value={s}>{s}</option>
                       ))}
                     </select>
@@ -168,6 +170,7 @@ export default function AdminDashboard() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
 
         {tab === 'engineers' && (
@@ -206,15 +209,16 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               </div>
+              <div className={styles.tableWrap}>
               <table className="data-table">
                 <thead><tr><th>Name</th><th>Specialization</th><th>Experience</th><th>Daily Rate</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody>
                   {visibleEngineers.map(e => (
                     <tr key={e.id}>
                       <td>{e.name}</td>
-                      <td style={{ color: 'var(--sky)' }}>{e.spec}</td>
+                      <td style={{ color: 'var(--brand-vivid)' }}>{e.spec}</td>
                       <td>{e.exp}</td>
-                      <td style={{ color: 'var(--gold)' }}>{formatPHP(e.rate)}</td>
+                      <td style={{ color: 'var(--brand)' }}>{formatPHP(e.rate)}</td>
                       <td>★ {e.rating}</td>
                       <td><span className={`status-pill ${e.status === 'available' ? 's-completed' : 's-ongoing'}`}>{e.status}</span></td>
                       <td style={{ display: 'flex', gap: '8px' }}>
@@ -225,29 +229,33 @@ export default function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
 
         {tab === 'services' && (
+          <div className={styles.tableWrap}>
           <table className="data-table">
             <thead><tr><th>Service</th><th>Type</th><th>Mat. Cost/sqm</th><th>Labor/sqm</th><th>Duration</th><th>Min Area</th></tr></thead>
             <tbody>
-              {SERVICES.map((s: any) => (
+              {SERVICES.map(s => (
                 <tr key={s.id}>
                   <td>{s.name}</td>
                   <td>{s.type}</td>
-                  <td style={{ color: 'var(--gold)' }}>{formatPHP(s.baseCostPerSqm.materials)}</td>
-                  <td style={{ color: 'var(--sky)' }}>{formatPHP(s.baseCostPerSqm.labor)}</td>
+                  <td style={{ color: 'var(--brand)' }}>{formatPHP(s.baseCostPerSqm.materials)}</td>
+                  <td style={{ color: 'var(--brand-vivid)' }}>{formatPHP(s.baseCostPerSqm.labor)}</td>
                   <td>{s.duration}</td>
                   <td>{s.minSqm} sqm</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         )}
 
         {tab === 'users' && (
+          <div className={styles.tableWrap}>
           <table className="data-table">
             <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Phone</th></tr></thead>
             <tbody>
@@ -261,6 +269,7 @@ export default function AdminDashboard() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

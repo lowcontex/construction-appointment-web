@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { formatPHP } from '@/utils/costing';
+import Reveal from './Reveal';
 import styles from './EngineerGrid.module.css';
 
 function initials(name: string): string {
@@ -19,7 +20,7 @@ export default function EngineerGrid() {
   const filtered = filter === 'All' ? engineers : engineers.filter(e => e.spec === filter);
 
   return (
-    <div className="section">
+    <Reveal className="section">
       <div className="section-tag">Our Team</div>
       <div className="section-title">Meet Our Licensed Engineers</div>
       <p className="section-sub">All engineers are PRC-licensed, experienced, and vetted by our team. Pick the right expert for your project.</p>
@@ -36,8 +37,8 @@ export default function EngineerGrid() {
         ))}
       </div>
       <div className={styles.grid}>
-        {filtered.map(e => (
-          <div key={e.id} className={styles.card}>
+        {filtered.map((e, i) => (
+          <Reveal key={e.id} className={styles.card} variant="card" delay={i * 70}>
             <div className={styles.avatar}>
               <div className={styles.avatarInitial}>{initials(e.name)}</div>
               <span className={`${styles.badge} ${e.status === 'available' ? 'badge-available' : 'badge-busy'}`}>
@@ -62,9 +63,9 @@ export default function EngineerGrid() {
               </div>
               <button className="btn btn-gold btn-sm" onClick={() => showPage('booking')}>Hire</button>
             </div>
-          </div>
+          </Reveal>
         ))}
       </div>
-    </div>
+    </Reveal>
   );
 }
