@@ -29,7 +29,7 @@ interface AppContextType {
   closeModal: () => void;
   switchAuthTab: (tab: 'login' | 'register') => void;
   doLogin: (email: string, password: string) => void;
-  doRegister: (form: Record<string, string>, role: string) => void;
+  doRegister: (form: Record<string, string>) => void;
   logout: () => void;
   toast: ToastState;
   showToast: (msg: string, icon?: string) => void;
@@ -99,8 +99,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     showToast('Logged out successfully.');
   }, [showPage, showToast]);
 
-  const doRegister = useCallback((form: Record<string, string>, role: string) => {
-    const { fname, lname, email, phone, password, prc, spec, exp, rate, bio } = form;
+  const doRegister = useCallback((form: Record<string, string>) => {
+    const { fname, lname, email, phone, password } = form;
     if (!fname || !email || !password) { showToast('Please fill in all required fields.'); return; }
     if (users.find(u => u.email === email)) { showToast('Email already registered.'); return; }
     if (password.length < 8) { showToast('Password must be at least 8 characters.'); return; }
@@ -111,26 +111,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
       phone,
-      role: role as User['role'],
+      role: 'customer',
     };
-
-    if (role === 'engineer') {
-      if (!prc) { showToast('PRC License No. is required for engineers.'); return; }
-      const specShort = spec.split(' ')[0];
-      setEngineers(prev => [...prev, {
-        id: prev.length + 1,
-        name: 'Engr. ' + fname + ' ' + lname,
-        spec: specShort,
-        avatar: '',
-        exp: exp + ' years',
-        rate: parseInt(rate) || 2500,
-        rating: 5.0,
-        reviews: 0,
-        status: 'available' as const,
-        skills: [specShort],
-        bio: bio || 'Newly registered engineer.',
-      }]);
-    }
 
     setUsers(prev => [...prev, newUser]);
     setCurrentUser(newUser);

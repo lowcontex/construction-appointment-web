@@ -5,7 +5,6 @@ import { useApp } from '@/context/AppContext';
 
 export default function AuthModal() {
   const { modalOpen, modalTab, closeModal, switchAuthTab } = useApp();
-  const [role, setRole] = useState<'customer' | 'engineer'>('customer');
 
   const handleOverlay = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) closeModal();
@@ -30,7 +29,7 @@ export default function AuthModal() {
 
         {/* REGISTER */}
         <div className={`modal-form ${modalTab === 'register' ? 'active' : ''}`}>
-          <RegisterForm role={role} onRoleChange={setRole} />
+          <RegisterForm />
         </div>
       </div>
     </div>
@@ -66,7 +65,7 @@ function LoginForm() {
   );
 }
 
-function RegisterForm({ role, onRoleChange }: { role: 'customer' | 'engineer'; onRoleChange: (r: 'customer' | 'engineer') => void }) {
+function RegisterForm() {
   const { doRegister } = useApp();
   const [form, setForm] = useState({
     fname: '', lname: '', email: '', phone: '', password: '',
@@ -79,19 +78,16 @@ function RegisterForm({ role, onRoleChange }: { role: 'customer' | 'engineer'; o
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    doRegister(form, role);
+    doRegister(form);
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="modal-field">
-        <label className="modal-label">I am registering as</label>
+        <label className="modal-label">Account Type</label>
         <div className="role-picker">
-          <div className={`role-opt ${role === 'customer' ? 'selected' : ''}`} onClick={() => onRoleChange('customer')}>
+          <div className="role-opt selected">
             <div className="role-opt-name">Customer</div>
-          </div>
-          <div className={`role-opt ${role === 'engineer' ? 'selected' : ''}`} onClick={() => onRoleChange('engineer')}>
-            <div className="role-opt-name">Engineer</div>
           </div>
         </div>
       </div>
@@ -103,20 +99,10 @@ function RegisterForm({ role, onRoleChange }: { role: 'customer' | 'engineer'; o
       <div className="modal-field"><label className="modal-label">Phone</label><input className="modal-input" placeholder="+63 9XX XXX XXXX" value={form.phone} onChange={handleChange('phone')} /></div>
       <div className="modal-field"><label className="modal-label">Password</label><input className="modal-input" type="password" placeholder="Min. 8 characters" value={form.password} onChange={handleChange('password')} /></div>
 
-      <div className={`eng-extra ${role === 'engineer' ? 'show' : ''}`}>
-        <div className="modal-divider">Engineer Information</div>
-        <div className="modal-field"><label className="modal-label">PRC License No.</label><input className="modal-input" placeholder="e.g. 0012345" value={form.prc} onChange={handleChange('prc')} /></div>
-        <div className="modal-field">
-          <label className="modal-label">Specialization</label>
-          <select className="modal-select" value={form.spec} onChange={handleChange('spec')}>
-            <option>Civil Engineering</option><option>Structural Engineering</option>
-            <option>Electrical Engineering</option><option>Mechanical Engineering</option>
-            <option>Geodetic Engineering</option>
-          </select>
+      <div className="modal-field" style={{ marginTop: '1rem' }}>
+        <div style={{ fontSize: '12px', color: 'var(--muted)', lineHeight: '1.6' }}>
+          Engineer accounts are created by admins only. If you are an engineer, please contact support to be added.
         </div>
-        <div className="modal-field"><label className="modal-label">Years of Experience</label><input className="modal-input" type="number" placeholder="e.g. 5" value={form.exp} onChange={handleChange('exp')} /></div>
-        <div className="modal-field"><label className="modal-label">Daily Rate (₱)</label><input className="modal-input" type="number" placeholder="e.g. 2500" value={form.rate} onChange={handleChange('rate')} /></div>
-        <div className="modal-field"><label className="modal-label">Notable Projects / Bio</label><textarea className="modal-input" placeholder="Brief experience summary..." style={{ minHeight: '70px', resize: 'vertical' }} value={form.bio} onChange={handleChange('bio')} /></div>
       </div>
 
       <button className="btn btn-gold" style={{ width: '100%', marginTop: '1rem', padding: '13px' }}>Create Account</button>

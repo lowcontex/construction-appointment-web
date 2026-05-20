@@ -33,6 +33,7 @@ export interface Engineer {
   status: 'available' | 'busy';
   skills: string[];
   bio: string;
+  userEmail?: string;
 }
 
 export interface User {

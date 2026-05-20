@@ -37,7 +37,11 @@ export default function Header() {
         <div className={styles.headerBtns}>
           {currentUser ? (
             <>
-              <button className="btn btn-outline btn-sm" onClick={() => showPage('admin')}>Dashboard</button>
+              {currentUser.role === 'admin' ? (
+                <button className="btn btn-outline btn-sm" onClick={() => showPage('admin')}>Admin</button>
+              ) : (
+                <button className="btn btn-outline btn-sm" onClick={() => showPage('booking')}>My Booking</button>
+              )}
               <button className="btn btn-gold" onClick={logout}>Logout</button>
             </>
           ) : (

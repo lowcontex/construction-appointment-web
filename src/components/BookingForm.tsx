@@ -44,6 +44,7 @@ export default function BookingForm() {
 
   const confirmBooking = () => {
     if (!currentUser) { showToast('Please login to confirm booking'); openModal('login'); return; }
+    if (currentUser.role !== 'customer') { showToast('Only customers can submit bookings.'); return; }
     if (!selectedService || !selectedEngineer) return;
     const id = 'BK-' + String(bookings.length + 1).padStart(3, '0');
     setBookings(prev => [{

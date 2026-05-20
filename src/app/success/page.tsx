@@ -28,7 +28,7 @@ export default function SuccessPage() {
         {successRef || 'Booking Reference: BK-000'}
       </div>
       <p style={{ color: 'var(--muted)', fontSize: '13px', marginBottom: '2rem' }}>
-        Track your booking status in the Admin Dashboard.
+        Track your booking status in the dashboard.
       </p>
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
         <button className="btn btn-gold" onClick={() => showPage('home')}>Back to Home</button>
