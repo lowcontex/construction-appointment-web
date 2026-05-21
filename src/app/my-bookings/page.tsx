@@ -39,65 +39,86 @@ export default function MyBookingsPage() {
 
   return (
     <div className={styles.shell}>
-      <Reveal className={styles.hero}>
+      <Reveal className={styles.heroSurface}>
         <div>
           <div className={styles.kicker}>Customer Dashboard</div>
           <h1 className={styles.title}>My Bookings</h1>
-          <p className={styles.subtitle}>Track your project requests, assigned engineers, dates, and booking status.</p>
+          <p className={styles.subtitle}>Track every project request, engineer assignment, estimate, and booking status from one clear view.</p>
+        </div>
+        <div className={styles.heroActions}>
+          <button className="btn btn-gold" type="button" onClick={() => showPage('booking')}>Book Another Project</button>
         </div>
       </Reveal>
 
       <div className={styles.summaryGrid}>
-        <Reveal className={styles.metric} variant="card" delay={80}>
+        <Reveal className={styles.metric} variant="card" delay={40}>
           <div className={styles.metricLabel}>Bookings</div>
           <div className={styles.metricValue}>{mine.length}</div>
           <div className={styles.metricSub}>total requests</div>
         </Reveal>
-        <Reveal className={styles.metric} variant="card" delay={150}>
+        <Reveal className={styles.metric} variant="card" delay={80}>
           <div className={styles.metricLabel}>Active</div>
           <div className={styles.metricValue}>{active}</div>
           <div className={styles.metricSub}>pending or in progress</div>
         </Reveal>
-        <Reveal className={styles.metric} variant="card" delay={220}>
+        <Reveal className={styles.metric} variant="card" delay={120}>
           <div className={styles.metricLabel}>Estimated Value</div>
           <div className={styles.metricValue}>{formatPHP(totalValue)}</div>
           <div className={styles.metricSub}>{completed} completed</div>
         </Reveal>
       </div>
 
-      <Reveal className={styles.tableWrap} variant="card" delay={140}>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Service</th>
-              <th>Engineer</th>
-              <th>Area (sqm)</th>
-              <th>Total</th>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mine.length === 0 ? (
-              <tr>
-                <td className={styles.emptyCell} colSpan={7}>No bookings yet.</td>
-              </tr>
-            ) : (
-              mine.map(b => (
-                <tr key={b.id}>
-                  <td className={styles.keyCell}>{b.id}</td>
-                  <td>{b.service}</td>
-                  <td>{b.engineer}</td>
-                  <td>{b.area}</td>
-                  <td className={styles.moneyCell}>{formatPHP(b.total)}</td>
-                  <td className={styles.mutedCell}>{b.date}</td>
-                  <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <Reveal className={styles.tableSection} delay={100}>
+        <div className={styles.tableHeader}>
+          <div>
+            <div className={styles.tableTitle}>Project Requests</div>
+            <p className={styles.tableDesc}>Each booking card shows the work type, engineer, date, status, and estimated value.</p>
+          </div>
+          <div className={styles.panelCount}>{mine.length} Total</div>
+        </div>
+
+        {mine.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyTitle}>No bookings yet</div>
+            Start a project request to see estimates, engineer assignments, and status updates here.
+            <div className={styles.emptyActions}>
+              <button className="btn btn-gold" type="button" onClick={() => showPage('booking')}>Start Booking</button>
+              <button className="btn btn-outline" type="button" onClick={() => showPage('services')}>View Services</button>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.bookingList}>
+            {mine.map(b => (
+              <article key={b.id} className={styles.bookingCard}>
+                <div className={styles.bookingHeader}>
+                  <div>
+                    <div className={styles.bookingId}>{b.id}</div>
+                    <div className={styles.bookingTitle}>{b.service}</div>
+                  </div>
+                  <span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span>
+                </div>
+                <div className={styles.bookingGrid}>
+                  <div>
+                    <span className={styles.fieldLabel}>Engineer</span>
+                    <span className={styles.fieldValue}>{b.engineer}</span>
+                  </div>
+                  <div>
+                    <span className={styles.fieldLabel}>Start Date</span>
+                    <span className={styles.fieldValue}>{b.date}</span>
+                  </div>
+                  <div>
+                    <span className={styles.fieldLabel}>Area</span>
+                    <span className={styles.fieldValue}>{b.area} sqm</span>
+                  </div>
+                  <div>
+                    <span className={styles.fieldLabel}>Estimate</span>
+                    <span className={styles.fieldValue}>{formatPHP(b.total)}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </Reveal>
     </div>
   );

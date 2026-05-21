@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 window.setTimeout(function () {
                   clean(document.documentElement);
                   observer.disconnect();
-                }, 3000);
+                }, 900);
               });
             })();
           `}

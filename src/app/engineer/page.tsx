@@ -33,69 +33,132 @@ export default function EngineerDashboardPage() {
 
   const firstName = currentUser.name.trim().split(/\s+/)[0] ?? '';
   const assigned = firstName ? bookings.filter(b => b.engineer.includes(firstName)) : [];
-  const active = assigned.filter(b => b.status === 'Confirmed' || b.status === 'Ongoing').length;
+  const activeAssigned = assigned.filter(b => b.status === 'Confirmed' || b.status === 'Ongoing');
+  const pendingAssigned = assigned.filter(b => b.status === 'Pending').length;
   const completed = assigned.filter(b => b.status === 'Completed').length;
 
   return (
     <div className={styles.shell}>
-      <Reveal className={styles.hero}>
+      <Reveal className={styles.heroSurface}>
         <div>
           <div className={styles.kicker}>Engineer Dashboard</div>
-          <h1 className={styles.title}>Assigned Bookings</h1>
-          <p className={styles.subtitle}>View project requests assigned to you and track their current status.</p>
+          <h1 className={styles.title}>Welcome, {currentUser.name}</h1>
+          <p className={styles.subtitle}>Track assigned projects, upcoming work, and client details from a compact field-ready view.</p>
+        </div>
+        <div className={styles.heroActions}>
+          <button className="btn btn-outline" type="button" onClick={() => showPage('home')}>Back to Home</button>
         </div>
       </Reveal>
 
       <div className={styles.summaryGrid}>
-        <Reveal className={styles.metric} variant="card" delay={80}>
+        <Reveal className={styles.metric} variant="card" delay={40}>
           <div className={styles.metricLabel}>Assigned</div>
           <div className={styles.metricValue}>{assigned.length}</div>
           <div className={styles.metricSub}>total projects</div>
         </Reveal>
-        <Reveal className={styles.metric} variant="card" delay={150}>
-          <div className={styles.metricLabel}>Active</div>
-          <div className={styles.metricValue}>{active}</div>
+        <Reveal className={styles.metric} variant="card" delay={80}>
+          <div className={styles.metricLabel}>Active Work</div>
+          <div className={styles.metricValue}>{activeAssigned.length}</div>
           <div className={styles.metricSub}>confirmed or ongoing</div>
         </Reveal>
-        <Reveal className={styles.metric} variant="card" delay={220}>
+        <Reveal className={styles.metric} variant="card" delay={120}>
           <div className={styles.metricLabel}>Completed</div>
           <div className={styles.metricValue}>{completed}</div>
-          <div className={styles.metricSub}>closed projects</div>
+          <div className={styles.metricSub}>{pendingAssigned} pending review</div>
         </Reveal>
       </div>
 
-      <Reveal className={styles.tableWrap} variant="card" delay={140}>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Client</th>
-              <th>Service</th>
-              <th>Area (sqm)</th>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assigned.length === 0 ? (
-              <tr>
-                <td className={styles.emptyCell} colSpan={6}>No assigned bookings yet.</td>
-              </tr>
+      <div className={styles.workspace}>
+        <Reveal className={styles.panel} variant="card" delay={80}>
+          <div className={styles.panelHeader}>
+            <div>
+              <div className={styles.panelTitle}>Active Work</div>
+              <p className={styles.panelDesc}>Projects that need field attention now.</p>
+            </div>
+            <div className={styles.panelCount}>{activeAssigned.length} Active</div>
+          </div>
+          <div className={styles.workList}>
+            {activeAssigned.length === 0 ? (
+              <div className={styles.emptyState}>
+                <div className={styles.emptyTitle}>No active assignments</div>
+                Confirmed or ongoing projects will appear here when an admin updates the booking status.
+              </div>
             ) : (
-              assigned.map(b => (
-                <tr key={b.id}>
-                  <td className={styles.keyCell}>{b.id}</td>
-                  <td>{b.client}</td>
-                  <td>{b.service}</td>
-                  <td>{b.area}</td>
-                  <td className={styles.mutedCell}>{b.date}</td>
-                  <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
-                </tr>
+              activeAssigned.map(b => (
+                <div key={b.id} className={styles.workItem}>
+                  <div className={styles.workItemHeader}>
+                    <div>
+                      <div className={styles.workTitle}>{b.service}</div>
+                      <div className={styles.workSub}>{b.client}</div>
+                    </div>
+                    <span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span>
+                  </div>
+                  <div className={styles.workMeta}>
+                    <div>
+                      <span className={styles.metaLabel}>Booking</span>
+                      <span className={styles.metaValue}>{b.id}</span>
+                    </div>
+                    <div>
+                      <span className={styles.metaLabel}>Start Date</span>
+                      <span className={styles.metaValue}>{b.date}</span>
+                    </div>
+                    <div>
+                      <span className={styles.metaLabel}>Area</span>
+                      <span className={styles.metaValue}>{b.area} sqm</span>
+                    </div>
+                    <div>
+                      <span className={styles.metaLabel}>Status</span>
+                      <span className={styles.metaValue}>{b.status}</span>
+                    </div>
+                  </div>
+                </div>
               ))
             )}
-          </tbody>
-        </table>
-      </Reveal>
+          </div>
+        </Reveal>
+
+        <Reveal className={styles.tableSection} delay={120}>
+          <div className={styles.tableHeader}>
+            <div>
+              <div className={styles.tableTitle}>Assignment Log</div>
+              <p className={styles.tableDesc}>A complete list of projects currently tied to your engineer profile.</p>
+            </div>
+            <div className={styles.panelCount}>{assigned.length} Total</div>
+          </div>
+          <div className={styles.tableWrap}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Client</th>
+                  <th>Service</th>
+                  <th>Area</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {assigned.length === 0 ? (
+                  <tr>
+                    <td className={styles.emptyCell} colSpan={6}>No assigned bookings yet.</td>
+                  </tr>
+                ) : (
+                  assigned.map(b => (
+                    <tr key={b.id}>
+                      <td className={styles.keyCell}>{b.id}</td>
+                      <td>{b.client}</td>
+                      <td>{b.service}</td>
+                      <td>{b.area} sqm</td>
+                      <td className={styles.mutedCell}>{b.date}</td>
+                      <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Reveal>
+      </div>
     </div>
   );
 }

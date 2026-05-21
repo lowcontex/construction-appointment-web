@@ -58,7 +58,8 @@ export default function BookingForm() {
       if (draft.date) setDate(draft.date);
       if (draft.timeline) setTimeline(draft.timeline);
       if (draft.notes) setNotes(draft.notes);
-    } catch {
+    } catch (error) {
+      console.warn('Failed to restore booking draft from localStorage.', { error });
       localStorage.removeItem(DRAFT_KEY);
     }
   }, []);
@@ -71,7 +72,15 @@ export default function BookingForm() {
 
   useEffect(() => {
     const draft = { step, name, phone, address, bArea, floors, grade, date, timeline, notes };
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    const timer = window.setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      } catch (error) {
+        console.error('Failed to save booking draft to localStorage.', { error });
+      }
+    }, 180);
+
+    return () => window.clearTimeout(timer);
   }, [step, name, phone, address, bArea, floors, grade, date, timeline, notes]);
 
   useEffect(() => {

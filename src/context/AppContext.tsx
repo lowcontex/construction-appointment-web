@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { User, Engineer, Booking, BookingState, PageId } from '@/types';
 import { initialEngineers, initialUsers, initialBookings } from '@/data/engineers';
@@ -12,7 +12,6 @@ interface ToastState {
 }
 
 interface AppContextType {
-  currentPage: PageId;
   showPage: (id: PageId) => void;
   currentUser: User | null;
   engineers: Engineer[];
@@ -43,6 +42,11 @@ const AppContext = createContext<AppContextType | null>(null);
 
 const STORAGE_KEY = 'construction-app-state-v1';
 const USER_ROLES = new Set<User['role']>(['admin', 'engineer', 'customer']);
+const ROLE_PRIORITY: Record<User['role'], number> = {
+  admin: 3,
+  engineer: 2,
+  customer: 1,
+};
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
@@ -50,6 +54,26 @@ function normalizeEmail(email: string) {
 
 function cleanText(value: string, maxLength = 120) {
   return value.trim().replace(/\s+/g, ' ').slice(0, maxLength);
+}
+
+function getNextUserId(userList: User[]) {
+  return userList.reduce((max, user) => Math.max(max, user.id), 0) + 1;
+}
+
+function isSameEmail(left: string, right: string) {
+  return normalizeEmail(left) === normalizeEmail(right);
+}
+
+function hasRegisteredEmail(userList: User[], email: string) {
+  const safeEmail = normalizeEmail(email);
+  return userList.some(user => normalizeEmail(user.email) === safeEmail);
+}
+
+function getPreferredUser(left: User, right: User) {
+  const roleDelta = ROLE_PRIORITY[right.role] - ROLE_PRIORITY[left.role];
+  if (roleDelta > 0) return right;
+  if (roleDelta < 0) return left;
+  return right.id < left.id ? right : left;
 }
 
 function isUser(value: unknown): value is User {
@@ -75,11 +99,36 @@ function isBookingState(value: unknown): value is BookingState {
 }
 
 function sanitizeUsers(value: unknown) {
-  return Array.isArray(value) ? value.filter(isUser) : null;
+  if (!Array.isArray(value)) return null;
+
+  const usersByEmail = new Map<string, User>();
+  value.filter(isUser).forEach(user => {
+    const safeEmail = normalizeEmail(user.email);
+    if (!safeEmail) return;
+    const normalizedUser = { ...user, email: safeEmail };
+    const existing = usersByEmail.get(safeEmail);
+    usersByEmail.set(safeEmail, existing ? getPreferredUser(existing, normalizedUser) : normalizedUser);
+  });
+
+  const safeUsers = Array.from(usersByEmail.values());
+  const usedIds = new Set<number>();
+  let nextId = getNextUserId(safeUsers);
+
+  return safeUsers.map(user => {
+    if (Number.isSafeInteger(user.id) && user.id > 0 && !usedIds.has(user.id)) {
+      usedIds.add(user.id);
+      return user;
+    }
+
+    while (usedIds.has(nextId)) nextId += 1;
+    const remappedUser = { ...user, id: nextId };
+    usedIds.add(nextId);
+    nextId += 1;
+    return remappedUser;
+  });
 }
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [currentPage, setCurrentPage] = useState<PageId>('home');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [engineers, setEngineers] = useState<Engineer[]>(initialEngineers);
   const [users, setUsers] = useState<User[]>(initialUsers);
@@ -91,13 +140,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<ToastState>({ message: '', icon: '', visible: false });
   const [successRef, setSuccessRef] = useState('');
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [, startTransition] = useTransition();
   const router = useRouter();
 
   const showPage = useCallback((id: PageId) => {
-    setCurrentPage(id);
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
     const paths: Record<PageId, string> = {
       home: '/',
       services: '/services',
@@ -108,8 +154,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       'my-bookings': '/my-bookings',
       success: '/success',
     };
-    router.push(paths[id]);
-  }, [router]);
+    const targetPath = paths[id];
+    if (typeof window !== 'undefined' && window.location.pathname === targetPath) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return;
+    }
+    startTransition(() => {
+      router.push(targetPath, { scroll: true });
+    });
+  }, [router, startTransition]);
 
   const openModal = useCallback((tab: 'login' | 'register') => {
     setModalOpen(true);
@@ -140,12 +193,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const doLogin = useCallback((email: string, password: string) => {
     const safeEmail = normalizeEmail(email);
-    const user = users.find(u => normalizeEmail(u.email) === safeEmail && u.password === password);
+    const user = users
+      .filter(u => normalizeEmail(u.email) === safeEmail && u.password === password)
+      .sort((a, b) => ROLE_PRIORITY[b.role] - ROLE_PRIORITY[a.role])[0];
     if (!user) { showToast('Invalid credentials.'); return; }
     setCurrentUser(user);
     closeModal();
     showToast('Welcome back, ' + user.name + '!');
-    setTimeout(() => handlePostAuth(user), 400);
+    handlePostAuth(user);
   }, [users, showToast, closeModal, handlePostAuth]);
 
   const logout = useCallback(() => {
@@ -163,11 +218,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const safePhone = cleanText(phone, 30);
     if (!safeFirstName || !safeEmail || !password) { showToast('Please fill in all required fields.'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) { showToast('Please enter a valid email address.'); return; }
-    if (users.find(u => normalizeEmail(u.email) === safeEmail)) { showToast('Email already registered.'); return; }
+    if (hasRegisteredEmail(users, safeEmail)) { showToast('This email is already registered.'); return; }
     if (password.length < 8) { showToast('Password must be at least 8 characters.'); return; }
 
     const newUser: User = {
-      id: users.length + 1,
+      id: getNextUserId(users),
       name: cleanText(`${safeFirstName} ${safeLastName}`),
       email: safeEmail,
       password,
@@ -179,7 +234,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(newUser);
     closeModal();
     showToast('Account created! Welcome, ' + safeFirstName + '!');
-    setTimeout(() => handlePostAuth(newUser), 400);
+    handlePostAuth(newUser);
   }, [users, showToast, closeModal, handlePostAuth]);
 
   useEffect(() => {
@@ -187,11 +242,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!stored) return;
     try {
       const parsed = JSON.parse(stored);
-      if (isUser(parsed?.currentUser)) setCurrentUser(parsed.currentUser);
       if (isBookingState(parsed?.booking)) setBooking(parsed.booking);
       if (Array.isArray(parsed?.bookings)) setBookings(parsed.bookings);
       const safeUsers = sanitizeUsers(parsed?.users);
-      if (safeUsers) setUsers(safeUsers);
+      if (safeUsers) {
+        setUsers(safeUsers);
+        if (isUser(parsed?.currentUser)) {
+          const restoredUser = safeUsers.find(user => isSameEmail(user.email, parsed.currentUser.email));
+          setCurrentUser(restoredUser ?? parsed.currentUser);
+        }
+      } else if (isUser(parsed?.currentUser)) {
+        setCurrentUser(parsed.currentUser);
+      }
       if (parsed?.engineers) setEngineers(parsed.engineers);
       if (parsed?.pendingAction) setPendingAction(parsed.pendingAction);
     } catch (error) {
@@ -209,12 +271,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       engineers,
       pendingAction,
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const timer = window.setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (error) {
+        console.error('Failed to persist app state to localStorage.', { error });
+      }
+    }, 160);
+
+    return () => window.clearTimeout(timer);
   }, [currentUser, booking, bookings, users, engineers, pendingAction]);
 
   return (
     <AppContext.Provider value={{
-      currentPage, showPage, currentUser,
+      showPage, currentUser,
       engineers, setEngineers, users, setUsers, bookings, setBookings,
       booking, setBooking, modalOpen, modalTab, openModal, closeModal,
       switchAuthTab, doLogin, doRegister, logout, pendingAction, setPendingAction,
