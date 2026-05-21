@@ -41,7 +41,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 const STORAGE_KEY = 'construction-app-state-v1';
-const STORAGE_VERSION = '2'; // increment when storage schema changes
+const STORAGE_VERSION = '3'; // increment when storage schema or initial data changes
 const USER_ROLES = new Set<User['role']>(['admin', 'engineer', 'customer']);
 const ROLE_PRIORITY: Record<User['role'], number> = {
   admin: 3,

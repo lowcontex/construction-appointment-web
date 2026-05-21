@@ -110,10 +110,10 @@ function LoginForm() {
         <input className="modal-input" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
       </div>
       <button className={`btn btn-gold ${styles.fullButton}`}>Login to Agudo Construction</button>
-      <div className={styles.demoCredentials}>
-        Demo: <span className={styles.demoValue}>admin@buildright.com</span> / <span className={styles.demoValue}>admin123</span>
-        <span aria-hidden="true"> | </span><span className={styles.demoValue}>eng@buildright.com</span> / <span className={styles.demoValue}>eng123</span>
-      </div>
+       <div className={styles.demoCredentials}>
+         <span className={styles.demoValue}>admin@agudo.com</span> / <span className={styles.demoValue}>admin123</span>
+         <span aria-hidden="true"> | </span><span className={styles.demoValue}>eng@agudo.com</span> / <span className={styles.demoValue}>eng123</span>
+       </div>
     </form>
   );
 }
