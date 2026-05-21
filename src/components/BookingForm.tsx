@@ -88,6 +88,10 @@ export default function BookingForm() {
   const cost = selectedService && bArea && Number(bArea) > 0
     ? calcCost(selectedService, Number(bArea), Number(floors) || 1, grade, timeline)
     : null;
+  const hasDraft = Boolean(
+    booking.service || booking.engineer || name || phone || address || bArea || date || notes ||
+    step > 1 || floors !== '1' || grade !== 'standard' || timeline !== 'normal'
+  );
 
   const nextStep = () => {
     if (step === 1 && !booking.service) { showToast('Please select a service.'); return; }
@@ -103,6 +107,21 @@ export default function BookingForm() {
   };
 
   const prevStep = () => setStep(s => s - 1);
+  const clearDraft = () => {
+    setStep(1);
+    setName(currentUser?.name || '');
+    setPhone(currentUser?.phone || '');
+    setAddress('');
+    setBArea('');
+    setFloors('1');
+    setGrade('standard');
+    setDate('');
+    setTimeline('normal');
+    setNotes('');
+    setBooking({ service: null, engineer: null });
+    localStorage.removeItem(DRAFT_KEY);
+    showToast('Booking draft cleared.');
+  };
 
   const confirmBooking = useCallback(() => {
     if (!currentUser) {
@@ -138,10 +157,19 @@ export default function BookingForm() {
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.title}>Book a Project</div>
-      <p className={styles.subtitle}>
-        Fill in your project details and get a full cost estimate before confirming.
-      </p>
+      <div className={styles.titleRow}>
+        <div>
+          <div className={styles.title}>Book a Project</div>
+          <p className={styles.subtitle}>
+            Fill in your project details and get a full cost estimate before confirming.
+          </p>
+        </div>
+        {hasDraft && (
+          <button className={`btn btn-outline btn-sm ${styles.clearButton}`} type="button" onClick={clearDraft}>
+            Clear Draft
+          </button>
+        )}
+      </div>
 
       <div className={styles.steps} aria-label="Booking progress">
         {['Service', 'Details', 'Engineer', 'Confirm'].map((label, i) => {
@@ -163,13 +191,14 @@ export default function BookingForm() {
         <div className={styles.panel}>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Select Service</div>
-            <div className={styles.picker}>
+            <div className={styles.picker} role="listbox" aria-label="Service options">
               {SERVICES.map(s => (
                 <button
                   type="button"
                   key={s.id}
+                  role="option"
                   className={`${styles.pick} ${booking.service === s.id ? styles.selected : ''}`}
-                  aria-pressed={booking.service === s.id}
+                  aria-selected={booking.service === s.id}
                   onClick={() => setBooking(prev => ({ ...prev, service: s.id }))}
                 >
                   <span className={styles.pickIcon} aria-hidden="true"></span>
@@ -232,13 +261,14 @@ export default function BookingForm() {
         <div className={styles.panel}>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Select Engineer</div>
-            <div className={styles.picker}>
+            <div className={styles.picker} role="listbox" aria-label="Engineer options">
               {engineers.map(e => (
                 <button
                   type="button"
                   key={e.id}
+                  role="option"
                   className={`${styles.engPick} ${booking.engineer === e.id ? styles.selected : ''}`}
-                  aria-pressed={booking.engineer === e.id}
+                  aria-selected={booking.engineer === e.id}
                   disabled={e.status !== 'available'}
                   onClick={() => setBooking(prev => ({ ...prev, engineer: e.id }))}
                 >

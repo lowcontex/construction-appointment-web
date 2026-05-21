@@ -143,6 +143,8 @@ button,a,[role="button"]{
 .btn:hover{transform:scale(1.01);box-shadow:var(--shadow-xs);}
 .btn:active{transform:scale(0.99);}
 .btn:focus-visible{outline:none;box-shadow:0 0 0 3px hsla(215, 65%, 29%, .16);}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn:disabled:hover{transform:none;box-shadow:none;}
 .btn-gold{background:var(--brand);color:white;border-color:var(--brand);}
 .btn-gold:hover{background:var(--brand-dark);border-color:var(--brand-dark);}
 .btn-outline{background:var(--color-surface);color:var(--text);border-color:var(--color-border);}

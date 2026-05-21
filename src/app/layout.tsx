@@ -21,6 +21,10 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: 'Agudo Construction - Together, We Build Stronger',
   description: 'Licensed construction services with transparent pricing. Book engineers, estimate costs, and track projects online. Agudo Construction - Together, We Build Stronger.',
+  icons: {
+    icon: [{ url: '/img/agudo-logo.svg', type: 'image/svg+xml' }],
+    shortcut: [{ url: '/img/agudo-logo.svg', type: 'image/svg+xml' }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

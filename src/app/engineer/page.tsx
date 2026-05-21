@@ -157,6 +157,28 @@ export default function EngineerDashboardPage() {
               </tbody>
             </table>
           </div>
+          <div className={styles.mobileCards} aria-label="Assigned booking cards">
+            {assigned.length === 0 ? (
+              <div className={styles.emptyCard}>No assigned bookings yet.</div>
+            ) : (
+              assigned.map(b => (
+                <article key={b.id} className={styles.bookingCard}>
+                  <div className={styles.cardTop}>
+                    <div>
+                      <div className={styles.cardEyebrow}>{b.id}</div>
+                      <div className={styles.cardTitle}>{b.service}</div>
+                    </div>
+                    <span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span>
+                  </div>
+                  <div className={styles.cardRows}>
+                    <div><span>Client</span><strong>{b.client}</strong></div>
+                    <div><span>Area</span><strong>{b.area} sqm</strong></div>
+                    <div><span>Date</span><strong>{b.date}</strong></div>
+                  </div>
+                </article>
+              ))
+            )}
+          </div>
         </Reveal>
       </div>
     </div>

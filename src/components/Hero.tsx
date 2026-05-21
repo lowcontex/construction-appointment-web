@@ -12,7 +12,7 @@ export default function Hero() {
     <div className={styles.hero}>
       <div className={styles.grid}></div>
       <div className={styles.inner}>
-        <div>
+        <div className={styles.copy}>
           <div className={styles.eyebrow}>Trusted Construction Partner</div>
           <h1 className={styles.heading}>Build Your <em className={styles.em}>Vision</em><br />With Expert Hands</h1>
           <p className={styles.sub}>From house construction to commercial renovation with transparent pricing, licensed engineers, and quality materials. Know your cost before you commit.</p>
@@ -33,7 +33,7 @@ export default function Hero() {
 }
 
 function QuickEstimateCard() {
-  const { showPage } = useApp();
+  const { showPage, setBooking } = useApp();
   const [selectedService, setSelectedService] = useState('');
   const [area, setArea] = useState('');
 
@@ -43,6 +43,12 @@ function QuickEstimateCard() {
   const mat = service && areaValue > 0 ? service.baseCostPerSqm.materials * areaValue : 0;
   const labor = service && areaValue > 0 ? service.baseCostPerSqm.labor * areaValue : 0;
   const total = mat + labor;
+  const continueToBooking = () => {
+    if (selectedService) {
+      setBooking(prev => ({ ...prev, service: selectedService }));
+    }
+    showPage('booking');
+  };
 
   return (
     <div className={styles.card}>
@@ -68,7 +74,7 @@ function QuickEstimateCard() {
           <div className={styles.resultTotal}><span>Total</span><span>PHP {total.toLocaleString()}</span></div>
         </div>
       )}
-      <button className={`btn btn-gold ${styles.fullButton}`} onClick={() => showPage('booking')}>
+      <button className={`btn btn-gold ${styles.fullButton}`} onClick={continueToBooking}>
         Proceed to Full Booking
       </button>
     </div>

@@ -7,7 +7,12 @@ import Reveal from './Reveal';
 import styles from './ServiceCards.module.css';
 
 export default function ServiceCards() {
-  const { showPage } = useApp();
+  const { showPage, setBooking } = useApp();
+
+  const bookService = (serviceId: string) => {
+    setBooking(prev => ({ ...prev, service: serviceId }));
+    showPage('booking');
+  };
 
   return (
     <Reveal className="section">
@@ -20,7 +25,7 @@ export default function ServiceCards() {
             <button
               type="button"
               className={styles.card}
-              onClick={() => showPage('booking')}
+              onClick={() => bookService(s.id)}
               aria-label={`Book ${s.name}`}
             >
               <div className={styles.top}>

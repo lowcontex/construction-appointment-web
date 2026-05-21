@@ -1,16 +1,9 @@
-.reveal{opacity:1;transform:none;animation:revealIn 220ms ease both;animation-delay:var(--reveal-delay,0ms);will-change:opacity,transform;}
-.card{animation-name:revealCardIn;}
+.reveal{opacity:0;transform:translate3d(0,16px,0);transition:opacity var(--transition-slow),transform var(--transition-slow);transition-delay:var(--reveal-delay,0ms);}
+.card{transform:translate3d(0,14px,0) scale(.992);}
+.visible{opacity:1;transform:none;}
+.reveal:not(.visible){will-change:opacity,transform;}
+.visible{will-change:auto;}
 
 @media(prefers-reduced-motion:reduce){
-  .reveal{animation:none;will-change:auto;}
-}
-
-@keyframes revealIn{
-  from{opacity:.92;transform:translate3d(0,8px,0);}
-  to{opacity:1;transform:none;}
-}
-
-@keyframes revealCardIn{
-  from{opacity:.92;transform:translate3d(0,8px,0) scale(.992);}
-  to{opacity:1;transform:none;}
+  .reveal{opacity:1;transform:none;transition:none;will-change:auto;}
 }

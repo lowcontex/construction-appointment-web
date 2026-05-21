@@ -66,8 +66,7 @@ function isSameEmail(left: string, right: string) {
 }
 
 function hasRegisteredEmail(userList: User[], email: string) {
-  const safeEmail = normalizeEmail(email);
-  return userList.some(user => normalizeEmail(user.email) === safeEmail);
+  return userList.some(user => isSameEmail(user.email, email));
 }
 
 function getPreferredUser(left: User, right: User) {
@@ -161,7 +160,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     startTransition(() => {
-      router.push(targetPath, { scroll: true }).catch(() => {});
+      router.push(targetPath, { scroll: true });
     });
   }, [router, startTransition]);
 
@@ -248,10 +247,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem(STORAGE_KEY);
         return;
       }
-      if (parsed?.currentUser) setCurrentUser(parsed.currentUser);
-      if (parsed?.booking) setBooking(parsed.booking);
+      if (isUser(parsed?.currentUser)) setCurrentUser(parsed.currentUser);
+      if (isBookingState(parsed?.booking)) setBooking(parsed.booking);
       if (parsed?.bookings) setBookings(parsed.bookings);
-      if (parsed?.users) setUsers(parsed.users);
+      const safeUsers = sanitizeUsers(parsed?.users);
+      if (safeUsers) setUsers(safeUsers);
       if (parsed?.engineers) setEngineers(parsed.engineers);
       if (parsed?.pendingAction) setPendingAction(parsed.pendingAction);
     } catch {
@@ -261,6 +261,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const data = {
+      version: STORAGE_VERSION,
       currentUser,
       booking,
       bookings,

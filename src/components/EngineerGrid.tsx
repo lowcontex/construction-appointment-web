@@ -14,10 +14,14 @@ function initials(name: string): string {
 const specs = ['All', 'Civil', 'Structural', 'Electrical', 'Mechanical'];
 
 export default function EngineerGrid() {
-  const { engineers, showPage } = useApp();
+  const { engineers, showPage, setBooking } = useApp();
   const [filter, setFilter] = useState('All');
 
   const filtered = filter === 'All' ? engineers : engineers.filter(e => e.spec === filter);
+  const hireEngineer = (engineerId: number) => {
+    setBooking(prev => ({ ...prev, engineer: engineerId }));
+    showPage('booking');
+  };
 
   return (
     <Reveal className="section">
@@ -61,7 +65,13 @@ export default function EngineerGrid() {
                 <div className={styles.rate}>{formatPHP(e.rate)}</div>
                 <div className={styles.rateLbl}>per day</div>
               </div>
-              <button className="btn btn-gold btn-sm" onClick={() => showPage('booking')}>Hire</button>
+              <button
+                className="btn btn-gold btn-sm"
+                disabled={e.status !== 'available'}
+                onClick={() => hireEngineer(e.id)}
+              >
+                {e.status === 'available' ? 'Hire' : 'Busy'}
+              </button>
             </div>
           </Reveal>
         ))}

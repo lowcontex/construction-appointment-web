@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useApp } from '@/context/AppContext';
 import { SERVICES } from '@/data/services';
 import { calcCost, formatPHP } from '@/utils/costing';
 import Reveal from './Reveal';
 import styles from './CostEstimator.module.css';
 
 export default function CostEstimator() {
+  const { setBooking, showPage } = useApp();
   const [serviceId, setServiceId] = useState('');
   const [area, setArea] = useState('');
   const [grade, setGrade] = useState<'standard' | 'premium' | 'economy'>('standard');
@@ -14,6 +16,10 @@ export default function CostEstimator() {
 
   const service = SERVICES.find(s => s.id === serviceId);
   const cost = service && area && Number(area) > 0 ? calcCost(service, Number(area), 1, grade, duration) : null;
+  const continueToBooking = () => {
+    if (serviceId) setBooking(prev => ({ ...prev, service: serviceId }));
+    showPage('booking');
+  };
 
   return (
     <Reveal className={`section ${styles.sectionTight}`}>
@@ -27,7 +33,7 @@ export default function CostEstimator() {
             <div className={styles.field}>
               <label className={styles.label}>Service Type</label>
               <select className={styles.select} value={serviceId} onChange={e => setServiceId(e.target.value)}>
-                <option value="">— Select —</option>
+                <option value="">Select service</option>
                 {SERVICES.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
@@ -78,6 +84,9 @@ export default function CostEstimator() {
                   <span>Total Estimate</span>
                   <span>{formatPHP(cost.total)}</span>
                 </div>
+                <button className={`btn btn-gold ${styles.bookButton}`} type="button" onClick={continueToBooking}>
+                  Book This Estimate
+                </button>
               </div>
             ) : (
               <div className={styles.emptyState}>

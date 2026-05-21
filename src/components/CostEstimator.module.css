@@ -16,6 +16,7 @@
 .lineLabel{color:var(--text-muted);}
 .lineVal{color:var(--text);font-weight:500;}
 .emptyState{color:var(--text-muted);font-size:var(--text-sm);padding:1rem 0;}
+.bookButton{width:100%;margin-top:1rem;}
 
 @media(max-width:800px){.grid{grid-template-columns:1fr;}.wrap{padding:1.5rem;}}
 @media(max-width:430px){.wrap{padding:1.25rem;}.line{align-items:flex-start;flex-direction:column;gap:2px;}}

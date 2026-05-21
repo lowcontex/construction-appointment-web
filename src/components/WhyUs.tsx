@@ -1,134 +1,80 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type TouchEvent } from 'react';
+import Image from 'next/image';
 import Reveal from './Reveal';
 import styles from './WhyUs.module.css';
 
-const slides = [0, 1, 2, 3];
-const AUTOPLAY_DELAY = 4500;
-const SWIPE_THRESHOLD = 45;
+const slides = [
+  {
+    id: 1,
+    image: '/img/project-sample-home.png',
+    alt: 'Completed modern residential construction project',
+  },
+  {
+    id: 2,
+    image: '/img/hero-construction-site.png',
+    alt: 'Active construction site with crew and equipment',
+  },
+  {
+    id: 3,
+    image: '/img/project-sample-home.png',
+    alt: 'Finished residential exterior sample project',
+  },
+  {
+    id: 4,
+    image: '/img/hero-construction-site.png',
+    alt: 'Construction worksite sample project',
+  },
+] as const;
 
 export default function WhyUs() {
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const touchStartX = useRef<number | null>(null);
-  const touchDeltaX = useRef(0);
-
-  const goToPrevious = useCallback(() => {
-    setActive(current => (current === 0 ? slides.length - 1 : current - 1));
-  }, []);
-
-  const goToNext = useCallback(() => {
-    setActive(current => (current === slides.length - 1 ? 0 : current + 1));
-  }, []);
-
-  useEffect(() => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (paused || reduceMotion) return;
-
-    const timer = window.setInterval(() => {
-      if (!document.hidden) goToNext();
-    }, AUTOPLAY_DELAY);
-
-    return () => window.clearInterval(timer);
-  }, [goToNext, paused]);
-
-  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
-    touchStartX.current = event.touches[0]?.clientX ?? null;
-    touchDeltaX.current = 0;
-    setPaused(true);
-  };
-
-  const handleTouchMove = (event: TouchEvent<HTMLDivElement>) => {
-    if (touchStartX.current === null) return;
-    touchDeltaX.current = (event.touches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
-  };
-
-  const handleTouchEnd = () => {
-    if (Math.abs(touchDeltaX.current) >= SWIPE_THRESHOLD) {
-      if (touchDeltaX.current < 0) goToNext();
-      else goToPrevious();
-    }
-
-    touchStartX.current = null;
-    touchDeltaX.current = 0;
-    setPaused(false);
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      goToPrevious();
-    }
-
-    if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      goToNext();
-    }
-  };
-
   return (
     <Reveal id="why-us" className="section">
       <div className="section-tag">Why Choose Us</div>
       <div className="section-title">Built on Trust & Transparency</div>
-      <Reveal
-        className={styles.carousel}
-        variant="card"
-        delay={90}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-        onFocus={() => setPaused(true)}
-        onBlur={() => setPaused(false)}
-      >
+      <Reveal className={styles.carousel} variant="card" delay={90}>
         <div
           className={styles.viewport}
           role="region"
           aria-roledescription="carousel"
           aria-label="Project image carousel"
           tabIndex={0}
-          onKeyDown={handleKeyDown}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
         >
-          <div className={`${styles.track} ${styles[`track${active}`]}`}>
-            {slides.map(slide => (
-              <div
-                key={slide}
-                className={styles.slide}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={`Slide ${slide + 1} of ${slides.length}`}
-                aria-hidden={active !== slide}
-              >
-                <div className={styles.imageSlot}>
-                  {/* Add your carousel image here, for example:
-                      <img src="/img/projects/project-1.jpg" alt="Finished construction project" />
-                  */}
-                </div>
-              </div>
-            ))}
+          <div className={styles.track}>
+            <SlideGroup />
+            <SlideGroup duplicate />
           </div>
-        </div>
-        <button className={`${styles.control} ${styles.prev}`} type="button" aria-label="Previous project image" onClick={goToPrevious}>
-          &lsaquo;
-        </button>
-        <button className={`${styles.control} ${styles.next}`} type="button" aria-label="Next project image" onClick={goToNext}>
-          &rsaquo;
-        </button>
-        <div className={styles.dots} aria-label="Carousel slides">
-          {slides.map(slide => (
-            <button
-              key={slide}
-              className={`${styles.dot} ${active === slide ? styles.activeDot : ''}`}
-              type="button"
-              aria-label={`Show slide ${slide + 1}`}
-              aria-current={active === slide}
-              onClick={() => setActive(slide)}
-            />
-          ))}
         </div>
       </Reveal>
     </Reveal>
+  );
+}
+
+function SlideGroup({ duplicate = false }: { duplicate?: boolean }) {
+  return (
+    <div className={styles.group} aria-hidden={duplicate}>
+      {slides.map(slide => (
+        <div
+          key={`${duplicate ? 'duplicate' : 'primary'}-${slide.id}`}
+          className={styles.slide}
+          role={duplicate ? undefined : 'group'}
+          aria-roledescription={duplicate ? undefined : 'slide'}
+          aria-label={duplicate ? undefined : `Slide ${slide.id} of ${slides.length}`}
+        >
+          <div className={`${styles.imageSlot} ${slide.image ? styles.filledSlot : ''}`}>
+            {slide.image ? (
+              <Image
+                className={styles.projectImage}
+                src={slide.image}
+                alt={duplicate ? '' : slide.alt}
+                fill
+                sizes="(max-width: 700px) 78vw, (max-width: 900px) 48vw, 460px"
+                priority={!duplicate && slide.id === 1}
+              />
+            ) : null}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
