@@ -91,7 +91,7 @@ export default function WhyUs() {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className={styles.track} style={{ transform: `translateX(-${active * 100}%)` }}>
+          <div className={`${styles.track} ${styles[`track${active}`]}`}>
             {slides.map(slide => (
               <div
                 key={slide}

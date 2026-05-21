@@ -1,3 +1,4 @@
+.sectionTight{margin-top:-2rem;}
 .wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:2.5rem;margin-top:3rem;box-shadow:var(--shadow);}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
 .colTitle{font-family:var(--font-head);font-size:1.1rem;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.04em;margin-bottom:1.2rem;padding-bottom:.7rem;border-bottom:1px solid var(--border);}
@@ -14,6 +15,7 @@
 .total{font-family:var(--font-head);font-size:1.3rem;color:var(--brand);font-weight:700;padding-top:12px;border-bottom:none;}
 .lineLabel{color:var(--text-muted);}
 .lineVal{color:var(--text);font-weight:500;}
+.emptyState{color:var(--text-muted);font-size:var(--text-sm);padding:1rem 0;}
 
 @media(max-width:800px){.grid{grid-template-columns:1fr;}.wrap{padding:1.5rem;}}
 @media(max-width:430px){.wrap{padding:1.25rem;}.line{align-items:flex-start;flex-direction:column;gap:2px;}}

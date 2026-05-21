@@ -99,6 +99,30 @@ export default function MyBookingsPage() {
           </tbody>
         </table>
       </Reveal>
+
+      <div className={styles.mobileCards} aria-label="My booking cards">
+        {mine.length === 0 ? (
+          <Reveal className={styles.emptyCard} variant="card" delay={140}>No bookings yet.</Reveal>
+        ) : (
+          mine.map((b, i) => (
+            <Reveal key={b.id} className={styles.bookingCard} variant="card" delay={80 + i * 50}>
+              <div className={styles.cardTop}>
+                <div>
+                  <div className={styles.cardEyebrow}>{b.id}</div>
+                  <div className={styles.cardTitle}>{b.service}</div>
+                </div>
+                <span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span>
+              </div>
+              <div className={styles.cardRows}>
+                <div><span>Engineer</span><strong>{b.engineer}</strong></div>
+                <div><span>Area</span><strong>{b.area} sqm</strong></div>
+                <div><span>Total</span><strong>{formatPHP(b.total)}</strong></div>
+                <div><span>Date</span><strong>{b.date}</strong></div>
+              </div>
+            </Reveal>
+          ))
+        )}
+      </div>
     </div>
   );
 }

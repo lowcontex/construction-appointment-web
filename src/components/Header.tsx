@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
@@ -43,7 +44,7 @@ export default function Header() {
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link href="/" className={styles.logo} onClick={closeMenu}>
-          <div className={styles.logoMark}><img src="/img/agudo-logo.svg" alt="Agudo Construction" /></div>
+          <div className={styles.logoMark}><Image src="/img/agudo-logo.svg" alt="Agudo Construction" width={40} height={40} priority /></div>
           Agudo<span className={styles.gold}>Construction</span>
         </Link>
         <nav className={styles.nav}>

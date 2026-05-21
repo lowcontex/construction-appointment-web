@@ -57,8 +57,8 @@
   --text-3xl: 40px;
 
   /* Typography */
-  --font-head: 'Montserrat', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-head: var(--font-head-family, 'Montserrat'), sans-serif;
+  --font-body: var(--font-body-family, 'Inter'), sans-serif;
 
   /* Legacy aliases used by existing components */
   --brand: var(--color-brand);
@@ -200,8 +200,9 @@ button,a,[role="button"]{
 .modal-close{background:none;border:1px solid var(--border);border-radius:50%;width:34px;height:34px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t);font-size:18px;}
 .modal-close:hover{background:var(--bg-alt);color:var(--text);border-color:var(--brand);}
 .modal-tabs{display:flex;background:var(--bg-alt);border-radius:var(--r);padding:3px;margin-bottom:1.5rem;gap:3px;}
-.modal-tab{flex:1;text-align:center;padding:8px;border-radius:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all var(--t);color:var(--text-muted);}
+.modal-tab{appearance:none;flex:1;text-align:center;padding:8px;border-radius:var(--radius-sm);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all var(--t);color:var(--text-muted);background:transparent;border:none;font-family:var(--font-body);}
 .modal-tab.active{background:var(--brand);color:white;}
+.modal-tab:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(21,101,192,0.16);}
 .modal-form{display:none;}
 .modal-form.active{display:block;animation:fadeUp .25s ease both;}
 .modal-field{margin-bottom:14px;}

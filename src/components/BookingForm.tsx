@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { SERVICES } from '@/data/services';
 import { calcCost, formatPHP } from '@/utils/costing';
@@ -74,12 +74,6 @@ export default function BookingForm() {
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
   }, [step, name, phone, address, bArea, floors, grade, date, timeline, notes]);
 
-  useEffect(() => {
-    if (!currentUser || pendingAction !== 'confirm-booking') return;
-    setPendingAction(null);
-    confirmBooking();
-  }, [currentUser, pendingAction]);
-
   const selectedService = SERVICES.find(s => s.id === booking.service);
   const selectedEngineer = engineers.find(e => e.id === booking.engineer);
   const cost = selectedService && bArea && Number(bArea) > 0
@@ -101,7 +95,7 @@ export default function BookingForm() {
 
   const prevStep = () => setStep(s => s - 1);
 
-  const confirmBooking = () => {
+  const confirmBooking = useCallback(() => {
     if (!currentUser) {
       setPendingAction('confirm-booking');
       showToast('Please register to confirm booking');
@@ -125,21 +119,31 @@ export default function BookingForm() {
     localStorage.removeItem(DRAFT_KEY);
     showPage('success');
     showToast('Booking submitted successfully!');
-  };
+  }, [bArea, bookings, cost, currentUser, date, name, openModal, selectedEngineer, selectedService, setBooking, setBookings, setPendingAction, setSuccessRef, showPage, showToast, today]);
+
+  useEffect(() => {
+    if (!currentUser || pendingAction !== 'confirm-booking') return;
+    setPendingAction(null);
+    confirmBooking();
+  }, [confirmBooking, currentUser, pendingAction, setPendingAction]);
 
   return (
     <div className={styles.wrap}>
       <div className={styles.title}>Book a Project</div>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '2.5rem' }}>
+      <p className={styles.subtitle}>
         Fill in your project details and get a full cost estimate before confirming.
       </p>
 
-      <div className={styles.steps}>
+      <div className={styles.steps} aria-label="Booking progress">
         {['Service', 'Details', 'Engineer', 'Confirm'].map((label, i) => {
           const num = i + 1;
           return (
-            <div key={num} className={`${styles.step} ${num === step ? styles.active : ''} ${num < step ? styles.done : ''}`}>
-              <div className={styles.circle}>{num < step ? '✓' : num}</div>
+            <div
+              key={num}
+              className={`${styles.step} ${num === step ? styles.active : ''} ${num < step ? styles.done : ''}`}
+              aria-current={num === step ? 'step' : undefined}
+            >
+              <div className={styles.circle}>{num < step ? <span aria-hidden="true">&#10003;</span> : num}</div>
               <div className={styles.stepLabel}>{label}</div>
             </div>
           );
@@ -152,19 +156,24 @@ export default function BookingForm() {
             <div className={styles.cardTitle}>Select Service</div>
             <div className={styles.picker}>
               {SERVICES.map(s => (
-                <div
+                <button
+                  type="button"
                   key={s.id}
                   className={`${styles.pick} ${booking.service === s.id ? styles.selected : ''}`}
+                  aria-pressed={booking.service === s.id}
                   onClick={() => setBooking(prev => ({ ...prev, service: s.id }))}
                 >
-                  <div className={styles.pickIcon}></div>
-                  <div className={styles.pickName}>{s.name}</div>
-                  <div className={styles.pickPrice}>{formatPHP(s.baseCostPerSqm.materials)}/sqm mat.</div>
-                </div>
+                  <span className={styles.pickIcon} aria-hidden="true"></span>
+                  <span className={styles.pickName}>{s.name}</span>
+                  <span className={styles.pickPrice}>{formatPHP(s.baseCostPerSqm.materials)}/sqm mat.</span>
+                </button>
               ))}
             </div>
           </div>
-          <div className={styles.nav}><div /><button className="btn btn-gold" onClick={nextStep}>Next: Project Details →</button></div>
+          <div className={styles.nav}>
+            <div />
+            <button className="btn btn-gold" onClick={nextStep}>Next: Project Details <span aria-hidden="true">&rarr;</span></button>
+          </div>
         </div>
       )}
 
@@ -193,7 +202,7 @@ export default function BookingForm() {
             </div>
             {cost && (
               <div className="cost-summary">
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--sky)', fontWeight: 700, marginBottom: '.7rem' }}>Estimated Project Cost</div>
+                <div className={styles.summaryHeading}>Estimated Project Cost</div>
                 <div className="cs-row"><span className="cs-label">Materials ({cost.totalArea} sqm)</span><span className="cs-val">{formatPHP(cost.mat)}</span></div>
                 <div className="cs-row"><span className="cs-label">Labor</span><span className="cs-val">{formatPHP(cost.labor)}</span></div>
                 {cost.fixed > 0 && <div className="cs-row"><span className="cs-label">Fixed Installations</span><span className="cs-val">{formatPHP(cost.fixed)}</span></div>}
@@ -204,8 +213,8 @@ export default function BookingForm() {
             )}
           </div>
           <div className={styles.nav}>
-            <button className="btn btn-outline" onClick={prevStep}>← Back</button>
-            <button className="btn btn-gold" onClick={nextStep}>Next: Choose Engineer →</button>
+            <button className="btn btn-outline" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
+            <button className="btn btn-gold" onClick={nextStep}>Next: Choose Engineer <span aria-hidden="true">&rarr;</span></button>
           </div>
         </div>
       )}
@@ -216,26 +225,29 @@ export default function BookingForm() {
             <div className={styles.cardTitle}>Select Engineer</div>
             <div className={styles.picker}>
               {engineers.map(e => (
-                <div
+                <button
+                  type="button"
                   key={e.id}
                   className={`${styles.engPick} ${booking.engineer === e.id ? styles.selected : ''}`}
+                  aria-pressed={booking.engineer === e.id}
+                  disabled={e.status !== 'available'}
                   onClick={() => setBooking(prev => ({ ...prev, engineer: e.id }))}
                 >
-                  <div className={styles.engPickAvatar}>{initials(e.name)}</div>
-                  <div className={styles.pickName}>{e.name}</div>
-                  <div className={styles.engPickSpec}>{e.spec}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>★ {e.rating} · {e.exp}</div>
-                  <div className={styles.pickPrice}>{formatPHP(e.rate)}/day</div>
-                  <div style={{ fontSize: '10px', marginTop: '4px' }}>
-                    <span className={e.status === 'available' ? 'badge-available' : 'badge-busy'} style={{ fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '10px' }}>{e.status}</span>
-                  </div>
-                </div>
+                  <span className={styles.engPickAvatar}>{initials(e.name)}</span>
+                  <span className={styles.pickName}>{e.name}</span>
+                  <span className={styles.engPickSpec}>{e.spec}</span>
+                  <span className={styles.engineerMeta}>Rating {e.rating} / 5 <span aria-hidden="true">&middot;</span> {e.exp}</span>
+                  <span className={styles.pickPrice}>{formatPHP(e.rate)}/day</span>
+                  <span className={styles.engineerStatus}>
+                    <span className={`${styles.engineerBadge} ${e.status === 'available' ? 'badge-available' : 'badge-busy'}`}>{e.status}</span>
+                  </span>
+                </button>
               ))}
             </div>
           </div>
           <div className={styles.nav}>
-            <button className="btn btn-outline" onClick={prevStep}>← Back</button>
-            <button className="btn btn-gold" onClick={nextStep}>Review & Confirm →</button>
+            <button className="btn btn-outline" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
+            <button className="btn btn-gold" onClick={nextStep}>Review & Confirm <span aria-hidden="true">&rarr;</span></button>
           </div>
         </div>
       )}
@@ -246,40 +258,40 @@ export default function BookingForm() {
             <div className={styles.cardTitle}>Review Your Booking</div>
             <div className={styles.reviewGrid}>
               <div>
-                  <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--sky)', fontWeight: 700, marginBottom: '.8rem' }}>Client Info</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Name:</span> {name}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Phone:</span> {phone || '—'}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Address:</span> {address}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Start Date:</span> {date || 'TBD'}</div>
+                <div className={styles.reviewHeading}>Client Info</div>
+                <div className={styles.reviewItem}><span className={styles.reviewLabel}>Name:</span> {name}</div>
+                <div className={styles.reviewItem}><span className={styles.reviewLabel}>Phone:</span> {phone || 'TBD'}</div>
+                <div className={styles.reviewItem}><span className={styles.reviewLabel}>Address:</span> {address}</div>
+                <div className={styles.reviewItem}><span className={styles.reviewLabel}>Start Date:</span> {date || 'TBD'}</div>
               </div>
               <div>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--sky)', fontWeight: 700, marginBottom: '.8rem' }}>Project Info</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Service:</span> {selectedService.name}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Area:</span> {bArea} sqm × {floors} floor(s)</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Grade:</span> {grade.charAt(0).toUpperCase() + grade.slice(1)}</div>
-                <div style={{ fontSize: '14px', marginBottom: '5px' }}><span style={{ color: 'var(--muted)' }}>Engineer:</span> {selectedEngineer.name}</div>
+                <div className={styles.reviewHeading}>Project Info</div>
+                <div className={styles.reviewItem}><span className={styles.reviewLabel}>Service:</span> {selectedService.name}</div>
+                <div className={styles.reviewItem}><span className={styles.reviewLabel}>Area:</span> {bArea} sqm &times; {floors} floor(s)</div>
+                <div className={styles.reviewItem}><span className={styles.reviewLabel}>Grade:</span> {grade.charAt(0).toUpperCase() + grade.slice(1)}</div>
+                <div className={styles.reviewItem}><span className={styles.reviewLabel}>Engineer:</span> {selectedEngineer.name}</div>
               </div>
             </div>
             {notes && (
-              <div style={{ marginTop: '1rem', fontSize: '13px', color: 'var(--muted)', padding: '.75rem', background: 'var(--slate)', borderRadius: 'var(--r)', border: '1px solid var(--mid)' }}>
+              <div className={styles.notes}>
                 {notes}
               </div>
             )}
             {cost && (
-              <div className="cost-summary" style={{ marginTop: '1.5rem' }}>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--gold)', fontWeight: 700, marginBottom: '.7rem' }}>Final Cost Summary</div>
+              <div className={`cost-summary ${styles.reviewCost}`}>
+                <div className={styles.summaryHeading}>Final Cost Summary</div>
                 <div className="cs-row"><span className="cs-label">Materials</span><span className="cs-val">{formatPHP(cost.mat)}</span></div>
                 <div className="cs-row"><span className="cs-label">Labor</span><span className="cs-val">{formatPHP(cost.labor)}</span></div>
                 {cost.fixed > 0 && <div className="cs-row"><span className="cs-label">Fixed Installations</span><span className="cs-val">{formatPHP(cost.fixed)}</span></div>}
                 <div className="cs-row"><span className="cs-label">VAT (12%)</span><span className="cs-val">{formatPHP(cost.vat)}</span></div>
-                <div className="cs-row"><span style={{ color: 'var(--gold)' }}>TOTAL ESTIMATE</span><span style={{ color: 'var(--gold)', fontFamily: 'var(--font-head)', fontSize: '1.4rem' }}>{formatPHP(cost.total)}</span></div>
+                <div className="cs-row"><span className={styles.totalLabel}>Total Estimate</span><span className={styles.totalValue}>{formatPHP(cost.total)}</span></div>
                 <div className="cs-note">* Estimate includes materials, labor, and VAT. Subject to final site assessment.</div>
               </div>
             )}
           </div>
           <div className={styles.nav}>
-            <button className="btn btn-outline" onClick={prevStep}>← Back</button>
-            <button className="btn btn-gold" onClick={confirmBooking}>Confirm & Submit Booking ✓</button>
+            <button className="btn btn-outline" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
+            <button className="btn btn-gold" onClick={confirmBooking}>Confirm & Submit Booking <span aria-hidden="true">&#10003;</span></button>
           </div>
         </div>
       )}

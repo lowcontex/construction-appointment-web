@@ -1,7 +1,22 @@
 import type { Metadata } from 'next';
+import { Inter, Montserrat } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import ClientLayout from '@/components/ClientLayout';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-body-family',
+  display: 'swap',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  variable: '--font-head-family',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Agudo Construction - Together, We Build Stronger',
@@ -10,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${montserrat.variable}`}>
       <head>
         <Script id="remove-extension-hydration-attrs" strategy="beforeInteractive">
           {`
@@ -63,12 +78,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             })();
           `}
         </Script>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body>
         <ClientLayout>{children}</ClientLayout>

@@ -1,6 +1,6 @@
 'use client';
 
-import { AppProvider, useApp } from '@/context/AppContext';
+import { AppProvider } from '@/context/AppContext';
 import Topbar from './Topbar';
 import Header from './Header';
 import Footer from './Footer';
@@ -8,7 +8,6 @@ import AuthModal from './AuthModal';
 import Toast from './Toast';
 
 function LayoutShell({ children }: { children: React.ReactNode }) {
-  const { currentUser } = useApp();
   return (
     <>
       <Topbar />
