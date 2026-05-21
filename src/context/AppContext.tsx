@@ -161,7 +161,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     startTransition(() => {
-      router.push(targetPath, { scroll: true });
+      router.push(targetPath, { scroll: true }).catch(() => {});
     });
   }, [router, startTransition]);
 
@@ -201,7 +201,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(user);
     closeModal();
     showToast('Welcome back, ' + user.name + '!');
-    handlePostAuth(user);
+    setTimeout(() => handlePostAuth(user), 100);
   }, [users, showToast, closeModal, handlePostAuth]);
 
   const logout = useCallback(() => {
@@ -235,7 +235,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentUser(newUser);
     closeModal();
     showToast('Account created! Welcome, ' + safeFirstName + '!');
-    handlePostAuth(newUser);
+    setTimeout(() => handlePostAuth(newUser), 100);
   }, [users, showToast, closeModal, handlePostAuth]);
 
   useEffect(() => {
