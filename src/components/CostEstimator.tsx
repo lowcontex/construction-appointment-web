@@ -16,7 +16,7 @@ export default function CostEstimator() {
   const cost = service && area && Number(area) > 0 ? calcCost(service, Number(area), 1, grade, duration) : null;
 
   return (
-    <Reveal className="section" style={{ marginTop: '-2rem' }}>
+    <Reveal className={`section ${styles.sectionTight}`}>
       <div className="section-tag">Cost Estimator</div>
       <div className="section-title">Calculate Your Budget</div>
       <p className="section-sub">Enter your project details to get an instant cost estimate breakdown.</p>
@@ -80,7 +80,7 @@ export default function CostEstimator() {
                 </div>
               </div>
             ) : (
-              <div style={{ color: 'var(--text-muted)', fontSize: '14px', padding: '1rem 0' }}>
+              <div className={styles.emptyState}>
                 Select a service and enter floor area to see cost estimate.
               </div>
             )}

@@ -41,6 +41,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 const STORAGE_KEY = 'construction-app-state-v1';
+const STORAGE_VERSION = '2'; // increment when storage schema changes
 const USER_ROLES = new Set<User['role']>(['admin', 'engineer', 'customer']);
 const ROLE_PRIORITY: Record<User['role'], number> = {
   admin: 3,
@@ -242,22 +243,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (!stored) return;
     try {
       const parsed = JSON.parse(stored);
-      if (isBookingState(parsed?.booking)) setBooking(parsed.booking);
-      if (Array.isArray(parsed?.bookings)) setBookings(parsed.bookings);
-      const safeUsers = sanitizeUsers(parsed?.users);
-      if (safeUsers) {
-        setUsers(safeUsers);
-        if (isUser(parsed?.currentUser)) {
-          const restoredUser = safeUsers.find(user => isSameEmail(user.email, parsed.currentUser.email));
-          setCurrentUser(restoredUser ?? parsed.currentUser);
-        }
-      } else if (isUser(parsed?.currentUser)) {
-        setCurrentUser(parsed.currentUser);
+      // Clear storage if version mismatch or tampered data
+      if (parsed?.version !== STORAGE_VERSION) {
+        localStorage.removeItem(STORAGE_KEY);
+        return;
       }
+      if (parsed?.currentUser) setCurrentUser(parsed.currentUser);
+      if (parsed?.booking) setBooking(parsed.booking);
+      if (parsed?.bookings) setBookings(parsed.bookings);
+      if (parsed?.users) setUsers(parsed.users);
       if (parsed?.engineers) setEngineers(parsed.engineers);
       if (parsed?.pendingAction) setPendingAction(parsed.pendingAction);
-    } catch (error) {
-      console.error('Failed to restore app state from localStorage.', { error });
+    } catch {
       localStorage.removeItem(STORAGE_KEY);
     }
   }, []);

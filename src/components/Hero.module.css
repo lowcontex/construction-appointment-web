@@ -1,6 +1,7 @@
-.hero{position:relative;background:linear-gradient(135deg, #f0f4fa 0%, #e8edf5 50%, #f4f6f9 100%);overflow:hidden;padding:5rem 2rem 4rem;}
-.grid{position:absolute;inset:0;opacity:.03;background-image:linear-gradient(var(--brand) 1px,transparent 1px),linear-gradient(90deg,var(--brand) 1px,transparent 1px);background-size:40px 40px;}
-.inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center;position:relative;animation:heroIntro var(--transition-slow) cubic-bezier(0.25,0.46,0.45,0.94) both;}
+.hero{position:relative;background-image:linear-gradient(90deg,rgba(248,250,252,.96) 0%,rgba(248,250,252,.88) 40%,rgba(248,250,252,.36) 72%),url('/img/hero-construction-site.png');background-size:cover;background-position:center;overflow:hidden;padding:5rem 2rem 4rem;}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.72));pointer-events:none;}
+.grid{position:absolute;inset:0;z-index:1;opacity:.04;background-image:linear-gradient(var(--brand) 1px,transparent 1px),linear-gradient(90deg,var(--brand) 1px,transparent 1px);background-size:40px 40px;}
+.inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:4rem;align-items:center;position:relative;z-index:2;animation:heroIntro var(--transition-slow) cubic-bezier(0.25,0.46,0.45,0.94) both;}
 .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brand);font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
 .eyebrow::before{content:'';width:30px;height:2px;background:var(--brand);}
 .heading{font-family:var(--font-head);font-size:clamp(2.8rem,5vw,4.5rem);font-weight:800;line-height:1.05;letter-spacing:-.01em;margin-bottom:1.2rem;color:var(--text);}
@@ -12,7 +13,7 @@
 .actions{display:flex;gap:12px;flex-wrap:wrap;}
 
 /* Quick Estimate Card */
-.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;position:relative;overflow:hidden;box-shadow:var(--shadow-card);}
+.card{background:rgba(255,255,255,.94);border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;position:relative;overflow:hidden;box-shadow:var(--shadow-card);backdrop-filter:blur(12px);}
 .cardTitle{font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:.05em;}
 .field{margin-bottom:12px;}
 .label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:5px;display:block;font-weight:600;}
@@ -36,5 +37,5 @@
 
 @media(prefers-reduced-motion:reduce){.inner{animation:none;}}
 
-@media(max-width:1000px){.inner{grid-template-columns:1fr;gap:2.5rem;}.card{display:none;}}
-@media(max-width:600px){.hero{padding:3.5rem 1rem 3rem;}.stats{gap:1.25rem;flex-wrap:wrap;}.actions{flex-direction:column;align-items:stretch;}.actions :global(.btn){width:100%;}.heading{font-size:clamp(2.35rem,12vw,3.2rem);}.sub{font-size:15px;line-height:1.7;}}
+@media(max-width:1000px){.hero{background-position:center right;}.inner{grid-template-columns:1fr;gap:2.5rem;}.card{max-width:560px;width:100%;}}
+@media(max-width:600px){.hero{padding:3.5rem 1rem 3rem;background-image:linear-gradient(180deg,rgba(248,250,252,.98) 0%,rgba(248,250,252,.92) 58%,rgba(248,250,252,.82) 100%),url('/img/hero-construction-site.png');}.stats{gap:1.25rem;flex-wrap:wrap;}.actions{flex-direction:column;align-items:stretch;}.actions :global(.btn){width:100%;}.heading{font-size:clamp(2.35rem,12vw,3.2rem);}.sub{font-size:15px;line-height:1.7;}.card{padding:1.35rem;}}

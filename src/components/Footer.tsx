@@ -22,23 +22,23 @@ export default function Footer() {
         </Reveal>
         <Reveal delay={70}>
           <div className={styles.heading}>Services</div>
-          <span className={styles.link} onClick={() => showPage('services')}>House Construction</span>
-          <span className={styles.link} onClick={() => showPage('services')}>Renovation</span>
-          <span className={styles.link} onClick={() => showPage('services')}>Commercial Build</span>
-          <span className={styles.link} onClick={() => showPage('services')}>Electrical Works</span>
+          <button className={styles.link} onClick={() => showPage('services')}>House Construction</button>
+          <button className={styles.link} onClick={() => showPage('services')}>Renovation</button>
+          <button className={styles.link} onClick={() => showPage('services')}>Commercial Build</button>
+          <button className={styles.link} onClick={() => showPage('services')}>Electrical Works</button>
         </Reveal>
         <Reveal delay={140}>
           <div className={styles.heading}>Company</div>
-          <span className={styles.link}>About Us</span>
-          <span className={styles.link} onClick={() => showPage('engineers')}>Our Engineers</span>
-          <span className={styles.link}>Projects</span>
-          <span className={styles.link}>Careers</span>
+          <span className={styles.info}>About Us</span>
+          <button className={styles.link} onClick={() => showPage('engineers')}>Our Engineers</button>
+          <span className={styles.info}>Projects</span>
+          <span className={styles.info}>Careers</span>
         </Reveal>
         <Reveal delay={210}>
           <div className={styles.heading}>Contact</div>
-          <span className={styles.link}>T: (02) 8123-4567</span>
-          <span className={styles.link}>E: hello@agudoconstruction.ph</span>
-          <span className={styles.link}>Metro Manila, PH</span>
+          <span className={styles.info}>T: (02) 8123-4567</span>
+          <span className={styles.info}>E: hello@agudoconstruction.ph</span>
+          <span className={styles.info}>Metro Manila, PH</span>
         </Reveal>
       </div>
       <div className={styles.bottom}>

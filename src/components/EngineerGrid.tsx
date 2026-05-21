@@ -29,7 +29,7 @@ export default function EngineerGrid() {
           <button
             key={s}
             className={`btn btn-outline btn-sm ${filter === s ? styles.activeFilter : ''}`}
-            style={filter === s ? { borderColor: 'var(--brand)', color: 'var(--brand)' } : undefined}
+            aria-pressed={filter === s}
             onClick={() => setFilter(s)}
           >
             {s}
@@ -50,7 +50,7 @@ export default function EngineerGrid() {
               <div className={styles.spec}>{e.spec} Engineering</div>
               <div className={styles.exp}>{e.exp} experience</div>
               <div className={styles.rating}>
-                ★ {e.rating} <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>({e.reviews} reviews)</span>
+                Rating {e.rating} / 5 <span className={styles.reviewCount}>({e.reviews} reviews)</span>
               </div>
               <div className={styles.skills}>
                 {e.skills.map(sk => <span key={sk} className={styles.skill}>{sk}</span>)}

@@ -1,0 +1,7 @@
+.fullButton{width:100%;margin-top:.5rem;padding:13px;}
+.registerButton{margin-top:1rem;}
+.demoCredentials{text-align:center;margin-top:1rem;font-size:var(--text-xs);color:var(--muted);line-height:1.6;}
+.demoValue{color:var(--brand);}
+.registerGrid{gap:12px;}
+.engineerNote{margin-top:1rem;}
+.noteText{font-size:var(--text-xs);color:var(--text-muted);line-height:1.6;}

@@ -1,0 +1,14 @@
+.wrap{text-align:center;padding:6rem 2rem;max-width:600px;margin:0 auto;}
+.mark{width:60px;height:60px;border-radius:var(--radius-full);border:3px solid var(--brand);margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:var(--text-xl);font-weight:800;color:var(--brand);}
+.title{font-family:var(--font-head);font-size:var(--text-3xl);font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.8rem;line-height:1.08;}
+.message{color:var(--text-secondary);font-size:var(--text-base);line-height:1.8;margin-bottom:.7rem;}
+.reference{font-family:var(--font-head);font-size:var(--text-xl);color:var(--brand);margin:1.5rem 0;font-weight:800;}
+.note{color:var(--text-muted);font-size:var(--text-sm);margin-bottom:2rem;}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+@media(max-width:520px){
+  .wrap{padding:4rem 1rem;}
+  .title{font-size:var(--text-2xl);}
+  .actions{flex-direction:column;}
+  .actions :global(.btn){width:100%;}
+}

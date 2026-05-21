@@ -1,34 +1,87 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApp } from '@/context/AppContext';
+import styles from './AuthModal.module.css';
 
 export default function AuthModal() {
   const { modalOpen, modalTab, closeModal, switchAuthTab } = useApp();
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!modalOpen) return;
+
+    closeRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeModal();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [closeModal, modalOpen]);
 
   const handleOverlay = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) closeModal();
   };
 
   return (
-    <div className={`modal-overlay ${modalOpen ? 'open' : ''}`} onClick={handleOverlay}>
-      <div className="modal">
+    <div className={`modal-overlay ${modalOpen ? 'open' : ''}`} onClick={handleOverlay} aria-hidden={!modalOpen}>
+      <div
+        ref={modalRef}
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+        tabIndex={-1}
+      >
         <div className="modal-header">
           <div className="modal-title" id="modalTitle">Welcome</div>
-          <button className="modal-close" onClick={closeModal}>×</button>
+          <button ref={closeRef} className="modal-close" type="button" onClick={closeModal} aria-label="Close authentication modal">&times;</button>
         </div>
-        <div className="modal-tabs">
-          <div className={`modal-tab ${modalTab === 'login' ? 'active' : ''}`} onClick={() => switchAuthTab('login')}>Login</div>
-          <div className={`modal-tab ${modalTab === 'register' ? 'active' : ''}`} onClick={() => switchAuthTab('register')}>Register</div>
+        <div className="modal-tabs" role="tablist" aria-label="Authentication">
+          <button
+            type="button"
+            id="login-tab"
+            role="tab"
+            aria-selected={modalTab === 'login'}
+            aria-controls="login-panel"
+            className={`modal-tab ${modalTab === 'login' ? 'active' : ''}`}
+            onClick={() => switchAuthTab('login')}
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            id="register-tab"
+            role="tab"
+            aria-selected={modalTab === 'register'}
+            aria-controls="register-panel"
+            className={`modal-tab ${modalTab === 'register' ? 'active' : ''}`}
+            onClick={() => switchAuthTab('register')}
+          >
+            Register
+          </button>
         </div>
 
-        {/* LOGIN */}
-        <div className={`modal-form ${modalTab === 'login' ? 'active' : ''}`}>
+        <div
+          id="login-panel"
+          role="tabpanel"
+          aria-labelledby="login-tab"
+          hidden={modalTab !== 'login'}
+          className={`modal-form ${modalTab === 'login' ? 'active' : ''}`}
+        >
           <LoginForm />
         </div>
 
-        {/* REGISTER */}
-        <div className={`modal-form ${modalTab === 'register' ? 'active' : ''}`}>
+        <div
+          id="register-panel"
+          role="tabpanel"
+          aria-labelledby="register-tab"
+          hidden={modalTab !== 'register'}
+          className={`modal-form ${modalTab === 'register' ? 'active' : ''}`}
+        >
           <RegisterForm />
         </div>
       </div>
@@ -54,12 +107,12 @@ function LoginForm() {
       </div>
       <div className="modal-field">
         <label className="modal-label">Password</label>
-        <input className="modal-input" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
+        <input className="modal-input" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
       </div>
-      <button className="btn btn-gold" style={{ width: '100%', marginTop: '.5rem', padding: '13px' }}>Login to Agudo Construction</button>
-      <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '12px', color: 'var(--muted)' }}>
-        Demo: <span style={{ color: 'var(--sky)' }}>admin@buildright.com</span> / <span style={{ color: 'var(--sky)' }}>admin123</span>
-        &nbsp;|&nbsp; <span style={{ color: 'var(--sky)' }}>eng@buildright.com</span> / <span style={{ color: 'var(--sky)' }}>eng123</span>
+      <button className={`btn btn-gold ${styles.fullButton}`}>Login to Agudo Construction</button>
+      <div className={styles.demoCredentials}>
+        Demo: <span className={styles.demoValue}>admin@buildright.com</span> / <span className={styles.demoValue}>admin123</span>
+        <span aria-hidden="true"> | </span><span className={styles.demoValue}>eng@buildright.com</span> / <span className={styles.demoValue}>eng123</span>
       </div>
     </form>
   );
@@ -91,7 +144,7 @@ function RegisterForm() {
           </div>
         </div>
       </div>
-      <div className="form-grid" style={{ gap: '12px' }}>
+      <div className={`form-grid ${styles.registerGrid}`}>
         <div className="modal-field"><label className="modal-label">First Name</label><input className="modal-input" placeholder="Juan" value={form.fname} onChange={handleChange('fname')} /></div>
         <div className="modal-field"><label className="modal-label">Last Name</label><input className="modal-input" placeholder="Dela Cruz" value={form.lname} onChange={handleChange('lname')} /></div>
       </div>
@@ -99,13 +152,13 @@ function RegisterForm() {
       <div className="modal-field"><label className="modal-label">Phone</label><input className="modal-input" placeholder="+63 9XX XXX XXXX" value={form.phone} onChange={handleChange('phone')} /></div>
       <div className="modal-field"><label className="modal-label">Password</label><input className="modal-input" type="password" placeholder="Min. 8 characters" value={form.password} onChange={handleChange('password')} /></div>
 
-      <div className="modal-field" style={{ marginTop: '1rem' }}>
-        <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.6' }}>
+      <div className={`modal-field ${styles.engineerNote}`}>
+        <div className={styles.noteText}>
           Engineer accounts are created by admins only. If you are an engineer, please contact support to be added.
         </div>
       </div>
 
-      <button className="btn btn-gold" style={{ width: '100%', marginTop: '1rem', padding: '13px' }}>Create Account</button>
+      <button className={`btn btn-gold ${styles.fullButton} ${styles.registerButton}`}>Create Account</button>
     </form>
   );
 }
