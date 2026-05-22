@@ -4,22 +4,68 @@ import { useEffect, useRef, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import styles from './AuthModal.module.css';
 
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
 export default function AuthModal() {
   const { modalOpen, modalTab, closeModal, switchAuthTab } = useApp();
   const modalRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!modalOpen) return;
 
-    closeRef.current?.focus();
+    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.setTimeout(() => closeRef.current?.focus(), 0);
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeModal();
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeModal();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const modal = modalRef.current;
+      if (!modal) return;
+
+      const focusable = Array.from(modal.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+        .filter(element => element.offsetParent !== null || element === document.activeElement);
+
+      if (!focusable.length) {
+        event.preventDefault();
+        modal.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (previousFocusRef.current?.isConnected) previousFocusRef.current.focus();
+    };
   }, [closeModal, modalOpen]);
 
   const handleOverlay = (e: React.MouseEvent) => {
@@ -102,14 +148,14 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div className="modal-field">
-        <label className="modal-label">Email</label>
-        <input className="modal-input" type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} />
+        <label className="modal-label" htmlFor="auth-login-email">Email</label>
+        <input id="auth-login-email" className="modal-input" type="email" autoComplete="email" required placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} />
       </div>
       <div className="modal-field">
-        <label className="modal-label">Password</label>
-        <input className="modal-input" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+        <label className="modal-label" htmlFor="auth-login-password">Password</label>
+        <input id="auth-login-password" className="modal-input" type="password" autoComplete="current-password" required placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
       </div>
-      <button className={`btn btn-gold ${styles.fullButton}`}>Login to Agudo Construction</button>
+      <button className={`btn btn-gold ${styles.fullButton}`} type="submit">Login to Agudo Construction</button>
        <div className={styles.demoCredentials}>
          <span className={styles.demoValue}>admin@agudo.com</span> / <span className={styles.demoValue}>admin123</span>
          <span aria-hidden="true"> | </span><span className={styles.demoValue}>eng@agudo.com</span> / <span className={styles.demoValue}>eng123</span>
@@ -137,20 +183,20 @@ function RegisterForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div className="modal-field">
-        <label className="modal-label">Account Type</label>
-        <div className="role-picker">
-          <div className="role-opt selected">
+        <div className="modal-label" id="auth-account-type-label">Account Type</div>
+        <div className="role-picker" role="radiogroup" aria-labelledby="auth-account-type-label">
+          <div className="role-opt selected" role="radio" aria-checked="true" aria-disabled="true">
             <div className="role-opt-name">Customer</div>
           </div>
         </div>
       </div>
       <div className={`form-grid ${styles.registerGrid}`}>
-        <div className="modal-field"><label className="modal-label">First Name</label><input className="modal-input" placeholder="Juan" value={form.fname} onChange={handleChange('fname')} /></div>
-        <div className="modal-field"><label className="modal-label">Last Name</label><input className="modal-input" placeholder="Dela Cruz" value={form.lname} onChange={handleChange('lname')} /></div>
+        <div className="modal-field"><label className="modal-label" htmlFor="auth-register-first-name">First Name</label><input id="auth-register-first-name" className="modal-input" autoComplete="given-name" required maxLength={40} placeholder="Juan" value={form.fname} onChange={handleChange('fname')} /></div>
+        <div className="modal-field"><label className="modal-label" htmlFor="auth-register-last-name">Last Name</label><input id="auth-register-last-name" className="modal-input" autoComplete="family-name" maxLength={40} placeholder="Dela Cruz" value={form.lname} onChange={handleChange('lname')} /></div>
       </div>
-      <div className="modal-field"><label className="modal-label">Email</label><input className="modal-input" type="email" placeholder="your@email.com" value={form.email} onChange={handleChange('email')} /></div>
-      <div className="modal-field"><label className="modal-label">Phone</label><input className="modal-input" placeholder="+63 9XX XXX XXXX" value={form.phone} onChange={handleChange('phone')} /></div>
-      <div className="modal-field"><label className="modal-label">Password</label><input className="modal-input" type="password" placeholder="Min. 8 characters" value={form.password} onChange={handleChange('password')} /></div>
+      <div className="modal-field"><label className="modal-label" htmlFor="auth-register-email">Email</label><input id="auth-register-email" className="modal-input" type="email" autoComplete="email" required placeholder="your@email.com" value={form.email} onChange={handleChange('email')} /></div>
+      <div className="modal-field"><label className="modal-label" htmlFor="auth-register-phone">Phone</label><input id="auth-register-phone" className="modal-input" type="tel" autoComplete="tel" maxLength={30} placeholder="+63 9XX XXX XXXX" value={form.phone} onChange={handleChange('phone')} /></div>
+      <div className="modal-field"><label className="modal-label" htmlFor="auth-register-password">Password</label><input id="auth-register-password" className="modal-input" type="password" autoComplete="new-password" required minLength={8} placeholder="Min. 8 characters" value={form.password} onChange={handleChange('password')} /></div>
 
       <div className={`modal-field ${styles.engineerNote}`}>
         <div className={styles.noteText}>
@@ -158,7 +204,7 @@ function RegisterForm() {
         </div>
       </div>
 
-      <button className={`btn btn-gold ${styles.fullButton} ${styles.registerButton}`}>Create Account</button>
+      <button className={`btn btn-gold ${styles.fullButton} ${styles.registerButton}`} type="submit">Create Account</button>
     </form>
   );
 }

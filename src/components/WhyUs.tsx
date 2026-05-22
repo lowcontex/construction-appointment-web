@@ -7,22 +7,22 @@ import styles from './WhyUs.module.css';
 const slides = [
   {
     id: 1,
-    image: '/img/project-sample-home.png',
+    image: '/img/project-sample-home.webp',
     alt: 'Completed modern residential construction project',
   },
   {
     id: 2,
-    image: '/img/hero-construction-site.png',
+    image: '/img/hero-construction-site.webp',
     alt: 'Active construction site with crew and equipment',
   },
   {
     id: 3,
-    image: '/img/project-sample-home.png',
+    image: '/img/project-sample-home.webp',
     alt: 'Finished residential exterior sample project',
   },
   {
     id: 4,
-    image: '/img/hero-construction-site.png',
+    image: '/img/hero-construction-site.webp',
     alt: 'Construction worksite sample project',
   },
 ] as const;
@@ -68,8 +68,8 @@ function SlideGroup({ duplicate = false }: { duplicate?: boolean }) {
                 src={slide.image}
                 alt={duplicate ? '' : slide.alt}
                 fill
+                quality={76}
                 sizes="(max-width: 700px) 78vw, (max-width: 900px) 48vw, 460px"
-                priority={!duplicate && slide.id === 1}
               />
             ) : null}
           </div>

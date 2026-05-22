@@ -1,4 +1,4 @@
-.header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;z-index:300;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.header{background:var(--bg-card);border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;z-index:300;box-shadow:var(--shadow-xs);}
 .inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px;gap:1rem;}
 .logo{font-family:var(--font-head);font-size:1.8rem;font-weight:800;color:var(--text);letter-spacing:-.01em;cursor:pointer;display:flex;align-items:center;gap:10px;text-decoration:none;}
 .logoMark{display:flex;align-items:center;}
@@ -8,13 +8,14 @@
 .navLink{font-size:13px;font-weight:500;color:var(--text-secondary);letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:color var(--t);padding:4px 0;border-bottom:2px solid transparent;text-decoration:none;}
 .navLink:hover,.active{color:var(--brand);border-bottom-color:var(--brand);}
 .headerBtns{display:flex;gap:10px;align-items:center;}
-.hamburger{display:none;width:40px;height:40px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px;transition:all var(--t);}
+.hamburger{display:none;width:44px;height:44px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px;transition:background-color var(--transition-base),border-color var(--transition-base),box-shadow var(--transition-base),transform var(--transition-fast);}
 .hamburger:hover{border-color:var(--brand);background:var(--bg-alt);}
+.hamburger:active{transform:scale(.98);}
 .hamburger span{display:block;width:20px;height:2px;background:var(--brand);border-radius:2px;}
 .drawer{display:none;border-top:1px solid var(--border);background:var(--bg-card);box-shadow:var(--shadow);}
 .drawerOpen{display:none;}
 .drawerInner{max-width:1300px;margin:0 auto;padding:1rem 2rem 1.25rem;display:flex;flex-direction:column;gap:4px;}
-.drawerLink{font-size:13px;font-weight:700;color:var(--text-secondary);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:11px 0;border-bottom:1px solid var(--border);}
+.drawerLink{font-size:13px;font-weight:700;color:var(--text-secondary);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:13px 0;border-bottom:1px solid var(--border);min-height:44px;display:flex;align-items:center;}
 .drawerLink:hover{color:var(--brand);}
 .drawerActions{display:flex;gap:10px;flex-wrap:wrap;padding-top:12px;}
 

@@ -1,5 +1,5 @@
-.reveal{opacity:0;transform:translate3d(0,16px,0);transition:opacity var(--transition-slow),transform var(--transition-slow);transition-delay:var(--reveal-delay,0ms);}
-.card{transform:translate3d(0,14px,0) scale(.992);}
+.reveal{opacity:0;transform:translate3d(0,22px,0);transition:opacity 520ms var(--ease-out-expo),transform 520ms var(--ease-out-expo);transition-delay:var(--reveal-delay,0ms);}
+.card{transform:translate3d(0,18px,0) scale(.985);}
 .visible{opacity:1;transform:none;}
 .reveal:not(.visible){will-change:opacity,transform;}
 .visible{will-change:auto;}

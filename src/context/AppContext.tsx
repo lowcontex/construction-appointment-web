@@ -272,8 +272,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const timer = window.setTimeout(() => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } catch (error) {
-        console.error('Failed to persist app state to localStorage.', { error });
+      } catch {
+        // Storage can be unavailable in private browsing or when quota is full.
       }
     }, 160);
 

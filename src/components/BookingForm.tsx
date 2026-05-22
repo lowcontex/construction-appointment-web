@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type KeyboardEvent } from 'react';
 import { useApp } from '@/context/AppContext';
 import { SERVICES } from '@/data/services';
 import { calcCost, formatPHP } from '@/utils/costing';
@@ -26,6 +26,28 @@ function nextBookingId(bookings: { id: string }[]) {
   }, 0);
 
   return 'BK-' + String(highest + 1).padStart(3, '0');
+}
+
+function handleRadioGroupKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+  const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
+  if (!keys.includes(event.key)) return;
+
+  const radios = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]:not(:disabled)'));
+  if (!radios.length) return;
+
+  event.preventDefault();
+  const activeIndex = radios.indexOf(document.activeElement as HTMLButtonElement);
+  const fallbackIndex = radios.findIndex(radio => radio.getAttribute('aria-checked') === 'true');
+  const currentIndex = activeIndex >= 0 ? activeIndex : Math.max(fallbackIndex, 0);
+  let nextIndex = currentIndex;
+
+  if (event.key === 'Home') nextIndex = 0;
+  if (event.key === 'End') nextIndex = radios.length - 1;
+  if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % radios.length;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (currentIndex - 1 + radios.length) % radios.length;
+
+  radios[nextIndex].focus();
+  radios[nextIndex].click();
 }
 
 export default function BookingForm() {
@@ -58,8 +80,7 @@ export default function BookingForm() {
       if (draft.date) setDate(draft.date);
       if (draft.timeline) setTimeline(draft.timeline);
       if (draft.notes) setNotes(draft.notes);
-    } catch (error) {
-      console.warn('Failed to restore booking draft from localStorage.', { error });
+    } catch {
       localStorage.removeItem(DRAFT_KEY);
     }
   }, []);
@@ -75,8 +96,8 @@ export default function BookingForm() {
     const timer = window.setTimeout(() => {
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-      } catch (error) {
-        console.error('Failed to save booking draft to localStorage.', { error });
+      } catch {
+        // Draft persistence is a convenience; booking remains usable without it.
       }
     }, 180);
 
@@ -191,14 +212,14 @@ export default function BookingForm() {
         <div className={styles.panel}>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Select Service</div>
-            <div className={styles.picker} role="listbox" aria-label="Service options">
+            <div className={styles.picker} role="radiogroup" aria-label="Service options" onKeyDown={handleRadioGroupKeyDown}>
               {SERVICES.map(s => (
                 <button
                   type="button"
                   key={s.id}
-                  role="option"
+                  role="radio"
                   className={`${styles.pick} ${booking.service === s.id ? styles.selected : ''}`}
-                  aria-selected={booking.service === s.id}
+                  aria-checked={booking.service === s.id}
                   onClick={() => setBooking(prev => ({ ...prev, service: s.id }))}
                 >
                   <span className={styles.pickIcon} aria-hidden="true"></span>
@@ -210,7 +231,7 @@ export default function BookingForm() {
           </div>
           <div className={styles.nav}>
             <div />
-            <button className="btn btn-gold" onClick={nextStep}>Next: Project Details <span aria-hidden="true">&rarr;</span></button>
+            <button className="btn btn-gold" type="button" onClick={nextStep}>Next: Project Details <span aria-hidden="true">&rarr;</span></button>
           </div>
         </div>
       )}
@@ -220,23 +241,23 @@ export default function BookingForm() {
           <div className={styles.card}>
             <div className={styles.cardTitle}>Project Details</div>
             <div className="form-grid">
-              <div className="form-group"><label className="form-label">Full Name</label><input className="form-input" value={name} onChange={e => setName(e.target.value)} placeholder="Juan Dela Cruz" /></div>
-              <div className="form-group"><label className="form-label">Phone</label><input className="form-input" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+63 9XX XXX XXXX" /></div>
-              <div className="form-group form-full"><label className="form-label">Project Address</label><input className="form-input" value={address} onChange={e => setAddress(e.target.value)} placeholder="Complete address" /></div>
-              <div className="form-group"><label className="form-label">Floor Area (sqm)</label><input className="form-input" type="number" min={MIN_AREA} max={MAX_AREA} value={bArea} onChange={e => setBArea(e.target.value)} placeholder="e.g. 80" /></div>
-              <div className="form-group"><label className="form-label">No. of Floors</label><select className="form-select" value={floors} onChange={e => setFloors(e.target.value)}><option value="1">1 Floor</option><option value="2">2 Floors</option><option value="3">3 Floors</option></select></div>
-              <div className="form-group"><label className="form-label">Material Grade</label>
-                <select className="form-select" value={grade} onChange={e => setGrade(e.target.value as typeof grade)}>
+              <div className="form-group"><label className="form-label" htmlFor="booking-client-name">Full Name</label><input id="booking-client-name" className="form-input" autoComplete="name" required maxLength={120} value={name} onChange={e => setName(e.target.value)} placeholder="Juan Dela Cruz" /></div>
+              <div className="form-group"><label className="form-label" htmlFor="booking-client-phone">Phone</label><input id="booking-client-phone" className="form-input" type="tel" autoComplete="tel" maxLength={30} value={phone} onChange={e => setPhone(e.target.value)} placeholder="+63 9XX XXX XXXX" /></div>
+              <div className="form-group form-full"><label className="form-label" htmlFor="booking-project-address">Project Address</label><input id="booking-project-address" className="form-input" autoComplete="street-address" required maxLength={180} value={address} onChange={e => setAddress(e.target.value)} placeholder="Complete address" /></div>
+              <div className="form-group"><label className="form-label" htmlFor="booking-floor-area">Floor Area (sqm)</label><input id="booking-floor-area" className="form-input" type="number" inputMode="numeric" min={MIN_AREA} max={MAX_AREA} required value={bArea} onChange={e => setBArea(e.target.value)} placeholder="e.g. 80" /></div>
+              <div className="form-group"><label className="form-label" htmlFor="booking-floors">No. of Floors</label><select id="booking-floors" className="form-select" value={floors} onChange={e => setFloors(e.target.value)}><option value="1">1 Floor</option><option value="2">2 Floors</option><option value="3">3 Floors</option></select></div>
+              <div className="form-group"><label className="form-label" htmlFor="booking-material-grade">Material Grade</label>
+                <select id="booking-material-grade" className="form-select" value={grade} onChange={e => setGrade(e.target.value as typeof grade)}>
                   <option value="standard">Standard</option><option value="premium">Premium (+30%)</option><option value="economy">Economy (-20%)</option>
                 </select>
               </div>
-              <div className="form-group"><label className="form-label">Preferred Start Date</label><input className="form-input" type="date" min={today} value={date} onChange={e => setDate(e.target.value)} /></div>
-              <div className="form-group"><label className="form-label">Timeline</label>
-                <select className="form-select" value={timeline} onChange={e => setTimeline(e.target.value as typeof timeline)}>
+              <div className="form-group"><label className="form-label" htmlFor="booking-start-date">Preferred Start Date</label><input id="booking-start-date" className="form-input" type="date" min={today} value={date} onChange={e => setDate(e.target.value)} /></div>
+              <div className="form-group"><label className="form-label" htmlFor="booking-timeline">Timeline</label>
+                <select id="booking-timeline" className="form-select" value={timeline} onChange={e => setTimeline(e.target.value as typeof timeline)}>
                   <option value="normal">Normal</option><option value="rush">Rush (+20% labor)</option>
                 </select>
               </div>
-              <div className="form-group form-full"><label className="form-label">Additional Notes</label><textarea className="form-textarea" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Any special requirements, existing structures, etc." /></div>
+              <div className="form-group form-full"><label className="form-label" htmlFor="booking-notes">Additional Notes</label><textarea id="booking-notes" className="form-textarea" maxLength={500} value={notes} onChange={e => setNotes(e.target.value)} placeholder="Any special requirements, existing structures, etc." /></div>
             </div>
             {cost && (
               <div className="cost-summary">
@@ -251,8 +272,8 @@ export default function BookingForm() {
             )}
           </div>
           <div className={styles.nav}>
-            <button className="btn btn-outline" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
-            <button className="btn btn-gold" onClick={nextStep}>Next: Choose Engineer <span aria-hidden="true">&rarr;</span></button>
+            <button className="btn btn-outline" type="button" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
+            <button className="btn btn-gold" type="button" onClick={nextStep}>Next: Choose Engineer <span aria-hidden="true">&rarr;</span></button>
           </div>
         </div>
       )}
@@ -261,14 +282,15 @@ export default function BookingForm() {
         <div className={styles.panel}>
           <div className={styles.card}>
             <div className={styles.cardTitle}>Select Engineer</div>
-            <div className={styles.picker} role="listbox" aria-label="Engineer options">
+            <div className={styles.picker} role="radiogroup" aria-label="Engineer options" onKeyDown={handleRadioGroupKeyDown}>
               {engineers.map(e => (
                 <button
                   type="button"
                   key={e.id}
-                  role="option"
+                  role="radio"
                   className={`${styles.engPick} ${booking.engineer === e.id ? styles.selected : ''}`}
-                  aria-selected={booking.engineer === e.id}
+                  aria-checked={booking.engineer === e.id}
+                  aria-disabled={e.status !== 'available'}
                   disabled={e.status !== 'available'}
                   onClick={() => setBooking(prev => ({ ...prev, engineer: e.id }))}
                 >
@@ -285,8 +307,8 @@ export default function BookingForm() {
             </div>
           </div>
           <div className={styles.nav}>
-            <button className="btn btn-outline" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
-            <button className="btn btn-gold" onClick={nextStep}>Review & Confirm <span aria-hidden="true">&rarr;</span></button>
+            <button className="btn btn-outline" type="button" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
+            <button className="btn btn-gold" type="button" onClick={nextStep}>Review & Confirm <span aria-hidden="true">&rarr;</span></button>
           </div>
         </div>
       )}
@@ -329,8 +351,8 @@ export default function BookingForm() {
             )}
           </div>
           <div className={styles.nav}>
-            <button className="btn btn-outline" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
-            <button className="btn btn-gold" onClick={confirmBooking}>Confirm & Submit Booking <span aria-hidden="true">&#10003;</span></button>
+            <button className="btn btn-outline" type="button" onClick={prevStep}><span aria-hidden="true">&larr;</span> Back</button>
+            <button className="btn btn-gold" type="button" onClick={confirmBooking}>Confirm & Submit Booking <span aria-hidden="true">&#10003;</span></button>
           </div>
         </div>
       )}

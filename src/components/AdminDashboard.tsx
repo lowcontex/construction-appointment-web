@@ -218,10 +218,12 @@ export default function AdminDashboard() {
           {ADMIN_TABS.map(t => (
             <button
               key={t}
+              id={`admin-tab-${t}`}
               className={`${styles.tabBtn} ${tab === t ? styles.active : ''}`}
               type="button"
               role="tab"
               aria-selected={tab === t}
+              aria-controls="admin-section-panel"
               onClick={() => setTab(t)}
             >
               <span>{formatLabel(t)}</span>
@@ -254,7 +256,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <section className={styles.section} aria-labelledby="admin-section-title">
+        <section id="admin-section-panel" className={styles.section} role="tabpanel" aria-labelledby={`admin-tab-${tab}`}>
           <div className={styles.sectionHeader}>
             <div>
               <h2 id="admin-section-title" className={styles.sectionTitle}>{tabCopy.title}</h2>
@@ -285,36 +287,68 @@ export default function AdminDashboard() {
           </div>
 
           {tab === 'bookings' && (
-            <div className={`${styles.tableWrap} ${styles.wideTable}`}>
-              <table className="data-table">
-                <thead><tr><th>Booking ID</th><th>Client</th><th>Service</th><th>Engineer</th><th>Area</th><th>Total</th><th>Date</th><th>Status</th><th>Update</th></tr></thead>
-                <tbody>
-                  {bookings.length === 0 ? (
-                    <tr><td className={styles.emptyCell} colSpan={9}>No bookings are in the queue.</td></tr>
-                  ) : (
-                    bookings.map(b => (
-                      <tr key={b.id}>
-                        <td className={styles.keyCell}>{b.id}</td>
-                        <td>{b.client}</td>
-                        <td>{b.service}</td>
-                        <td>{b.engineer}</td>
-                        <td>{b.area} sqm</td>
-                        <td className={styles.moneyCell}>{formatPHP(b.total)}</td>
-                        <td className={styles.mutedCell}>{b.date}</td>
-                        <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
-                        <td>
-                          <select className={styles.actionSel} value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value)}>
-                            {BOOKING_STATUSES.map(s => (
-                              <option key={s} value={s}>{s}</option>
-                            ))}
-                          </select>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <>
+              <div className={`${styles.tableWrap} ${styles.wideTable}`}>
+                <table className="data-table">
+                  <thead><tr><th>Booking ID</th><th>Client</th><th>Service</th><th>Engineer</th><th>Area</th><th>Total</th><th>Date</th><th>Status</th><th>Update</th></tr></thead>
+                  <tbody>
+                    {bookings.length === 0 ? (
+                      <tr><td className={styles.emptyCell} colSpan={9}>No bookings are in the queue.</td></tr>
+                    ) : (
+                      bookings.map(b => (
+                        <tr key={b.id}>
+                          <td className={styles.keyCell}>{b.id}</td>
+                          <td>{b.client}</td>
+                          <td>{b.service}</td>
+                          <td>{b.engineer}</td>
+                          <td>{b.area} sqm</td>
+                          <td className={styles.moneyCell}>{formatPHP(b.total)}</td>
+                          <td className={styles.mutedCell}>{b.date}</td>
+                          <td><span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span></td>
+                          <td>
+                            <select className={styles.actionSel} aria-label={`Update status for booking ${b.id}`} value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value)}>
+                              {BOOKING_STATUSES.map(s => (
+                                <option key={s} value={s}>{s}</option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div className={styles.mobileCards} aria-label="Booking cards">
+                {bookings.length === 0 ? (
+                  <div className={styles.mobileEmpty}>No bookings are in the queue.</div>
+                ) : (
+                  bookings.map(b => (
+                    <article key={b.id} className={styles.adminCard}>
+                      <div className={styles.cardTop}>
+                        <div>
+                          <div className={styles.cardEyebrow}>{b.id}</div>
+                          <div className={styles.cardTitle}>{b.service}</div>
+                        </div>
+                        <span className={`status-pill s-${b.status.toLowerCase()}`}>{b.status}</span>
+                      </div>
+                      <div className={styles.cardRows}>
+                        <div><span>Client</span><strong>{b.client}</strong></div>
+                        <div><span>Engineer</span><strong>{b.engineer}</strong></div>
+                        <div><span>Area</span><strong>{b.area} sqm</strong></div>
+                        <div><span>Total</span><strong>{formatPHP(b.total)}</strong></div>
+                        <div><span>Date</span><strong>{b.date}</strong></div>
+                      </div>
+                      <label className={styles.cardSelectLabel} htmlFor={`booking-status-${b.id}`}>Update status</label>
+                      <select id={`booking-status-${b.id}`} className={styles.cardSelect} value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value)}>
+                        {BOOKING_STATUSES.map(s => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </article>
+                  ))
+                )}
+              </div>
+            </>
           )}
 
           {tab === 'engineers' && (
@@ -327,20 +361,20 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className={styles.engGrid}>
-                  <div className={styles.engField}><label>First Name *</label><input value={engForm.fname} onChange={handleEngChange('fname')} placeholder="Juan" /></div>
-                  <div className={styles.engField}><label>Last Name *</label><input value={engForm.lname} onChange={handleEngChange('lname')} placeholder="Dela Cruz" /></div>
-                  <div className={styles.engField}><label>Email *</label><input type="email" value={engForm.email} onChange={handleEngChange('email')} placeholder="engineer@email.com" /></div>
-                  <div className={styles.engField}><label>Phone</label><input value={engForm.phone} onChange={handleEngChange('phone')} placeholder="+63 9XX XXX XXXX" /></div>
-                  <div className={styles.engField}><label>Password *</label><input type="password" value={engForm.password} onChange={handleEngChange('password')} placeholder="Min. 8 characters" /></div>
-                  <div className={styles.engField}><label>Specialization</label>
-                    <select value={engForm.spec} onChange={handleEngChange('spec')}>
+                  <div className={styles.engField}><label htmlFor="admin-engineer-first-name">First Name *</label><input id="admin-engineer-first-name" required maxLength={40} autoComplete="given-name" value={engForm.fname} onChange={handleEngChange('fname')} placeholder="Juan" /></div>
+                  <div className={styles.engField}><label htmlFor="admin-engineer-last-name">Last Name *</label><input id="admin-engineer-last-name" required maxLength={40} autoComplete="family-name" value={engForm.lname} onChange={handleEngChange('lname')} placeholder="Dela Cruz" /></div>
+                  <div className={styles.engField}><label htmlFor="admin-engineer-email">Email *</label><input id="admin-engineer-email" type="email" required autoComplete="email" value={engForm.email} onChange={handleEngChange('email')} placeholder="engineer@email.com" /></div>
+                  <div className={styles.engField}><label htmlFor="admin-engineer-phone">Phone</label><input id="admin-engineer-phone" type="tel" maxLength={30} autoComplete="tel" value={engForm.phone} onChange={handleEngChange('phone')} placeholder="+63 9XX XXX XXXX" /></div>
+                  <div className={styles.engField}><label htmlFor="admin-engineer-password">Password *</label><input id="admin-engineer-password" type="password" required minLength={8} autoComplete="new-password" value={engForm.password} onChange={handleEngChange('password')} placeholder="Min. 8 characters" /></div>
+                  <div className={styles.engField}><label htmlFor="admin-engineer-specialization">Specialization</label>
+                    <select id="admin-engineer-specialization" value={engForm.spec} onChange={handleEngChange('spec')}>
                       <option>Civil</option><option>Structural</option><option>Electrical</option><option>Mechanical</option><option>Geodetic</option>
                     </select>
                   </div>
-                  <div className={styles.engField}><label>Experience</label><input type="number" value={engForm.exp} onChange={handleEngChange('exp')} placeholder="5 years" /></div>
-                  <div className={styles.engField}><label>Daily Rate</label><input type="number" value={engForm.rate} onChange={handleEngChange('rate')} placeholder="2500" /></div>
-                  <div className={`${styles.engField} ${styles.full}`}><label>Skills</label><input value={engForm.skills} onChange={handleEngChange('skills')} placeholder="Structural, Foundation, QA" /></div>
-                  <div className={`${styles.engField} ${styles.full}`}><label>Bio</label><textarea value={engForm.bio} onChange={handleEngChange('bio')} placeholder="Brief experience summary" /></div>
+                  <div className={styles.engField}><label htmlFor="admin-engineer-experience">Experience</label><input id="admin-engineer-experience" type="number" inputMode="numeric" min="0" max="60" value={engForm.exp} onChange={handleEngChange('exp')} placeholder="5 years" /></div>
+                  <div className={styles.engField}><label htmlFor="admin-engineer-rate">Daily Rate</label><input id="admin-engineer-rate" type="number" inputMode="numeric" min="1000" max="50000" value={engForm.rate} onChange={handleEngChange('rate')} placeholder="2500" /></div>
+                  <div className={`${styles.engField} ${styles.full}`}><label htmlFor="admin-engineer-skills">Skills</label><input id="admin-engineer-skills" maxLength={180} value={engForm.skills} onChange={handleEngChange('skills')} placeholder="Structural, Foundation, QA" /></div>
+                  <div className={`${styles.engField} ${styles.full}`}><label htmlFor="admin-engineer-bio">Bio</label><textarea id="admin-engineer-bio" maxLength={240} value={engForm.bio} onChange={handleEngChange('bio')} placeholder="Brief experience summary" /></div>
                 </div>
                 <div className={styles.engActions}>
                   <button className="btn btn-gold" type="submit">Add Engineer</button>
@@ -379,50 +413,118 @@ export default function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
+                <div className={styles.mobileCards} aria-label="Engineer roster cards">
+                  {visibleEngineers.length === 0 ? (
+                    <div className={styles.mobileEmpty}>No engineers match this filter.</div>
+                  ) : (
+                    visibleEngineers.map(e => (
+                      <article key={e.id} className={styles.adminCard}>
+                        <div className={styles.cardTop}>
+                          <div>
+                            <div className={styles.cardEyebrow}>{e.spec}</div>
+                            <div className={styles.cardTitle}>{e.name}</div>
+                          </div>
+                          <span className={`status-pill ${e.status === 'available' ? 's-completed' : 's-busy'}`}>{formatLabel(e.status)}</span>
+                        </div>
+                        <div className={styles.cardRows}>
+                          <div><span>Experience</span><strong>{e.exp}</strong></div>
+                          <div><span>Daily Rate</span><strong>{formatPHP(e.rate)}</strong></div>
+                          <div><span>Rating</span><strong>{e.rating} / 5</strong></div>
+                        </div>
+                        <div className={styles.mobileActions}>
+                          <button className={`btn btn-outline btn-sm ${styles.statusAction}`} type="button" onClick={() => toggleEngStatus(e.id)}>{e.status === 'available' ? 'Mark Busy' : 'Mark Available'}</button>
+                          <button className={`btn btn-danger btn-sm ${styles.removeAction}`} type="button" onClick={() => removeEngineer(e.id, e.accountEmail)}>Remove</button>
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           )}
 
           {tab === 'services' && (
-            <div className={styles.tableWrap}>
-              <table className="data-table">
-                <thead><tr><th>Service</th><th>Type</th><th>Material Cost</th><th>Labor</th><th>Duration</th><th>Min Area</th></tr></thead>
-                <tbody>
-                  {SERVICES.map(s => (
-                    <tr key={s.id}>
-                      <td className={styles.keyCell}>{s.name}</td>
-                      <td>{s.type}</td>
-                      <td className={styles.moneyCell}>{formatPHP(s.baseCostPerSqm.materials)} / sqm</td>
-                      <td className={styles.brandCell}>{formatPHP(s.baseCostPerSqm.labor)} / sqm</td>
-                      <td>{s.duration}</td>
-                      <td>{s.minSqm} sqm</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <>
+              <div className={styles.tableWrap}>
+                <table className="data-table">
+                  <thead><tr><th>Service</th><th>Type</th><th>Material Cost</th><th>Labor</th><th>Duration</th><th>Min Area</th></tr></thead>
+                  <tbody>
+                    {SERVICES.map(s => (
+                      <tr key={s.id}>
+                        <td className={styles.keyCell}>{s.name}</td>
+                        <td>{s.type}</td>
+                        <td className={styles.moneyCell}>{formatPHP(s.baseCostPerSqm.materials)} / sqm</td>
+                        <td className={styles.brandCell}>{formatPHP(s.baseCostPerSqm.labor)} / sqm</td>
+                        <td>{s.duration}</td>
+                        <td>{s.minSqm} sqm</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className={styles.mobileCards} aria-label="Service catalog cards">
+                {SERVICES.map(s => (
+                  <article key={s.id} className={styles.adminCard}>
+                    <div className={styles.cardTop}>
+                      <div>
+                        <div className={styles.cardEyebrow}>{s.type}</div>
+                        <div className={styles.cardTitle}>{s.name}</div>
+                      </div>
+                    </div>
+                    <div className={styles.cardRows}>
+                      <div><span>Material Cost</span><strong>{formatPHP(s.baseCostPerSqm.materials)} / sqm</strong></div>
+                      <div><span>Labor</span><strong>{formatPHP(s.baseCostPerSqm.labor)} / sqm</strong></div>
+                      <div><span>Duration</span><strong>{s.duration}</strong></div>
+                      <div><span>Min Area</span><strong>{s.minSqm} sqm</strong></div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </>
           )}
 
           {tab === 'users' && (
-            <div className={styles.tableWrap}>
-              <table className="data-table">
-                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Phone</th></tr></thead>
-                <tbody>
-                  {users.length === 0 ? (
-                    <tr><td className={styles.emptyCell} colSpan={4}>No users are registered.</td></tr>
-                  ) : (
-                    users.map(u => (
-                      <tr key={normalizeEmail(u.email) || `user-${u.id}`}>
-                        <td className={styles.keyCell}>{u.name}</td>
-                        <td>{u.email}</td>
-                        <td><span className={`status-pill ${u.role === 'admin' ? 's-confirmed' : u.role === 'engineer' ? 's-ongoing' : 's-completed'}`}>{formatLabel(u.role)}</span></td>
-                        <td className={styles.mutedCell}>{u.phone || 'Not provided'}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <>
+              <div className={styles.tableWrap}>
+                <table className="data-table">
+                  <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Phone</th></tr></thead>
+                  <tbody>
+                    {users.length === 0 ? (
+                      <tr><td className={styles.emptyCell} colSpan={4}>No users are registered.</td></tr>
+                    ) : (
+                      users.map(u => (
+                        <tr key={normalizeEmail(u.email) || `user-${u.id}`}>
+                          <td className={styles.keyCell}>{u.name}</td>
+                          <td>{u.email}</td>
+                          <td><span className={`status-pill ${u.role === 'admin' ? 's-confirmed' : u.role === 'engineer' ? 's-ongoing' : 's-completed'}`}>{formatLabel(u.role)}</span></td>
+                          <td className={styles.mutedCell}>{u.phone || 'Not provided'}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div className={styles.mobileCards} aria-label="User directory cards">
+                {users.length === 0 ? (
+                  <div className={styles.mobileEmpty}>No users are registered.</div>
+                ) : (
+                  users.map(u => (
+                    <article key={normalizeEmail(u.email) || `user-card-${u.id}`} className={styles.adminCard}>
+                      <div className={styles.cardTop}>
+                        <div>
+                          <div className={styles.cardEyebrow}>{u.email}</div>
+                          <div className={styles.cardTitle}>{u.name}</div>
+                        </div>
+                        <span className={`status-pill ${u.role === 'admin' ? 's-confirmed' : u.role === 'engineer' ? 's-ongoing' : 's-completed'}`}>{formatLabel(u.role)}</span>
+                      </div>
+                      <div className={styles.cardRows}>
+                        <div><span>Phone</span><strong>{u.phone || 'Not provided'}</strong></div>
+                      </div>
+                    </article>
+                  ))
+                )}
+              </div>
+            </>
           )}
         </section>
       </div>

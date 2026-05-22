@@ -1,4 +1,4 @@
-.topbar{background:var(--brand);color:white;text-align:center;font-size:12px;font-weight:600;letter-spacing:.06em;padding:7px 12px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;line-height:1.35;}
+.topbar{background:var(--brand);color:var(--color-on-brand);text-align:center;font-size:12px;font-weight:600;letter-spacing:.06em;padding:7px 12px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;line-height:1.35;}
 .topbar span{min-width:0;max-width:100%;overflow-wrap:anywhere;}
 .extra::before{content:'- ';opacity:.85;}
 

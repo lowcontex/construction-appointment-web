@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { SERVICES } from '@/data/services';
@@ -10,6 +11,15 @@ export default function Hero() {
 
   return (
     <div className={styles.hero}>
+      <Image
+        className={styles.heroImage}
+        src="/img/hero-construction-site.webp"
+        alt=""
+        fill
+        priority
+        quality={76}
+        sizes="100vw"
+      />
       <div className={styles.grid}></div>
       <div className={styles.inner}>
         <div className={styles.copy}>
@@ -54,8 +64,8 @@ function QuickEstimateCard() {
     <div className={styles.card}>
       <div className={styles.cardTitle}>Quick Estimate</div>
       <div className={styles.field}>
-        <label className={styles.label}>Service Type</label>
-        <select className={styles.select} value={selectedService} onChange={e => setSelectedService(e.target.value)}>
+        <label className={styles.label} htmlFor="quick-estimate-service">Service Type</label>
+        <select id="quick-estimate-service" className={styles.select} value={selectedService} onChange={e => setSelectedService(e.target.value)}>
           <option value="">Select Service</option>
           {SERVICES.map(s => (
             <option key={s.id} value={s.id}>{s.name}</option>
@@ -63,8 +73,8 @@ function QuickEstimateCard() {
         </select>
       </div>
       <div className={styles.field}>
-        <label className={styles.label}>Floor Area (sqm)</label>
-        <input className={styles.input} type="number" min="1" placeholder="e.g. 80" value={area} onChange={e => setArea(e.target.value)} />
+        <label className={styles.label} htmlFor="quick-estimate-area">Floor Area (sqm)</label>
+        <input id="quick-estimate-area" className={styles.input} type="number" min="1" max="10000" inputMode="numeric" placeholder="e.g. 80" value={area} onChange={e => setArea(e.target.value)} />
       </div>
       {selectedService && areaValue > 0 && (
         <div className={styles.result}>
@@ -74,7 +84,7 @@ function QuickEstimateCard() {
           <div className={styles.resultTotal}><span>Total</span><span>PHP {total.toLocaleString()}</span></div>
         </div>
       )}
-      <button className={`btn btn-gold ${styles.fullButton}`} onClick={continueToBooking}>
+      <button className={`btn btn-gold ${styles.fullButton}`} type="button" onClick={continueToBooking}>
         Proceed to Full Booking
       </button>
     </div>

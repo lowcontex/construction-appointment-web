@@ -31,27 +31,27 @@ export default function CostEstimator() {
           <div>
             <div className={styles.colTitle}>Project Details</div>
             <div className={styles.field}>
-              <label className={styles.label}>Service Type</label>
-              <select className={styles.select} value={serviceId} onChange={e => setServiceId(e.target.value)}>
+              <label className={styles.label} htmlFor="cost-estimator-service">Service Type</label>
+              <select id="cost-estimator-service" className={styles.select} value={serviceId} onChange={e => setServiceId(e.target.value)}>
                 <option value="">Select service</option>
                 {SERVICES.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Floor Area (sqm)</label>
-              <input className={styles.input} type="number" placeholder="e.g. 100" value={area} onChange={e => setArea(e.target.value)} />
+              <label className={styles.label} htmlFor="cost-estimator-area">Floor Area (sqm)</label>
+              <input id="cost-estimator-area" className={styles.input} type="number" min="1" max="10000" inputMode="numeric" placeholder="e.g. 100" value={area} onChange={e => setArea(e.target.value)} />
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Material Grade</label>
-              <select className={styles.select} value={grade} onChange={e => setGrade(e.target.value as typeof grade)}>
+              <label className={styles.label} htmlFor="cost-estimator-grade">Material Grade</label>
+              <select id="cost-estimator-grade" className={styles.select} value={grade} onChange={e => setGrade(e.target.value as typeof grade)}>
                 <option value="standard">Standard</option>
                 <option value="premium">Premium (+30%)</option>
                 <option value="economy">Economy (-20%)</option>
               </select>
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Project Duration</label>
-              <select className={styles.select} value={duration} onChange={e => setDuration(e.target.value as typeof duration)}>
+              <label className={styles.label} htmlFor="cost-estimator-duration">Project Duration</label>
+              <select id="cost-estimator-duration" className={styles.select} value={duration} onChange={e => setDuration(e.target.value as typeof duration)}>
                 <option value="normal">Normal Timeline</option>
                 <option value="rush">Rush (+20% labor)</option>
               </select>
